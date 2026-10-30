@@ -1,7 +1,7 @@
 {
   "name": "study-skills",
-  "version": "0.1.1",
-  "description": "Agent skills for studying, learning, and creating. First skill: turn a Canvas course into study documents.",
+  "version": "0.2.0",
+  "description": "Agent skills for studying, learning, and creating. Canvas Study, Lecture Notes, Flashcard Forge, and Explain Back.",
   "author": {
     "name": "Fernando Pagani",
     "url": "https://github.com/fernandoleitepagani"
@@ -14,10 +14,14 @@
     "canvas",
     "learning",
     "flashcards",
-    "study-plan",
+    "lecture-notes",
     "agent-skills"
   ],
   "skills": [
-    "./skills/study/canvas-study"
+    "./skills/study/canvas-study",
+    "./skills/study/study-core",
+    "./skills/study/lecture-notes",
+    "./skills/study/flashcard-forge",
+    "./skills/study/explain-back"
   ]
 }

@@ -1,6 +1,6 @@
 # Harness capability matrix
 
-Record the result of the v0.1.1 smoke test here.
+Record the result of the v0.2.0 smoke test here.
 
 ## Environment used for this run
 
@@ -21,6 +21,9 @@ The script layer is covered by the automated test suite. Native question renderi
 | OpenCode | GUI | pending | pending | pending | pending | GUI not available |
 | Codex | CLI | pending | pending | pending | pending | CLI not installed |
 | Codex | GUI | pending | pending | pending | pending | GUI not available |
+| lecture-notes | CLI + GUI | pending | pending | pending | pending | v0.2.0 |
+| flashcard-forge | CLI + GUI | n/a | n/a | n/a | pending | v0.2.0; CSV/MD only |
+| explain-back | CLI + GUI | pending | pending | pending | pending | v0.2.0 |
 
 ## How to record
 
@@ -31,7 +34,7 @@ For each cell:
 - `n/a`: surface does not expose that capability.
 - `pending`: not exercised yet.
 
-If a format is `no`, the skill must still produce the other requested formats and report the failure. See `references/outputs.md` in the skill.
+If a format is `no`, the skill must still produce the other requested formats and report the failure. See `skills/study/study-core/references/output-conventions.md`.
 
 ## Script layer verified
 

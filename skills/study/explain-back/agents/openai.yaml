@@ -1,0 +1,6 @@
+interface:
+  display_name: "Explain Back"
+  short_description: "Explain concepts in layers with the Feynman technique"
+  brand_color: "#1F3A5F"
+policy:
+  allow_implicit_invocation: false

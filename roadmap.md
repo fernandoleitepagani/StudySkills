@@ -43,15 +43,20 @@ There is no plan to add other harnesses.
 - Bug fixes and format refinements.
 - No new features unless required to fix a broken requested format.
 
-## v0.2.0 - Study Skill Collection
+## v0.2.0 - Study Skill Foundation
 
+- Shared model-invoked `study-core` engine.
 - `lecture-notes`: turn lecture material into structured notes.
-- `exam-sim`: timed practice exams and spaced repetition.
-- `flashcard-forge`: Anki-ready decks.
+- `flashcard-forge`: Anki-ready CSV and Markdown decks.
 - `explain-back`: Feynman technique explanations.
+- Shared question, plan, validation, style, and output conventions.
+- Install the collection; individual v0.2 skill installs are not supported.
+
+## v0.2.1 - Remaining Study Skills
+
+- `exam-sim`: timed practice exams and optional review schedule.
 - `study-planner`: standalone multi-course planning.
-- `note-organizer`: Markdown and Obsidian organization.
-- Shared style, question, and output conventions.
+- `note-organizer`: read-only Markdown and Obsidian organization.
 
 ## v0.3.0 - File Study
 

@@ -9,6 +9,14 @@ export const CANVAS_SCRIPT = path.join(
   REPO_ROOT,
   "skills/study/canvas-study/scripts/canvas.mjs",
 );
+export const CORE_SCRIPT = path.join(
+  REPO_ROOT,
+  "skills/study/study-core/scripts/core.mjs",
+);
+export const CARDS_SCRIPT = path.join(
+  REPO_ROOT,
+  "skills/study/flashcard-forge/scripts/cards.mjs",
+);
 
 export async function makeTempDir(prefix = "studyskills-test-") {
   return mkdtemp(path.join(os.tmpdir(), prefix));
@@ -24,9 +32,9 @@ export async function cleanupDir(dir) {
   await rm(dir, { recursive: true, force: true });
 }
 
-export function runCli(args, { home, env = {}, cwd = REPO_ROOT } = {}) {
+export function runScript(script, args, { home, env = {}, cwd = REPO_ROOT } = {}) {
   return new Promise((resolve, reject) => {
-    const child = spawn(process.execPath, [CANVAS_SCRIPT, ...args], {
+    const child = spawn(process.execPath, [script, ...args], {
       cwd,
       env: {
         ...process.env,
@@ -43,4 +51,16 @@ export function runCli(args, { home, env = {}, cwd = REPO_ROOT } = {}) {
     child.on("error", reject);
     child.on("close", (code) => resolve({ code, stdout, stderr }));
   });
+}
+
+export function runCli(args, options = {}) {
+  return runScript(CANVAS_SCRIPT, args, options);
+}
+
+export function runCore(args, options = {}) {
+  return runScript(CORE_SCRIPT, args, options);
+}
+
+export function runCards(args, options = {}) {
+  return runScript(CARDS_SCRIPT, args, options);
 }

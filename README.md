@@ -11,7 +11,14 @@ The skill fetches Canvas materials read-only, asks you what you want through the
 | Skill | Status | What it does |
 | --- | --- | --- |
 | `canvas-study` | v0.1.1 | Fetch a Canvas course read-only and generate study documents. |
-| `file-study` | Planned | Study from local files you attach or name. See `roadmap2.md`. |
+| `lecture-notes` | v0.2.0 | Turn lecture slides, transcripts, or notes into structured notes. |
+| `flashcard-forge` | v0.2.0 | Create Anki-ready CSV and Markdown flashcards. |
+| `explain-back` | v0.2.0 | Explain concepts in layers with the Feynman technique. |
+| `study-core` | internal | Shared engine for the v0.2 study skills. Not invoked directly. |
+| `exam-sim` | Planned v0.2.1 | Generate timed practice exams. |
+| `study-planner` | Planned v0.2.1 | Plan multiple courses and deadlines. |
+| `note-organizer` | Planned v0.2.1 | Organize Markdown and Obsidian notes read-only. |
+| `file-study` | Planned v0.3.0 | Study from local files you attach or name. See `roadmap2.md`. |
 
 ## Install
 
@@ -45,6 +52,8 @@ npx skills@latest update
 
 The commands above assume the repository is hosted at `fernandoleitepagani/StudySkills`. For local development before pushing, see [Development](#development).
 
+Install the **whole collection** for the 2026 study skills. The new skills call the shared internal `study-core` skill. Installing a single v0.2 skill on its own is not supported because it would miss the core.
+
 ## Quick start
 
 1. Create a Canvas personal access token.
@@ -59,6 +68,16 @@ The commands above assume the repository is hosted at `fernandoleitepagani/Study
 If no token is found, the skill warns you and offers two choices: exit, or guide you through creating the file. The guide creates `~/.studyskills/` and an empty `canvas-token.txt`, then exits so you can paste the token and run the skill again.
 
 The token is never requested in chat. It is never printed, stored in the plan, or written to the output files.
+
+## Using the v0.2 skills
+
+- `/lecture-notes`: lecture slides, transcript, or notes to structured notes.
+- `/flashcard-forge`: study material to Anki-ready CSV and Markdown.
+- `/explain-back`: a concept explained in layers, with a self-test.
+
+Each skill asks through the native question UI, shows a plan before generating, and writes only the requested files to `~/Documents/StudySkills/<topic>/<run>/`.
+
+See [docs/study/README.md](./docs/study/README.md) for the collection documentation.
 
 ## Supported harnesses
 

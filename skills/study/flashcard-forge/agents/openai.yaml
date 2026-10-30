@@ -1,0 +1,6 @@
+interface:
+  display_name: "Flashcard Forge"
+  short_description: "Create Anki-ready flashcards from study material"
+  brand_color: "#E8A317"
+policy:
+  allow_implicit_invocation: false

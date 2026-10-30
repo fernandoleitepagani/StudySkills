@@ -40,4 +40,5 @@ If the installer does not support local paths, run `./scripts/link-skills.sh`.
 
 - The commands above assume the repository is hosted at `fernandoleitepagani/StudySkills`.
 - No `npm install` is required. StudySkills has no runtime dependencies.
+- Install the whole collection. The v0.2 study skills call the internal `study-core` skill; installing one alone is not supported.
 - Do not promise automatic updates for routes that require a manual command.
