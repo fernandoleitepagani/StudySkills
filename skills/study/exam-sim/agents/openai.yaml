@@ -1,0 +1,6 @@
+interface:
+  display_name: "Exam Sim"
+  short_description: "Generate timed practice exams with answer keys"
+  brand_color: "#1F3A5F"
+policy:
+  allow_implicit_invocation: false

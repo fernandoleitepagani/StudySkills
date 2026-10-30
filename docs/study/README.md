@@ -39,11 +39,26 @@ Full page: [canvas-study.md](./canvas-study.md).
 - **Common questions:** a source is optional. If none is used, the skill says so.
 - **It's working if:** ELI5, exam-level, expert-level, analogy, misconceptions, and self-test are present.
 
-## Planned v0.2.1
+## exam-sim
 
-- `exam-sim`
-- `study-planner`
-- `note-organizer`
+- **What it does:** generates a timed practice exam with answer key and topic map.
+- **When to use it:** you want exam practice from a pack, local files, or a topic.
+- **Common questions:** the time limit is printed, not a live timer. No answer key means no answer key file.
+- **It's working if:** question count, time limit, answer key, and topic map agree.
+
+## study-planner
+
+- **What it does:** plans multiple courses around deadlines, weekly hours, and fixed commitments.
+- **When to use it:** you need a term plan without a source pack.
+- **Common questions:** deadlines are validated and never invented. Past deadlines require confirmation.
+- **It's working if:** every course and deadline appears in the weekly plan.
+
+## note-organizer
+
+- **What it does:** inventories and organizes Markdown or Obsidian notes read-only.
+- **When to use it:** you want an index, tags, a note map, or a study guide.
+- **Common questions:** source notes are never modified. Only requested outputs are written to Documents.
+- **It's working if:** the source hashes are unchanged and the index covers the vault.
 
 ## Planned v0.3.0
 

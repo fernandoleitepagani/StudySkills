@@ -10,6 +10,9 @@ const USER_SKILLS = [
   "lecture-notes",
   "flashcard-forge",
   "explain-back",
+  "exam-sim",
+  "study-planner",
+  "note-organizer",
 ];
 const MODEL_SKILLS = ["study-core"];
 
@@ -80,7 +83,7 @@ test("skills: required files exist", async () => {
 });
 
 test("skills: new skills do not import Canvas or token code", async () => {
-  for (const name of ["lecture-notes", "flashcard-forge", "explain-back", "study-core"]) {
+  for (const name of ["lecture-notes", "flashcard-forge", "explain-back", "exam-sim", "study-planner", "note-organizer", "study-core"]) {
     const dir = path.join(SKILLS_ROOT, name);
     const files = [];
     async function walk(current) {
@@ -103,4 +106,19 @@ test("skills: no runtime dependencies", async () => {
   const pkg = JSON.parse(await read("package.json"));
   assert.equal(pkg.dependencies ?? undefined, undefined);
   assert.equal(pkg.devDependencies ?? undefined, undefined);
+});
+
+test("skills: v0.2.1 skill constraints", async () => {
+  const notes = await read("skills/study/note-organizer/SKILL.md");
+  assert.match(notes, /Read-only source/);
+  assert.match(notes, /Never move, rename, rewrite, or delete/);
+  assert.match(notes, /core\.mjs inventory/);
+
+  const planner = await read("skills/study/study-planner/SKILL.md");
+  assert.match(planner, /Do not invent courses, deadlines, or hours/);
+  assert.match(planner, /No Canvas access/);
+
+  const exam = await read("skills/study/exam-sim/SKILL.md");
+  assert.match(exam, /No live timer application/);
+  assert.match(exam, /Match the requested question count exactly/);
 });
