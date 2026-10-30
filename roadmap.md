@@ -60,10 +60,15 @@ There is no plan to add other harnesses.
 
 ## v0.3.0 - File Study
 
-- New skill for manually supplied local files.
-- Attachments or file names and paths.
-- No Canvas, no token, no network.
-- Detailed plan in `roadmap2.md`.
+- User-invoked `file-study` skill on the shared `study-core` engine.
+- Folder, file-path, and attachment-path inputs.
+- Source inventory with size, type, hash, Markdown headings, tags, and links.
+- Include/exclude confirmation before planning.
+- Exact and near-duplicate reporting.
+- Citations to filenames and pages or sections.
+- Sectioned processing for large sources.
+- No Canvas, no token, no network, no source copies.
+- Detailed history in `roadmap2.md`.
 
 ## v0.4.0 - Polish and Scale
 

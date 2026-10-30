@@ -1,6 +1,6 @@
 # Harness capability matrix
 
-Record the result of the v0.2.1 smoke test here.
+Record the result of the v0.3.0 smoke test here.
 
 ## Environment used for this run
 
@@ -27,6 +27,7 @@ The script layer is covered by the automated test suite. Native question renderi
 | exam-sim | CLI + GUI | pending | pending | n/a | pending | v0.2.1; PDF/DOCX |
 | study-planner | CLI + GUI | pending | pending | n/a | pending | v0.2.1; PDF/DOCX |
 | note-organizer | CLI + GUI | pending | pending | pending | pending | v0.2.1; read-only source |
+| file-study | CLI + GUI | pending | pending | pending | pending | v0.3.0; local files, read-only |
 
 ## How to record
 

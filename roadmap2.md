@@ -22,7 +22,7 @@ There is no Canvas connection, no token, and no network access.
 - Same rule: only requested output files are written to Documents.
 - Source files are read-only. The skill never modifies, moves, renames, or deletes them.
 
-## v0.1 - Core File Study
+## Shipped in v0.3.0 - Core File Study
 
 - Accept attachments and explicit file paths.
 - Inventory files: name, type, size, and last modified date.
@@ -34,7 +34,7 @@ There is no Canvas connection, no token, and no network access.
 - Save only requested outputs in Documents.
 - No network access, uploads, or external services.
 
-## v0.2 - Folder Ingestion
+## Shipped in v0.3.0 - Folder Ingestion
 
 - Accept a folder path and recurse.
 - Ignore hidden files, build artifacts, and unsupported binaries.
@@ -42,7 +42,7 @@ There is no Canvas connection, no token, and no network access.
 - Let the user include or exclude files before planning.
 - Cite source filenames and page numbers in outputs.
 
-## v0.3 - Large Sources
+## Shipped in v0.3.0 - Large Sources
 
 - Chunk large PDFs and long documents.
 - Summarize sections progressively and then synthesize.

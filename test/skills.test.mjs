@@ -13,6 +13,7 @@ const USER_SKILLS = [
   "exam-sim",
   "study-planner",
   "note-organizer",
+  "file-study",
 ];
 const MODEL_SKILLS = ["study-core"];
 
@@ -83,7 +84,7 @@ test("skills: required files exist", async () => {
 });
 
 test("skills: new skills do not import Canvas or token code", async () => {
-  for (const name of ["lecture-notes", "flashcard-forge", "explain-back", "exam-sim", "study-planner", "note-organizer", "study-core"]) {
+  for (const name of ["lecture-notes", "flashcard-forge", "explain-back", "exam-sim", "study-planner", "note-organizer", "file-study", "study-core"]) {
     const dir = path.join(SKILLS_ROOT, name);
     const files = [];
     async function walk(current) {
@@ -121,4 +122,20 @@ test("skills: v0.2.1 skill constraints", async () => {
   const exam = await read("skills/study/exam-sim/SKILL.md");
   assert.match(exam, /No live timer application/);
   assert.match(exam, /Match the requested question count exactly/);
+});
+
+test("skills: file-study constraints", async () => {
+  const text = await read("skills/study/file-study/SKILL.md");
+  assert.match(text, /Call the Skill tool with \*\*study-core\*\*/);
+  assert.match(text, /No Canvas/);
+  assert.match(text, /No network/);
+  assert.match(text, /Read-only sources/);
+  assert.match(text, /inventory --path/);
+  assert.match(text, /attachments/);
+  assert.match(text, /Exact duplicates/);
+  assert.match(text, /Near duplicates/);
+  assert.match(text, /Every output cites sources/);
+  assert.match(text, /Large sources/);
+  assert.match(text, /source hashes/);
+  assert.match(text, /Only the requested files/);
 });

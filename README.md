@@ -14,11 +14,11 @@ The skill fetches Canvas materials read-only, asks you what you want through the
 | `lecture-notes` | v0.2.0 | Turn lecture slides, transcripts, or notes into structured notes. |
 | `flashcard-forge` | v0.2.0 | Create Anki-ready CSV and Markdown flashcards. |
 | `explain-back` | v0.2.0 | Explain concepts in layers with the Feynman technique. |
-| `study-core` | internal | Shared engine for the v0.2 study skills. Not invoked directly. |
+| `study-core` | internal | Shared engine for the study skills. Not invoked directly. |
 | `exam-sim` | v0.2.1 | Generate timed practice exams. |
 | `study-planner` | v0.2.1 | Plan multiple courses and deadlines. |
 | `note-organizer` | v0.2.1 | Organize Markdown and Obsidian notes read-only. |
-| `file-study` | Planned v0.3.0 | Study from local files you attach or name. See `roadmap2.md`. |
+| `file-study` | v0.3.0 | Turn local folders, files, or attachments into study documents. |
 
 ## Install
 
@@ -77,6 +77,7 @@ The token is never requested in chat. It is never printed, stored in the plan, o
 - `/exam-sim`: a timed practice exam with answer key and topic map.
 - `/study-planner`: a multi-course plan with deadlines and weekly hours.
 - `/note-organizer`: a read-only index, tag list, map, or study guide for Markdown notes.
+- `/file-study`: local folders or files to summaries, plans, flashcards, exams, maps, or custom outputs. Sources stay read-only.
 
 Each skill asks through the native question UI, shows a plan before generating, and writes only the requested files to `~/Documents/StudySkills/<topic>/<run>/`.
 
@@ -186,7 +187,7 @@ The agent's harness provides DOCX, PDF, and PPTX generation. The skill provides 
 
 ## Roadmap
 
-See [roadmap.md](./roadmap.md) for the StudySkills roadmap and [roadmap2.md](./roadmap2.md) for the planned `file-study` skill.
+See [roadmap.md](./roadmap.md) for the StudySkills roadmap and [roadmap2.md](./roadmap2.md) for the File Study history and future work.
 
 ## Development
 

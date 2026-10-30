@@ -13,7 +13,7 @@ Full page: [canvas-study.md](./canvas-study.md).
 
 ## study-core
 
-- **What it does:** shared engine for the v0.2 study skills.
+- **What it does:** shared engine for the v0.2 and v0.3 study skills.
 - **When to use it:** never directly. A user-invoked skill loads it.
 - **Common questions:** why it exists, why it is internal, where it writes.
 - **It's working if:** the calling skill can create work/output directories, validate, and report partial formats.
@@ -60,6 +60,9 @@ Full page: [canvas-study.md](./canvas-study.md).
 - **Common questions:** source notes are never modified. Only requested outputs are written to Documents.
 - **It's working if:** the source hashes are unchanged and the index covers the vault.
 
-## Planned v0.3.0
+## file-study
 
-- `file-study`
+- **What it does:** turns local folders, files, or harness attachments into study documents.
+- **When to use it:** you have local slides, readings, notes, or PDFs and want study outputs without Canvas.
+- **Common questions:** sources are read-only; exact and near duplicates are reported; attachments must be available as paths; no network.
+- **It's working if:** inventory is confirmed before planning, source hashes are unchanged, citations name the files, and only requested outputs are written.

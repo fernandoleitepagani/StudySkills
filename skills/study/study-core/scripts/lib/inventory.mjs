@@ -4,8 +4,9 @@ import { createHash } from "node:crypto";
 import { createReadStream } from "node:fs";
 
 const ALLOWED = new Set([
-  ".md", ".markdown", ".txt", ".pdf", ".docx", ".pptx", ".csv",
-  ".png", ".jpg", ".jpeg", ".webp", ".gif", ".svg", ".html",
+  ".md", ".markdown", ".txt", ".pdf", ".doc", ".docx", ".ppt", ".pptx",
+  ".xls", ".xlsx", ".csv", ".rtf", ".odt", ".epub", ".html",
+  ".png", ".jpg", ".jpeg", ".webp", ".gif", ".svg",
 ]);
 const SKIP_DIRS = new Set([".git", "node_modules", ".obsidian", ".trash", ".gitlab"]);
 const MAX_FILES = 500;

@@ -114,12 +114,14 @@ test("core: inventory scans files, folders, Markdown metadata, and packs", async
     );
     await fs.writeFile(path.join(root, "nested", "notes.md"), "# Nested\n");
     await fs.writeFile(path.join(root, ".hidden.md"), "# Hidden\n");
+    await fs.writeFile(path.join(root, "legacy.doc"), Buffer.from("legacy"));
     await fs.writeFile(path.join(root, "skip.bin"), Buffer.from([0, 1, 2]));
 
     let result = await runCore(["inventory", "--path", root, "--json"], { home });
     assert.equal(result.code, 0);
     let data = await json(result);
-    assert.equal(data.totalFiles, 2);
+    assert.equal(data.totalFiles, 3);
+    assert.equal(data.files.some((item) => item.name === "legacy.doc"), true);
     assert.equal(data.skipped.some((item) => item.path.endsWith("skip.bin")), true);
     const intro = data.files.find((item) => item.name === "intro.md");
     assert.equal(intro.markdown.title, "Introduction");
