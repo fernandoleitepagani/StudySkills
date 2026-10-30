@@ -1,0 +1,163 @@
+{
+  "user": {
+    "id": 99,
+    "name": "Test Student"
+  },
+  "course": {
+    "id": 1,
+    "name": "Statistics 101",
+    "course_code": "STAT101",
+    "workflow_state": "available",
+    "access_restricted_by_date": false,
+    "term": {
+      "id": 10,
+      "name": "Fall 2026"
+    },
+    "start_at": "2026-08-01T00:00:00Z",
+    "end_at": "2026-12-15T00:00:00Z",
+    "syllabus_body": "<h2>Syllabus</h2><p>Learn <strong>statistics</strong> and <em>data analysis</em>.</p>"
+  },
+  "coursesPage1": [
+    {
+      "id": 1,
+      "name": "Statistics 101",
+      "course_code": "STAT101",
+      "workflow_state": "available",
+      "access_restricted_by_date": false,
+      "term": {
+        "id": 10,
+        "name": "Fall 2026"
+      }
+    }
+  ],
+  "coursesPage2": [
+    {
+      "id": 2,
+      "name": "Hidden Course",
+      "course_code": "HID100",
+      "workflow_state": "available",
+      "access_restricted_by_date": true,
+      "term": {
+        "id": 10,
+        "name": "Fall 2026"
+      }
+    }
+  ],
+  "modules": [
+    {
+      "id": 1,
+      "name": "Week 1",
+      "position": 1,
+      "state": "active",
+      "items": [
+        {
+          "id": 11,
+          "type": "Page",
+          "title": "Introduction",
+          "page_url": "intro",
+          "html_url": "https://canvas.example/courses/1/pages/intro",
+          "content_id": 101
+        },
+        {
+          "id": 12,
+          "type": "Assignment",
+          "title": "Problem Set 1",
+          "html_url": "https://canvas.example/courses/1/assignments/201",
+          "content_id": 201
+        },
+        {
+          "id": 13,
+          "type": "ExternalUrl",
+          "title": "Optional reading",
+          "external_url": "https://example.com/reading"
+        }
+      ]
+    }
+  ],
+  "pages": [
+    {
+      "url": "intro",
+      "title": "Introduction",
+      "updated_at": "2026-08-02T10:00:00Z"
+    }
+  ],
+  "page": {
+    "url": "intro",
+    "title": "Introduction",
+    "html_url": "https://canvas.example/courses/1/pages/intro",
+    "body": "<h1>Introduction</h1><p>Statistics studies <strong>variation</strong>.</p><ul><li>Mean</li><li>Median</li></ul><p><a href=\"https://example.com/notes\">Notes</a></p>"
+  },
+  "assignments": [
+    {
+      "id": 201,
+      "name": "Problem Set 1",
+      "description": "<p>Solve the exercises about <em>means</em>.</p>",
+      "due_at": "2026-09-01T23:59:00Z",
+      "points_possible": 10,
+      "html_url": "https://canvas.example/courses/1/assignments/201",
+      "rubric": [
+        {
+          "description": "Accuracy",
+          "points": 5
+        }
+      ]
+    }
+  ],
+  "discussions": [
+    {
+      "id": 301,
+      "title": "Introduce yourself",
+      "message": "<p>Tell the class about your background.</p>",
+      "posted_at": "2026-08-03T10:00:00Z",
+      "announcement": false
+    }
+  ],
+  "announcements": [
+    {
+      "id": 302,
+      "title": "Exam date",
+      "message": "<p>The midterm is on October 20.</p>",
+      "posted_at": "2026-08-04T10:00:00Z",
+      "announcement": true
+    }
+  ],
+  "files": [
+    {
+      "id": 10,
+      "filename": "lecture.pdf",
+      "display_name": "lecture.pdf",
+      "size": 1200,
+      "content-type": "application/pdf",
+      "url": "/api/v1/files/10/download"
+    },
+    {
+      "id": 11,
+      "filename": "huge.pdf",
+      "display_name": "huge.pdf",
+      "size": 60000000,
+      "content-type": "application/pdf",
+      "url": "/api/v1/files/11/download"
+    },
+    {
+      "id": 12,
+      "filename": "slides.pptx",
+      "display_name": "slides.pptx",
+      "size": 4000,
+      "content-type": "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+      "url": "/api/v1/files/12/download"
+    },
+    {
+      "id": 13,
+      "filename": "lecture.mp4",
+      "display_name": "lecture.mp4",
+      "size": 1000,
+      "content-type": "video/mp4",
+      "url": "/api/v1/files/13/download"
+    }
+  ],
+  "frontPage": {
+    "title": "Welcome",
+    "url": "welcome",
+    "body": "<p>Welcome to Statistics 101.</p>"
+  }
+}

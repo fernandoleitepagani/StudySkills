@@ -1,0 +1,6 @@
+interface:
+  display_name: "Canvas Study"
+  short_description: "Turn a Canvas course into study documents"
+  brand_color: "#1F3A5F"
+policy:
+  allow_implicit_invocation: false

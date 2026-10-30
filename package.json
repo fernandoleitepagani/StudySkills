@@ -1,0 +1,15 @@
+{
+  "name": "study-skills",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Agent skills for studying, learning, and creating.",
+  "license": "MIT",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "test": "node --test",
+    "test:watch": "node --test --watch"
+  }
+}

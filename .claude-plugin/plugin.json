@@ -1,0 +1,23 @@
+{
+  "name": "study-skills",
+  "version": "0.1.0",
+  "description": "Agent skills for studying, learning, and creating. First skill: turn a Canvas course into study documents.",
+  "author": {
+    "name": "Fernando Pagani",
+    "url": "https://github.com/fernandoleitepagani"
+  },
+  "homepage": "https://github.com/fernandoleitepagani/StudySkills",
+  "repository": "https://github.com/fernandoleitepagani/StudySkills",
+  "license": "MIT",
+  "keywords": [
+    "study",
+    "canvas",
+    "learning",
+    "flashcards",
+    "study-plan",
+    "agent-skills"
+  ],
+  "skills": [
+    "./skills/study/canvas-study"
+  ]
+}

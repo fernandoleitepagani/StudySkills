@@ -1,0 +1,23 @@
+{
+  "name": "studyskills",
+  "owner": {
+    "name": "Fernando Pagani",
+    "url": "https://github.com/fernandoleitepagani"
+  },
+  "description": "StudySkills: agent skills for studying, learning, and creating.",
+  "plugins": [
+    {
+      "name": "study-skills",
+      "source": "./",
+      "description": "Agent skills for studying, learning, and creating. First skill: Canvas Study.",
+      "category": "productivity",
+      "keywords": [
+        "study",
+        "canvas",
+        "learning",
+        "flashcards",
+        "agent-skills"
+      ]
+    }
+  ]
+}
