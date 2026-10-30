@@ -64,7 +64,7 @@ test("cli: token, courses, inspect, fetch, output, validate, cleanup", async () 
     assert.equal(result.code, 0);
     data = await json(result);
     assert.equal(data.counts.modules, 1);
-    assert.equal(data.counts.pages, 1);
+    assert.equal(data.counts.pages, 2);
     assert.equal(data.counts.assignments, 1);
     assert.equal(data.counts.files, 4);
     assert.equal(data.counts.allowedFiles, 2);
@@ -96,52 +96,88 @@ test("cli: token, courses, inspect, fetch, output, validate, cleanup", async () 
       assert.match(materials, /Problem Set 1/);
       assert.match(materials, /Exam date/);
       assert.match(materials, /Optional reading/);
+      assert.match(materials, /mean = sum\(x\) \/ n/);
+      assert.match(materials, /Week one content/);
+      assert.match(materials, /\| Term \| Meaning \|/);
+      assert.match(materials, /Distribution diagram/);
+      assert.match(materials, /external\.example/);
       assert.equal(materials.includes("test-token"), false);
       assert.ok(mock.state.requests.every((request) => request.method === "GET"));
+      assert.equal(data.downloadedImages, 1);
       const manifest = JSON.parse(
         await fs.readFile(path.join(work, "sources", "manifest.json"), "utf8"),
       );
       assert.equal(manifest.files.length, 2);
-      assert.equal(manifest.skipped.length, 2);
+      assert.equal(manifest.skipped.files.length, 2);
+      assert.equal(manifest.images.length, 1);
+      assert.equal(manifest.externalImages.length, 1);
+      assert.equal(manifest.externalMaterials.length, 1);
       await fs.access(path.join(work, "sources", "files", "lecture.pdf"));
       await fs.access(path.join(work, "sources", "files", "slides.pptx"));
+      await fs.access(path.join(work, "sources", "images", "diagram.png"));
       await assert.rejects(fs.access(path.join(work, "sources", "files", "huge.pdf")));
       await assert.rejects(fs.access(path.join(work, "sources", "files", "lecture.mp4")));
 
       result = await runCli(["output-dir", "--course-name", "Statistics 101", "--json"], { home, env });
       assert.equal(result.code, 0);
       data = await json(result);
-      const outputDir = data.runDir;
+      let outputDir = data.runDir;
       assert.ok(outputDir.startsWith(path.join(docs, "StudySkills", "statistics-101")));
 
+      result = await runCli(["cleanup-output", "--dir", outputDir, "--json"], { home, env });
+      assert.equal(result.code, 0);
+      data = await json(result);
+      assert.equal(data.removed, true);
+      await assert.rejects(fs.access(outputDir));
+
+      result = await runCli(["output-dir", "--course-name", "Statistics 101", "--json"], { home, env });
+      assert.equal(result.code, 0);
+      data = await json(result);
+      outputDir = data.runDir;
+
       await fs.writeFile(path.join(outputDir, "summary.pdf"), "%PDF-1.4\n%%EOF\n");
-      const expectedPath = path.join(work, "outputs.json");
+      const planPath = path.join(work, "plan.json");
+      const checksPath = path.join(work, "checks.json");
       await fs.writeFile(
-        expectedPath,
-        JSON.stringify({ files: [{ name: "summary.pdf", format: "pdf" }] }),
+        planPath,
+        JSON.stringify({
+          course: { id: "1", name: "Statistics 101" },
+          requested: [
+            { output: "summary", formats: ["pdf"], files: ["summary.pdf"] },
+          ],
+        }),
+        "utf8",
+      );
+      await fs.writeFile(
+        checksPath,
+        JSON.stringify({
+          files: {
+            "summary.pdf": { sections: ["cover", "recap"], counts: { pages: 1 } },
+          },
+        }),
         "utf8",
       );
       result = await runCli(
-        ["validate", "--run-dir", outputDir, "--expected", expectedPath, "--json"],
+        ["validate", "--run-dir", outputDir, "--plan", planPath, "--checks", checksPath, "--json"],
         { home, env },
       );
       assert.equal(result.code, 0);
       data = await json(result);
       assert.equal(data.ok, true);
 
-      const partialExpected = path.join(work, "outputs-partial.json");
+      const partialPlan = path.join(work, "plan-partial.json");
       await fs.writeFile(
-        partialExpected,
+        partialPlan,
         JSON.stringify({
-          files: [
-            { name: "summary.pdf", format: "pdf" },
-            { name: "summary.docx", format: "docx" },
+          course: { id: "1", name: "Statistics 101" },
+          requested: [
+            { output: "summary", formats: ["pdf", "docx"], files: ["summary.pdf", "summary.docx"] },
           ],
         }),
         "utf8",
       );
       result = await runCli(
-        ["validate", "--run-dir", outputDir, "--expected", partialExpected, "--json"],
+        ["validate", "--run-dir", outputDir, "--plan", partialPlan, "--checks", checksPath, "--json"],
         { home, env },
       );
       assert.equal(result.code, 1);

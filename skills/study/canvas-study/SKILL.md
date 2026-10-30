@@ -52,9 +52,9 @@ The script checks, in order:
 1. `~/.studyskills/canvas-token.txt`
 2. `~/.studyskills/canvas-token.env`
 
-If `found` is false, or the token is empty:
+If `found` is false, or the token is empty, or `error` is present:
 
-1. Warn the user that no valid token was found in either path.
+1. Warn the user that no readable token was found in either path. If `error` is present, show its message.
 2. Use the native question tool with exactly two options:
    - **Exit**
    - **Guide me to create it**
@@ -92,7 +92,11 @@ Validate it by listing courses:
 node <skill-dir>/scripts/canvas.mjs courses --base-url <url> --json
 ```
 
-If validation fails with `401` or `403`, tell the user the token is invalid or expired, offer **Exit** or **Guide me**, and stop. Do not loop.
+If validation fails with `UNAUTHORIZED`, tell the user the token is invalid or expired. Offer **Exit** or **Guide me**, then stop. Do not loop.
+
+If validation fails with `FORBIDDEN`, the token is valid but lacks access to that endpoint. Report the endpoint and stop; do not tell the user to recreate the token automatically.
+
+If validation fails with `RATE_LIMITED`, wait and retry later. Do not treat it as an auth failure.
 
 ### Round 2 - Course
 
@@ -140,7 +144,32 @@ Run:
 node <skill-dir>/scripts/canvas.mjs inspect --base-url <url> --course-id <id> --json
 ```
 
-Use the counts and estimated size in the plan. Write `canvas-plan.md` in `workDir` using `references/outputs.md` as the plan template. Include:
+Use the counts and estimated size in the plan. Write two files in `workDir`:
+
+- `canvas-plan.md`, the human-readable plan using `references/outputs.md`.
+- `plan.json`, the machine-readable contract.
+
+`plan.json` must contain every requested output and every requested file:
+
+```json
+{
+  "course": {
+    "id": "1",
+    "name": "Statistics 101"
+  },
+  "requested": [
+    {
+      "output": "summary",
+      "formats": ["pdf", "docx"],
+      "files": ["summary.pdf", "summary.docx"]
+    }
+  ],
+  "settings": {},
+  "scope": {}
+}
+```
+
+Include:
 
 - Canvas URL
 - Course name and ID
@@ -153,22 +182,26 @@ Use the counts and estimated size in the plan. Write `canvas-plan.md` in `workDi
 Show the plan in chat. Ask **Approve / Edit / Cancel** with the native question tool.
 
 - **Approve:** continue.
-- **Edit:** update the plan and ask again.
+- **Edit:** update both files and ask again.
 - **Cancel:** stop.
 
 Do not fetch materials before approval.
 
+### Round 6 - Document preflight
+
+After approval, before fetching, verify that the harness can produce every requested format.
+
+1. Create `workDir/preflight/`.
+2. Generate a one-page sample PDF, DOCX, or PPTX only for the requested formats.
+3. Check that each sample is non-empty and has the correct signature.
+4. Delete the samples.
+5. If a format fails, tell the user before fetching. Either remove that format from `plan.json` and report it, or stop if the user wants only that format.
+
+Do not fetch materials first and discover a missing renderer afterward.
+
 ## Step 3 - Fetch materials
 
-After approval, create the output directory:
-
-```bash
-node <skill-dir>/scripts/canvas.mjs output-dir --course-name "<course name>" --json
-```
-
-This creates `~/Documents/StudySkills/<course-slug>/<YYYY-MM-DD-HHmm>/` and returns `outputDir`.
-
-Fetch into the work directory:
+After the preflight, fetch into the work directory:
 
 ```bash
 node <skill-dir>/scripts/canvas.mjs fetch --base-url <url> --course-id <id> --out <workDir> --json
@@ -179,10 +212,21 @@ The script writes:
 ```text
 <workDir>/sources/materials.md
 <workDir>/sources/files/
+<workDir>/sources/images/
 <workDir>/sources/manifest.json
 ```
 
-It handles pagination, rate limits, file caps, HTML to text, and skipped files. Report any fetch errors or skipped files to the user. If the course cannot be fetched at all, stop and keep the work directory for debugging.
+It handles pagination, truncation reporting, rate limits, file caps, image caps, HTML to text, external materials, and skipped files. Report any fetch errors, truncations, external materials, or skipped files to the user.
+
+Only after the fetch succeeds, create the output directory:
+
+```bash
+node <skill-dir>/scripts/canvas.mjs output-dir --course-name "<course name>" --json
+```
+
+This creates `~/Documents/StudySkills/<course-slug>/<YYYY-MM-DD-HHmm>/` and returns `outputDir`.
+
+If the fetch fails, stop and keep the work directory for debugging. Do not create an empty output directory.
 
 ## Step 4 - Generate outputs
 
@@ -195,7 +239,7 @@ Read:
 
 For each requested output:
 
-1. Build the content from `materials.md` and the original files in `sources/files/`. `materials.md` contains course text and Canvas HTML, but it does not contain the text of PDF, DOCX, or PPTX files. Use the harness document skill to read those originals when they are relevant.
+1. Build the content from `materials.md`, the original files in `sources/files/`, and the local images in `sources/images/`. `materials.md` contains course text, Canvas HTML, local image paths, and external material references, but it does not contain the text of PDF, DOCX, or PPTX files. Use the harness document skill to read those originals when they are relevant.
 2. Apply the didactic style.
 3. Use the harness native document skill to generate the requested format.
 4. Save it directly in `outputDir`.
@@ -212,30 +256,38 @@ Do not create prompts, zip files, source copies, or extra formats in `outputDir`
 
 ## Step 5 - Validate
 
-Write `outputs.json` in `workDir`:
+`plan.json` is the source of truth. Do not rewrite it to hide a failed format.
+
+After generating, read each output back with the harness document skill and write `checks.json` in `workDir`:
 
 ```json
 {
-  "files": [
-    { "name": "summary.pdf", "format": "pdf" },
-    { "name": "flashcards.csv", "format": "csv" }
-  ]
+  "files": {
+    "summary.pdf": {
+      "sections": ["cover", "how-to-use", "big-picture", "topics", "recap"],
+      "counts": { "pages": 10 }
+    },
+    "flashcards.csv": {
+      "sections": ["cards"],
+      "counts": { "rows": 40 }
+    }
+  }
 }
 ```
 
-List only the files that were requested and successfully generated. Keep the full requested list in `canvas-plan.md`.
+Every produced file needs an entry. The counts and sections are the agent’s attestation after reading the generated file back. They are not a substitute for opening the document.
 
 Run:
 
 ```bash
-node <skill-dir>/scripts/canvas.mjs validate --run-dir <outputDir> --expected <workDir>/outputs.json --json
+node <skill-dir>/scripts/canvas.mjs validate --run-dir <outputDir> --plan <workDir>/plan.json --checks <workDir>/checks.json --json
 ```
 
-If validation reports missing, invalid, extra, or token leakage:
+If validation reports missing, invalid, extra, token leakage, or missing semantic checks:
 
 - Fix what can be fixed.
 - Re-run validation.
-- If a requested format still cannot be produced, report it.
+- If a requested format still cannot be produced, keep it in `plan.json`, leave it missing, and report it.
 - Never leave invalid or empty files in `outputDir`.
 
 ## Step 6 - Report and clean up
@@ -244,8 +296,10 @@ Show a concise report:
 
 - Output directory.
 - Produced files.
-- Requested formats that were not produced, with reasons.
-- Sources skipped during fetch.
+- Requested files that were not produced, with reasons.
+- Truncated collections and skipped pages.
+- Skipped files and images.
+- External materials and external images.
 - Reminder to revoke the Canvas token if it is no longer needed.
 
 On success, remove the work directory:
@@ -254,14 +308,24 @@ On success, remove the work directory:
 node <skill-dir>/scripts/canvas.mjs cleanup --work-dir <workDir> --json
 ```
 
-On failure, keep the work directory and report its path.
+If generation failed before producing any file, remove the empty output directory:
+
+```bash
+node <skill-dir>/scripts/canvas.mjs cleanup-output --dir <outputDir> --json
+```
+
+On failure with partial outputs, keep the output directory and work directory and report both paths.
 
 ## Stop conditions
 
 Stop immediately and report when:
 
 - No token and the user declines the guide.
-- The Canvas URL or token is invalid after one attempt.
+- The token file is unreadable and the user declines the guide.
+- `UNAUTHORIZED`: the token is invalid or expired.
+- `FORBIDDEN`: the token lacks access to the course or endpoint.
+- `RATE_LIMITED`: retries are exhausted and the user does not want to wait.
+- The Canvas URL is invalid after one attempt.
 - The user cancels the plan.
 - The course cannot be fetched.
 - No requested output can be generated.

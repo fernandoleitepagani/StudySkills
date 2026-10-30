@@ -2,7 +2,7 @@
 
 ## What it does
 
-`canvas-study` turns one Canvas course into finished study documents. It fetches the course materials read-only, asks what you want through the harness native question UI, and generates only the formats you request.
+`canvas-study` turns one Canvas course into finished study documents. It fetches the course materials read-only, asks what you want through the harness native question UI, and generates only the formats you request. The current release is v0.1.1.
 
 Outputs can include a study plan, summary, flashcards, practice exam, concept map, or a custom study document. Files are saved in `~/Documents/StudySkills/<course>/<run>/`.
 
@@ -33,11 +33,11 @@ No. It only makes GET requests. It cannot submit assignments, post discussions, 
 
 **What if no token is found?**
 
-The skill warns you and offers Exit or Guide me. The guide creates the folder and an empty token file, then exits so you can save the token and run the skill again.
+The skill warns you and offers Exit or Guide me. The guide creates the folder and an empty token file, then exits so you can save the token and run the skill again. If the token file is unreadable or is a directory, the same guide flow is offered.
 
 **What formats can it produce?**
 
-Whatever your harness can render. The agent chooses when you do not specify. If one requested format fails, the skill produces the rest and reports the failure.
+Whatever your harness can render. The agent chooses when you do not specify. If one requested format fails, the skill produces the rest and reports the failure. It also verifies that every requested file is accounted for before reporting success.
 
 **Where are the files?**
 
@@ -69,10 +69,18 @@ The skill shows a plan. After approval, it fetches the course and saves:
 └── flashcards.csv
 ```
 
+## Known limitations
+
+- Semantic checks are agent-side. The validator checks file structure, requested-versus-produced coverage, extras, and token leakage, not document prose.
+- Quizzes, LTI tools, cloud drives, and external tools are listed but not downloaded.
+- Inline images are downloaded only from Canvas. External images are listed as links.
+- Courses with more than 500 pages report skipped pages.
+
 ## It's working if
 
 - The native question cards appear in your harness.
 - The skill shows a plan before downloading anything.
 - The output folder contains only the requested files.
 - The report lists any requested format that could not be produced.
+- Truncated collections, external materials, and skipped images appear in the report.
 - No token appears in any file or message.

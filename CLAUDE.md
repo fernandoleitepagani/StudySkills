@@ -5,7 +5,7 @@ StudySkills is a collection of user-invoked agent skills for studying, learning,
 ## Layout
 
 - `skills/study/` holds the study skills.
-- `skills/study/canvas-study/` is the v0.1.0 skill.
+- `skills/study/canvas-study/` is the Canvas Study skill.
 - `docs/study/` holds human-facing documentation.
 - `test/` holds the zero-dependency `node:test` suites and fixtures.
 - `test-support/` holds test helpers and the mock Canvas server.

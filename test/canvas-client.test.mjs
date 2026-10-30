@@ -2,6 +2,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import path from "node:path";
 import fs from "node:fs/promises";
+import http from "node:http";
 import {
   CanvasClient,
   CanvasError,
@@ -9,6 +10,7 @@ import {
   assertReadOnlyPath,
   normalizeBaseUrl,
   parseNextLink,
+  statusCode,
 } from "../skills/study/canvas-study/scripts/lib/canvas-client.mjs";
 import { startMockCanvas } from "../test-support/mock-canvas.mjs";
 import { makeTempDir, cleanupDir } from "../test-support/temp.mjs";
@@ -52,6 +54,53 @@ test("canvas: follows pagination and filters nothing at client level", async () 
   }
 });
 
+test("canvas: reports pagination truncation", async () => {
+  const mock = await startMockCanvas();
+  try {
+    const client = new CanvasClient({ baseUrl: mock.origin, token: "test-token" });
+    const result = await client.getAllWithMeta("/api/v1/courses", { per_page: 100 }, { maxPages: 1 });
+    assert.equal(result.items.length, 1);
+    assert.equal(result.pagesFetched, 1);
+    assert.equal(result.truncated, true);
+  } finally {
+    await mock.close();
+  }
+});
+
+test("canvas: maps HTTP statuses to error codes", () => {
+  assert.equal(statusCode(401), "UNAUTHORIZED");
+  assert.equal(statusCode(403), "FORBIDDEN");
+  assert.equal(statusCode(404), "NOT_FOUND");
+  assert.equal(statusCode(429), "RATE_LIMITED");
+  assert.equal(statusCode(500), "SERVER_ERROR");
+});
+
+test("canvas: refuses cross-origin API redirects", async () => {
+  const mock = await startMockCanvas();
+  try {
+    const client = new CanvasClient({ baseUrl: mock.origin, token: "test-token" });
+    await assert.rejects(
+      client.getJson("/api/v1/courses/1/redirect"),
+      (error) => error instanceof CanvasError && error.code === "INSECURE_REDIRECT",
+    );
+  } finally {
+    await mock.close();
+  }
+});
+
+test("canvas: classifies forbidden responses", async () => {
+  const mock = await startMockCanvas();
+  try {
+    const client = new CanvasClient({ baseUrl: mock.origin, token: "test-token" });
+    await assert.rejects(
+      client.getJson("/api/v1/courses/1/forbidden"),
+      (error) => error.code === "FORBIDDEN" && error.status === 403,
+    );
+  } finally {
+    await mock.close();
+  }
+});
+
 test("canvas: retries rate-limited requests", async () => {
   const mock = await startMockCanvas();
   try {
@@ -71,7 +120,7 @@ test("canvas: rejects invalid token", async () => {
     const client = new CanvasClient({ baseUrl: mock.origin, token: "wrong-token" });
     await assert.rejects(
       client.getJson("/api/v1/users/self"),
-      (error) => error instanceof CanvasError && error.status === 401,
+      (error) => error instanceof CanvasError && error.status === 401 && error.code === "UNAUTHORIZED",
     );
   } finally {
     await mock.close();
@@ -89,6 +138,33 @@ test("canvas: downloads a file with auth", async () => {
     const content = await fs.readFile(destination, "utf8");
     assert.match(content, /^%PDF/);
   } finally {
+    await mock.close();
+    await cleanupDir(dir);
+  }
+});
+
+test("canvas: drops Authorization on cross-origin download redirects", async () => {
+  const mock = await startMockCanvas();
+  const dir = await makeTempDir();
+  let authHeader = "unset";
+  const target = http.createServer((req, res) => {
+    authHeader = req.headers.authorization ?? null;
+    const buffer = Buffer.from("%PDF-1.4\ntarget\n%%EOF\n");
+    res.writeHead(200, { "Content-Type": "application/pdf", "Content-Length": buffer.length });
+    res.end(buffer);
+  });
+  await new Promise((resolve) => target.listen(0, "127.0.0.1", resolve));
+  try {
+    const targetPort = target.address().port;
+    mock.state.redirectFileUrl = `http://127.0.0.1:${targetPort}/file.pdf`;
+    const client = new CanvasClient({ baseUrl: mock.origin, token: "test-token" });
+    const destination = path.join(dir, "target.pdf");
+    const bytes = await client.download({ id: 20, url: "/api/v1/files/20/download" }, destination);
+    assert.equal(bytes > 0, true);
+    assert.equal(authHeader, null);
+    assert.match(await fs.readFile(destination, "utf8"), /^%PDF/);
+  } finally {
+    await new Promise((resolve) => target.close(resolve));
     await mock.close();
     await cleanupDir(dir);
   }

@@ -34,6 +34,33 @@ test("html: converts links and ignores javascript links", () => {
   assert.equal(text.includes("javascript:"), false);
 });
 
+test("html: preserves preformatted blocks", () => {
+  const text = htmlToText("<pre>line one\n  line two</pre>");
+  assert.match(text, /```/);
+  assert.match(text, /line one/);
+  assert.match(text, /  line two/);
+});
+
+test("html: converts simple tables to Markdown", () => {
+  const text = htmlToText(
+    "<table><tr><th>A</th><th>B</th></tr><tr><td>1</td><td>2</td></tr></table>",
+  );
+  assert.match(text, /\| A \| B \|/);
+  assert.match(text, /\| --- \| --- \|/);
+  assert.match(text, /\| 1 \| 2 \|/);
+});
+
+test("html: preserves image alt text and source", () => {
+  const text = htmlToText('<p><img src="/images/x.png" alt="Diagram"></p>');
+  assert.match(text, /!\[Diagram\]\(\/images\/x\.png\)/);
+});
+
+test("html: indents nested lists", () => {
+  const text = htmlToText("<ul><li>One<ul><li>Two</li></ul></li></ul>");
+  assert.match(text, /^- One/m);
+  assert.match(text, /^  - Two/m);
+});
+
 test("html: handles empty and null input", () => {
   assert.equal(htmlToText(null), "");
   assert.equal(htmlToText(""), "");

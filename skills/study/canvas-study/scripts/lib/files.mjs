@@ -114,6 +114,20 @@ export async function cleanupWorkDir(workDir) {
   return resolvedWork;
 }
 
+export async function cleanupEmptyOutputDir(dir) {
+  const base = path.join(await resolveDocumentsDir(), "StudySkills");
+  const resolvedBase = path.resolve(base);
+  const resolvedDir = path.resolve(dir);
+  const relative = path.relative(resolvedBase, resolvedDir);
+  if (!relative || relative.startsWith("..") || path.isAbsolute(relative)) {
+    throw new Error("Refusing to remove a directory outside the StudySkills output root.");
+  }
+  const entries = await fs.readdir(resolvedDir);
+  if (entries.length > 0) return false;
+  await fs.rmdir(resolvedDir);
+  return true;
+}
+
 const RESERVED_WINDOWS_NAMES = new Set([
   "con", "prn", "aux", "nul",
   "com1", "com2", "com3", "com4", "com5", "com6", "com7", "com8", "com9",

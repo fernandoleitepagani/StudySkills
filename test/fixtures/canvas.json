@@ -79,13 +79,18 @@
       "url": "intro",
       "title": "Introduction",
       "updated_at": "2026-08-02T10:00:00Z"
+    },
+    {
+      "url": "week 1",
+      "title": "Week 1",
+      "updated_at": "2026-08-05T10:00:00Z"
     }
   ],
   "page": {
     "url": "intro",
     "title": "Introduction",
     "html_url": "https://canvas.example/courses/1/pages/intro",
-    "body": "<h1>Introduction</h1><p>Statistics studies <strong>variation</strong>.</p><ul><li>Mean</li><li>Median</li></ul><p><a href=\"https://example.com/notes\">Notes</a></p>"
+    "body": "<h1>Introduction</h1><p>Statistics studies <strong>variation</strong>.</p><ul><li>Mean</li><li>Median<ul><li>Trimmed mean</li></ul></li></ul><pre>mean = sum(x) / n</pre><table><tr><th>Term</th><th>Meaning</th></tr><tr><td>Mean</td><td>Average</td></tr></table><p><img src=\"/images/diagram.png\" alt=\"Distribution diagram\"></p><p><img src=\"https://external.example/diagram.png\" alt=\"External diagram\"></p><p><a href=\"https://example.com/notes\">Notes</a></p>"
   },
   "assignments": [
     {
@@ -159,5 +164,11 @@
     "title": "Welcome",
     "url": "welcome",
     "body": "<p>Welcome to Statistics 101.</p>"
+  },
+  "pageWeek": {
+    "url": "week 1",
+    "title": "Week 1",
+    "html_url": "https://canvas.example/courses/1/pages/week%201",
+    "body": "<h1>Week 1</h1><p>Week one content.</p>"
   }
 }

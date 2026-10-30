@@ -28,8 +28,19 @@ There is no plan to add other harnesses.
 
 ## v0.1.1 - Fixes and Format Coverage
 
-- Bug fixes and prompt or format refinements.
-- Document any harness format limitations in `docs/study/harness-matrix.md`.
+- Plan-driven delivery contract: `plan.json` is the source of truth.
+- Validator compares requested files against produced files. Missing formats fail validation.
+- Semantic checks are recorded in `checks.json` and verified for coverage.
+- Truncated collections and skipped pages are reported.
+- Inline Canvas images are downloaded; external images and materials are listed.
+- HTML preserves preformatted blocks, tables, images, and nested lists.
+- Page URLs are encoded.
+- 401, 403 permission, and 403 rate limits have separate error codes.
+- API redirects never send the token cross-origin.
+- Unreadable token files enter the Exit or Guide flow.
+- Output directories are created only after a successful fetch.
+- Document preflight runs before the fetch.
+- Bug fixes and format refinements.
 - No new features unless required to fix a broken requested format.
 
 ## v0.2.0 - Study Skill Collection

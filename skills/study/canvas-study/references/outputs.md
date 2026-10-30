@@ -13,6 +13,16 @@ Generate only the requested outputs and formats. Do not create prompts, zips, so
 7. Use the exact file names recorded in the plan.
 8. Keep quotes from source materials in their original language.
 
+## Source materials
+
+- `sources/materials.md` contains Canvas text, local image paths, and external references.
+- `sources/files/` contains downloaded course files.
+- `sources/images/` contains downloaded Canvas page images.
+- External tools, LTI links, cloud drives, and quizzes are listed in `materials.md` and `manifest.json`, not downloaded.
+- `manifest.json` reports truncated collections, skipped pages, skipped files, and skipped images.
+
+Do not claim the pack is complete when `manifest.json` reports truncation or external materials. Include those in the final report.
+
 ## Plan template
 
 Write `canvas-plan.md` in the work directory:
@@ -63,6 +73,44 @@ Write `canvas-plan.md` in the work directory:
 - Some linked materials may live outside Canvas.
 - Scanned PDFs may have no extractable text.
 ```
+
+## Machine-readable plan
+
+Write `plan.json` beside `canvas-plan.md`:
+
+```json
+{
+  "course": { "id": "1", "name": "Statistics 101" },
+  "requested": [
+    {
+      "output": "summary",
+      "formats": ["pdf", "docx"],
+      "files": ["summary.pdf", "summary.docx"]
+    }
+  ],
+  "settings": {},
+  "scope": {}
+}
+```
+
+Every requested file must appear. Do not remove a failed format from `plan.json`; leave it missing and report it.
+
+## Checks
+
+After reading each generated file back, write `checks.json`:
+
+```json
+{
+  "files": {
+    "summary.pdf": {
+      "sections": ["cover", "how-to-use", "big-picture", "topics", "recap"],
+      "counts": { "pages": 10 }
+    }
+  }
+}
+```
+
+Every produced file needs an entry. This is an attestation, not an independent content parser.
 
 ## Study plan
 
@@ -214,7 +262,11 @@ Before reporting success:
 - [ ] Every file is non-empty.
 - [ ] PDF starts with `%PDF`.
 - [ ] DOCX and PPTX are valid ZIP containers.
+- [ ] Every produced file has a `checks.json` entry.
 - [ ] Required sections are present.
 - [ ] Flashcard and exam counts match the plan.
 - [ ] No token appears in any file.
 - [ ] No extra files are in the output directory.
+- [ ] Truncated collections and skipped pages are reported.
+- [ ] External materials and images are reported.
+- [ ] Requested formats that failed are still present in `plan.json` and reported.

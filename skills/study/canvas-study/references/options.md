@@ -62,11 +62,12 @@ Default to PT-BR when the user writes Portuguese. Otherwise default to EN.
 Default, no question needed unless the user wants to change it:
 
 - Include syllabus, front page, modules, pages, assignments, discussions, announcements, and course files.
+- Download same-origin Canvas page images.
 - Convert HTML to text.
 - Skip media and quizzes.
 - Skip files over 50 MB.
 - Stop downloading after 300 MB total.
-- Report skipped files.
+- Report skipped files, skipped images, truncated collections, and external materials.
 
 If the user asks for a different scope, honor it.
 

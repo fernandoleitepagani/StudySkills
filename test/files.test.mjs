@@ -3,6 +3,7 @@ import assert from "node:assert/strict";
 import path from "node:path";
 import fs from "node:fs/promises";
 import {
+  cleanupEmptyOutputDir,
   cleanupWorkDir,
   formatBytes,
   makeDocumentsRunDir,
@@ -84,6 +85,31 @@ test("files: refuses to clean outside the work root", async () => {
     await assert.rejects(cleanupWorkDir(path.join(home, "not-work")));
   } finally {
     process.env.HOME = oldHome;
+    await cleanupDir(home);
+  }
+});
+
+test("files: removes only an empty output directory", async () => {
+  const home = await makeTempDir();
+  const documents = path.join(home, "Docs");
+  const oldHome = process.env.HOME;
+  const oldXdg = process.env.XDG_DOCUMENTS_DIR;
+  process.env.HOME = home;
+  process.env.XDG_DOCUMENTS_DIR = documents;
+  try {
+    const { runDir } = await makeDocumentsRunDir("Statistics 101");
+    assert.equal(await cleanupEmptyOutputDir(runDir), true);
+    await assert.rejects(fs.access(runDir));
+
+    const second = await makeDocumentsRunDir("Statistics 101");
+    await fs.writeFile(path.join(second.runDir, "summary.pdf"), "%PDF-1.4\n");
+    assert.equal(await cleanupEmptyOutputDir(second.runDir), false);
+    await fs.access(second.runDir);
+
+    await assert.rejects(cleanupEmptyOutputDir(path.join(home, "outside")));
+  } finally {
+    process.env.HOME = oldHome;
+    process.env.XDG_DOCUMENTS_DIR = oldXdg;
     await cleanupDir(home);
   }
 });

@@ -16,6 +16,7 @@ import {
   TOKEN_TXT,
 } from "./lib/token.mjs";
 import {
+  cleanupEmptyOutputDir,
   cleanupWorkDir,
   ensureDir,
   formatBytes,
@@ -26,16 +27,20 @@ import {
   uniquePath,
   writeJson,
 } from "./lib/files.mjs";
-import { htmlToText } from "./lib/html-to-text.mjs";
+import { extractImageSources, htmlToText } from "./lib/html-to-text.mjs";
 import { validateRun } from "./lib/validate.mjs";
 
 const MAX_FILE_BYTES = 50 * 1024 * 1024;
 const MAX_TOTAL_BYTES = 300 * 1024 * 1024;
+const MAX_IMAGE_BYTES = 10 * 1024 * 1024;
+const MAX_TOTAL_IMAGE_BYTES = 50 * 1024 * 1024;
 const MAX_FILES = 300;
+const MAX_PAGES = 500;
 const ALLOWED_EXTENSIONS = new Set([
   ".pdf", ".doc", ".docx", ".ppt", ".pptx", ".xls", ".xlsx",
   ".txt", ".md", ".csv", ".rtf", ".odt", ".odp", ".ods", ".epub", ".html",
 ]);
+const ALLOWED_IMAGE_EXTENSIONS = new Set([".png", ".jpg", ".jpeg", ".gif", ".webp", ".svg"]);
 
 function parseArgs(argv) {
   const flags = {};
@@ -103,6 +108,7 @@ function progress(message) {
 
 function safeError(error) {
   return {
+    code: error?.code ?? "ERROR",
     status: error instanceof CanvasError ? error.status : null,
     message: redactSecrets(error?.message ?? String(error)),
     body: error instanceof CanvasError ? error.body : null,
@@ -153,27 +159,39 @@ function moduleItemLine(item) {
   return parts.join("\n");
 }
 
-async function loadCourseLists(client, courseId, { errors, progressLabel = "Inspecting" }) {
+async function loadCourseLists(client, courseId, { errors, truncations = {}, progressLabel = "Inspecting" }) {
   const course = await client.getJson(`/api/v1/courses/${courseId}`, { "include[]": ["syllabus", "term"] });
   progress(`${progressLabel} ${course.name ?? courseId}...`);
 
-  const modules = await attempt("modules", () => client.getAll(`/api/v1/courses/${courseId}/modules`, { "include[]": "items", per_page: 100 }), errors);
-  const pagesList = await attempt("pages", () => client.getAll(`/api/v1/courses/${courseId}/pages`, { per_page: 100 }), errors);
-  const assignments = await attempt("assignments", () => client.getAll(`/api/v1/courses/${courseId}/assignments`, { per_page: 100 }), errors);
-  const discussions = await attempt("discussions", () => client.getAll(`/api/v1/courses/${courseId}/discussion_topics`, { per_page: 100 }), errors);
-  const announcements = await attempt("announcements", () => client.getAll(`/api/v1/courses/${courseId}/discussion_topics`, { only_announcements: true, per_page: 100 }), errors);
-  const files = await attempt("files", () => client.getAll(`/api/v1/courses/${courseId}/files`, { per_page: 100, sort: "position", order: "asc" }), errors);
+  async function getList(label, pathname, params, maxPages = 100) {
+    const result = await attempt(
+      label,
+      () => client.getAllWithMeta(pathname, params, { maxPages }),
+      errors,
+    );
+    if (!result) return [];
+    truncations[label] = result.truncated;
+    return result.items;
+  }
+
+  const modules = await getList("modules", `/api/v1/courses/${courseId}/modules`, { "include[]": "items", per_page: 100 });
+  const pagesList = await getList("pages", `/api/v1/courses/${courseId}/pages`, { per_page: 100 });
+  const assignments = await getList("assignments", `/api/v1/courses/${courseId}/assignments`, { per_page: 100 });
+  const discussions = await getList("discussions", `/api/v1/courses/${courseId}/discussion_topics`, { per_page: 100 });
+  const announcements = await getList("announcements", `/api/v1/courses/${courseId}/discussion_topics`, { only_announcements: true, per_page: 100 });
+  const files = await getList("files", `/api/v1/courses/${courseId}/files`, { per_page: 100, sort: "position", order: "asc" });
   const frontPage = await attempt("front_page", () => client.getJson(`/api/v1/courses/${courseId}/front_page`), errors);
 
   return {
     course,
-    modules: modules ?? [],
-    pagesList: pagesList ?? [],
-    assignments: assignments ?? [],
-    discussions: discussions ?? [],
-    announcements: announcements ?? [],
-    files: files ?? [],
+    modules,
+    pagesList,
+    assignments,
+    discussions,
+    announcements,
+    files,
     frontPage,
+    truncations,
   };
 }
 
@@ -210,23 +228,107 @@ async function inspectCourse(client, courseId) {
     estimatedSize: formatBytes(estimatedBytes),
     frontPage: Boolean(data.frontPage),
     errors,
+    truncated: data.truncations,
   };
+}
+
+function rewriteImages(html, imageMap, baseUrl) {
+  return String(html ?? "").replace(/<img\b[^>]*>/gi, (tag) => {
+    const match = tag.match(/\bsrc\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s>]+))/i);
+    if (!match) return tag;
+    const raw = (match[1] ?? match[2] ?? match[3] ?? "").replace(/&amp;/g, "&");
+    let absolute;
+    try {
+      absolute = new URL(raw, baseUrl).toString();
+    } catch {
+      return tag;
+    }
+    const local = imageMap.get(absolute);
+    if (!local) return tag;
+    return tag.replace(match[0], `src="${local}"`);
+  });
+}
+
+async function fetchImages(client, sourcesDir, htmlSources, manifest) {
+  const imagesDir = path.join(sourcesDir, "images");
+  const imageMap = new Map();
+  const seen = new Set();
+  let totalBytes = 0;
+  let downloaded = 0;
+
+  for (const [label, html] of htmlSources) {
+    for (const image of extractImageSources(html)) {
+      if (image.src.startsWith("data:")) continue;
+      let absolute;
+      try {
+        absolute = new URL(image.src, client.baseUrl);
+      } catch {
+        manifest.skipped.images.push({ src: image.src, reason: "Invalid image URL" });
+        continue;
+      }
+      if (absolute.protocol !== client.base.protocol || absolute.host !== client.base.host) {
+        manifest.externalImages.push({ src: absolute.toString(), alt: image.alt, source: label });
+        continue;
+      }
+      const extension = path.extname(absolute.pathname).toLowerCase();
+      if (!ALLOWED_IMAGE_EXTENSIONS.has(extension)) {
+        manifest.skipped.images.push({ src: absolute.toString(), reason: "Unsupported image extension" });
+        continue;
+      }
+      if (seen.has(absolute.toString())) continue;
+      seen.add(absolute.toString());
+      if (downloaded >= 200) {
+        manifest.skipped.images.push({ src: absolute.toString(), reason: "Image count cap reached" });
+        continue;
+      }
+      if (totalBytes >= MAX_TOTAL_IMAGE_BYTES) {
+        manifest.skipped.images.push({ src: absolute.toString(), reason: "Image size cap reached" });
+        continue;
+      }
+
+      const baseName = sanitizeFilename(path.basename(absolute.pathname) || `image${extension}`);
+      const destination = await uniquePath(imagesDir, baseName);
+      try {
+        const bytes = await client.download({ url: absolute.toString() }, destination, { maxBytes: MAX_IMAGE_BYTES });
+        if (totalBytes + bytes > MAX_TOTAL_IMAGE_BYTES) {
+          await fs.rm(destination, { force: true });
+          manifest.skipped.images.push({ src: absolute.toString(), reason: "Image size cap reached after download" });
+          continue;
+        }
+        totalBytes += bytes;
+        downloaded += 1;
+        const relativePath = path.relative(sourcesDir, destination).split(path.sep).join("/");
+        imageMap.set(absolute.toString(), relativePath);
+        manifest.images.push({ src: absolute.toString(), path: relativePath, alt: image.alt, size: bytes });
+      } catch (error) {
+        manifest.skipped.images.push({ src: absolute.toString(), reason: safeError(error).message });
+      }
+    }
+  }
+
+  return { imageMap, totalBytes, downloaded };
 }
 
 async function fetchCourse(client, courseId, workDir) {
   const errors = [];
-  const data = await loadCourseLists(client, courseId, { errors, progressLabel: "Fetching" });
+  const truncations = {};
+  const data = await loadCourseLists(client, courseId, { errors, truncations, progressLabel: "Fetching" });
   const course = data.course;
   const sourcesDir = path.join(workDir, "sources");
   const filesDir = path.join(sourcesDir, "files");
   await ensureDir(filesDir);
 
   const pages = [];
-  const pageLimit = Math.min(data.pagesList.length, 200);
+  const pageLimit = Math.min(data.pagesList.length, MAX_PAGES);
+  const pagesSkipped = Math.max(0, data.pagesList.length - pageLimit);
   for (let i = 0; i < pageLimit; i += 1) {
     const page = data.pagesList[i];
     progress(`Fetching page ${i + 1}/${pageLimit}: ${page.title ?? page.url}`);
-    const detail = await attempt(`page:${page.url}`, () => client.getJson(`/api/v1/courses/${courseId}/pages/${page.url}`), errors);
+    const detail = await attempt(
+      `page:${page.url}`,
+      () => client.getJson(`/api/v1/courses/${courseId}/pages/${encodeURIComponent(page.url)}`),
+      errors,
+    );
     if (detail) pages.push(detail);
   }
 
@@ -248,9 +350,26 @@ async function fetchCourse(client, courseId, workDir) {
       files: data.files.length,
     },
     files: [],
-    skipped: [],
+    images: [],
+    externalImages: [],
+    externalMaterials: [],
+    skipped: {
+      pages: pagesSkipped,
+      files: [],
+      images: [],
+    },
+    truncated: {
+      modules: Boolean(truncations.modules),
+      pages: Boolean(truncations.pages) || pagesSkipped > 0,
+      assignments: Boolean(truncations.assignments),
+      discussions: Boolean(truncations.discussions),
+      announcements: Boolean(truncations.announcements),
+      files: Boolean(truncations.files),
+    },
+    excluded: ["quizzes", "media", "archives"],
     endpointErrors: errors,
     totalBytes: 0,
+    totalImageBytes: 0,
   };
 
   let totalBytes = 0;
@@ -263,19 +382,19 @@ async function fetchCourse(client, courseId, workDir) {
     const size = fileSize(file);
 
     if (!ALLOWED_EXTENSIONS.has(ext)) {
-      manifest.skipped.push({ name: originalName, reason: "Unsupported extension", size: formatBytes(size) });
+      manifest.skipped.files.push({ name: originalName, reason: "Unsupported extension", size: formatBytes(size) });
       continue;
     }
     if (size > MAX_FILE_BYTES) {
-      manifest.skipped.push({ name: originalName, reason: "File over 50 MB", size: formatBytes(size) });
+      manifest.skipped.files.push({ name: originalName, reason: "File over 50 MB", size: formatBytes(size) });
       continue;
     }
     if (downloaded >= MAX_FILES) {
-      manifest.skipped.push({ name: originalName, reason: "File count cap reached", size: formatBytes(size) });
+      manifest.skipped.files.push({ name: originalName, reason: "File count cap reached", size: formatBytes(size) });
       continue;
     }
     if (size > 0 && totalBytes + size > MAX_TOTAL_BYTES) {
-      manifest.skipped.push({ name: originalName, reason: "Total size cap reached", size: formatBytes(size) });
+      manifest.skipped.files.push({ name: originalName, reason: "Total size cap reached", size: formatBytes(size) });
       continue;
     }
 
@@ -286,7 +405,7 @@ async function fetchCourse(client, courseId, workDir) {
       const bytes = await client.download(file, destination, { maxBytes: MAX_FILE_BYTES });
       if (totalBytes + bytes > MAX_TOTAL_BYTES) {
         await fs.rm(destination, { force: true });
-        manifest.skipped.push({ name: originalName, reason: "Total size cap reached after download", size: formatBytes(bytes) });
+        manifest.skipped.files.push({ name: originalName, reason: "Total size cap reached after download", size: formatBytes(bytes) });
         continue;
       }
       totalBytes += bytes;
@@ -301,14 +420,27 @@ async function fetchCourse(client, courseId, workDir) {
       fileIndex.push({ name: originalName, path: relativePath, size: bytes });
     } catch (error) {
       const info = safeError(error);
-      manifest.skipped.push({ name: originalName, reason: info.message, size: formatBytes(size) });
+      manifest.skipped.files.push({ name: originalName, reason: info.message, size: formatBytes(size) });
     }
     await new Promise((resolve) => setTimeout(resolve, 60));
   }
 
   manifest.totalBytes = totalBytes;
   manifest.stats.downloadedFiles = downloaded;
-  manifest.stats.skippedFiles = manifest.skipped.length;
+  manifest.stats.skippedFiles = manifest.skipped.files.length;
+
+  const imageSources = [
+    ["syllabus", course.syllabus_body],
+    ["front_page", data.frontPage?.body],
+    ...pages.map((page) => [`page:${page.title ?? page.url}`, page.body]),
+    ...data.assignments.map((assignment) => [`assignment:${assignment.name ?? assignment.id}`, assignment.description]),
+  ];
+  const imageResult = await fetchImages(client, sourcesDir, imageSources, manifest);
+  manifest.totalImageBytes = imageResult.totalBytes;
+  manifest.stats.downloadedImages = imageResult.downloaded;
+  manifest.stats.skippedImages = manifest.skipped.images.length;
+
+  const rewrite = (html) => rewriteImages(html, imageResult.imageMap, client.baseUrl);
 
   const modulesText = data.modules.length
     ? data.modules.map((mod) => {
@@ -318,7 +450,7 @@ async function fetchCourse(client, courseId, workDir) {
     : "";
 
   const pagesText = pages.length
-    ? pages.map((page) => `### ${page.title ?? page.url}\n\nURL: ${page.html_url ?? page.url}\n\n${htmlToText(page.body)}`).join("\n\n")
+    ? pages.map((page) => `### ${page.title ?? page.url}\n\nURL: ${page.html_url ?? page.url}\n\n${htmlToText(rewrite(page.body))}`).join("\n\n")
     : "";
 
   const assignmentsText = data.assignments.length
@@ -329,7 +461,7 @@ async function fetchCourse(client, courseId, workDir) {
           `Points: ${assignment.points_possible ?? "not specified"}`,
           assignment.html_url ? `Link: ${assignment.html_url}` : "",
           "",
-          htmlToText(assignment.description),
+          htmlToText(rewrite(assignment.description)),
         ];
         if (assignment.rubric) {
           parts.push("", "Rubric:", "```json", JSON.stringify(assignment.rubric, null, 2), "```");
@@ -350,7 +482,9 @@ async function fetchCourse(client, courseId, workDir) {
   for (const mod of data.modules) {
     for (const item of mod.items ?? []) {
       if (item.type === "ExternalUrl" || item.type === "ExternalTool") {
-        externalLinks.push(`- ${item.title ?? "(untitled)"} (${item.type}): ${item.external_url ?? item.url ?? ""}`);
+        const url = item.external_url ?? item.url ?? "";
+        externalLinks.push(`- ${item.title ?? "(untitled)"} (${item.type}): ${url}`);
+        manifest.externalMaterials.push({ title: item.title ?? null, type: item.type, url });
       }
     }
   }
@@ -358,9 +492,20 @@ async function fetchCourse(client, courseId, workDir) {
   const filesText = fileIndex.length
     ? fileIndex.map((file) => `- ${file.name} (${formatBytes(file.size)}): ${file.path}`).join("\n")
     : "";
-  const skippedText = manifest.skipped.length
-    ? manifest.skipped.map((file) => `- ${file.name}: ${file.reason}`).join("\n")
+
+  const imagesText = manifest.images.length
+    ? manifest.images.map((image) => `- ${image.alt || "image"} (${formatBytes(image.size)}): ${image.path}`).join("\n")
     : "";
+
+  const externalImagesText = manifest.externalImages.length
+    ? manifest.externalImages.map((image) => `- ${image.alt || "image"}: ${image.src}`).join("\n")
+    : "";
+
+  const skippedText = [
+    ...(pagesSkipped ? [`- Pages skipped: ${pagesSkipped}`] : []),
+    ...manifest.skipped.files.map((file) => `- ${file.name}: ${file.reason}`),
+    ...manifest.skipped.images.map((image) => `- ${image.src}: ${image.reason}`),
+  ].join("\n");
 
   const materials = [
     `# ${course.name ?? `Course ${courseId}`}`,
@@ -370,16 +515,18 @@ async function fetchCourse(client, courseId, workDir) {
     `Fetched: ${manifest.fetchedAt}`,
     `Canvas URL: ${client.baseUrl}`,
     "",
-    section("Syllabus", htmlToText(course.syllabus_body)),
-    section("Front page", htmlToText(data.frontPage?.body)),
+    section("Syllabus", htmlToText(rewrite(course.syllabus_body))),
+    section("Front page", htmlToText(rewrite(data.frontPage?.body))),
     section("Modules", modulesText),
     section("Pages", pagesText),
     section("Assignments", assignmentsText),
     section("Discussions", discussionsText),
     section("Announcements", announcementsText),
     section("Files", filesText),
-    section("Skipped files", skippedText),
-    section("External links", externalLinks.join("\n")),
+    section("Images", imagesText),
+    section("External images", externalImagesText),
+    section("External materials", externalLinks.join("\n")),
+    section("Skipped", skippedText),
   ].join("\n");
 
   const materialsPath = path.join(sourcesDir, "materials.md");
@@ -394,9 +541,16 @@ async function fetchCourse(client, courseId, workDir) {
     filesDir,
     counts: manifest.stats,
     downloadedFiles: downloaded,
+    downloadedImages: imageResult.downloaded,
     totalBytes,
     totalSize: formatBytes(totalBytes),
-    skipped: manifest.skipped,
+    totalImageBytes: imageResult.totalBytes,
+    totalImageSize: formatBytes(imageResult.totalBytes),
+    skipped: manifest.skipped.files,
+    skippedImages: manifest.skipped.images,
+    pagesSkipped,
+    truncated: manifest.truncated,
+    externalMaterials: manifest.externalMaterials,
     errors,
   };
 }
@@ -415,8 +569,9 @@ async function main() {
           "workdir --course-name NAME",
           "output-dir --course-name NAME",
           "fetch --base-url URL --course-id ID --out WORKDIR",
-          "validate --run-dir DIR --expected FILE",
+          "validate --run-dir DIR --plan PLAN --checks CHECKS",
           "cleanup --work-dir DIR",
+          "cleanup-output --dir DIR",
         ],
       },
       [
@@ -431,8 +586,9 @@ async function main() {
         "  workdir --course-name NAME",
         "  output-dir --course-name NAME",
         "  fetch --base-url URL --course-id ID --out WORKDIR",
-        "  validate --run-dir DIR --expected FILE",
+        "  validate --run-dir DIR --plan PLAN --checks CHECKS",
         "  cleanup --work-dir DIR",
+        "  cleanup-output --dir DIR",
         "",
         "Add --json for machine-readable output.",
       ].join("\n"),
@@ -445,7 +601,7 @@ async function main() {
     const documentsDir = await resolveDocumentsDir();
     const token = status.found
       ? { found: true, source: status.source, path: status.path }
-      : { found: false, paths: [TOKEN_TXT, TOKEN_ENV] };
+      : { found: false, paths: [TOKEN_TXT, TOKEN_ENV], error: status.error ?? null };
     respond(
       {
         ok: true,
@@ -459,7 +615,7 @@ async function main() {
       [
         `Node: ${process.version}`,
         `Platform: ${process.platform}`,
-        `Token: ${status.found ? `found in ${status.source}` : "not found"}`,
+        `Token: ${status.found ? `found in ${status.source}` : status.error ? status.error.message : "not found"}`,
         `Documents: ${documentsDir}`,
       ].join("\n"),
     );
@@ -475,11 +631,14 @@ async function main() {
       path: status.path,
       paths: [TOKEN_TXT, TOKEN_ENV],
     };
+    if (status.error) safe.error = status.error;
     respond(
       safe,
       status.found
         ? `Canvas token found in ${status.path}.`
-        : `No Canvas token found.\nLooked in:\n  ${TOKEN_TXT}\n  ${TOKEN_ENV}`,
+        : status.error
+          ? status.error.message
+          : `No Canvas token found.\nLooked in:\n  ${TOKEN_TXT}\n  ${TOKEN_ENV}`,
     );
     return;
   }
@@ -513,10 +672,18 @@ async function main() {
 
   if (command === "validate") {
     const runDir = requireFlag("run-dir");
-    const expectedPath = requireFlag("expected");
-    const result = await validateRun({ runDir, expectedPath });
+    const planPath = requireFlag("plan");
+    const checksPath = requireFlag("checks");
+    const result = await validateRun({ runDir, planPath, checksPath });
     respond(result);
     if (!result.ok) process.exitCode = 1;
+    return;
+  }
+
+  if (command === "cleanup-output") {
+    const dir = requireFlag("dir");
+    const removed = await cleanupEmptyOutputDir(dir);
+    respond({ ok: true, removed }, removed ? `Removed ${dir}` : `${dir} is not empty; kept.`);
     return;
   }
 
@@ -528,16 +695,22 @@ async function main() {
     const baseUrl = requireFlag("base-url");
     const client = new CanvasClient({ baseUrl, token: tokenStatus.token });
     const user = await validateToken(client);
-    const courses = await client.getAll("/api/v1/courses", {
+    const coursePage = await client.getAllWithMeta("/api/v1/courses", {
       enrollment_state: "active",
       "include[]": "term",
       per_page: 100,
     });
+    const courses = coursePage.items;
     const filtered = courses
       .filter((course) => course.workflow_state === "available" && course.access_restricted_by_date !== true)
       .map(pickCourse);
     respond(
-      { ok: true, user: { id: String(user.id), name: user.name ?? null }, courses: filtered },
+      {
+        ok: true,
+        user: { id: String(user.id), name: user.name ?? null },
+        courses: filtered,
+        truncated: coursePage.truncated,
+      },
       filtered.length
         ? filtered.map((course, index) => `${index + 1}. ${course.name} (${course.courseCode ?? course.id})${course.term ? ` - ${course.term}` : ""}`).join("\n")
         : "No available courses found.",
@@ -570,10 +743,14 @@ async function main() {
 
 main().catch((error) => {
   if (error instanceof CanvasError) {
-    fail(error.status === 401 ? "UNAUTHORIZED" : "CANVAS_ERROR", error.message, {
+    fail(error.code ?? "CANVAS_ERROR", error.message, {
       status: error.status,
       body: error.body,
     });
   }
-  fail("ERROR", redactSecrets(error?.stack ?? error?.message ?? String(error)));
+  const known = error?.code && error.code !== "ERROR" && error.code !== "CANVAS_ERROR";
+  const message = known
+    ? error.message
+    : redactSecrets(error?.stack ?? error?.message ?? String(error));
+  fail(error.code ?? "ERROR", message);
 });

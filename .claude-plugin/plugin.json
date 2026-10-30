@@ -1,6 +1,6 @@
 {
   "name": "study-skills",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Agent skills for studying, learning, and creating. First skill: turn a Canvas course into study documents.",
   "author": {
     "name": "Fernando Pagani",

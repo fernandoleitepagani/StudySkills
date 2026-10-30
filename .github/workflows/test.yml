@@ -18,6 +18,9 @@ jobs:
         with:
           node-version: 20
 
+      - name: Check version sync
+        run: npm run check:version
+
       - name: Run tests
         run: node --test
 

@@ -36,8 +36,10 @@ Rules:
 - Never write the token to a plan, manifest, source file, output, log, or error message.
 - Never put the token in a URL or query string.
 - Never send it to any host other than the Canvas instance.
+- API requests follow only same-origin redirects. A cross-origin API redirect is refused.
 - Drop the Authorization header when a file download redirects to a different host.
 - Never store the token in the repository.
+- If the token file is unreadable, is a directory, or has the wrong permissions, return the structured error and offer the Exit or Guide flow. Do not print a stack trace.
 - Remind the user to revoke the token when it is no longer needed.
 
 Redact `Authorization`, `access_token`, `verifier`, and the token value from any error that leaves the script.

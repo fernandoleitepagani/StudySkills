@@ -91,6 +91,11 @@ export async function startMockCanvas({ token = "test-token" } = {}) {
       return;
     }
 
+    if (url.pathname === "/api/v1/courses/1/pages/week%201") {
+      json(res, 200, fixture.pageWeek);
+      return;
+    }
+
     if (url.pathname === "/api/v1/courses/1/assignments") {
       json(res, 200, fixture.assignments);
       return;
@@ -109,6 +114,28 @@ export async function startMockCanvas({ token = "test-token" } = {}) {
 
     if (url.pathname === "/api/v1/courses/1/front_page") {
       json(res, 200, fixture.frontPage);
+      return;
+    }
+
+    if (url.pathname === "/api/v1/courses/1/redirect") {
+      res.writeHead(302, { Location: "https://evil.example/steal" });
+      res.end();
+      return;
+    }
+
+    if (url.pathname === "/api/v1/courses/1/forbidden") {
+      json(res, 403, { error: "forbidden" });
+      return;
+    }
+
+    if (url.pathname === "/images/diagram.png") {
+      file(res, 200, "image/png", Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]));
+      return;
+    }
+
+    if (url.pathname === "/api/v1/files/20/download" && state.redirectFileUrl) {
+      res.writeHead(302, { Location: state.redirectFileUrl });
+      res.end();
       return;
     }
 

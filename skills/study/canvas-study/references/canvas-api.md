@@ -171,6 +171,41 @@ Record and continue when a single item fails:
 
 Stop when the course itself cannot be fetched, the token is invalid, or the base URL is wrong.
 
+Error codes:
+
+- `UNAUTHORIZED` for 401.
+- `FORBIDDEN` for 403 without a rate-limit marker.
+- `RATE_LIMITED` for 429 or a 403 with `Rate Limit Exceeded`.
+- `NOT_FOUND` for 404.
+- `SERVER_ERROR` for 5xx.
+- `INSECURE_REDIRECT` for a cross-origin API redirect.
+
+## Truncation
+
+Follow `Link` headers up to 100 pages per collection. If the next link remains, mark the collection as truncated and report it. Fetch page bodies up to 500 pages. Report the number of pages skipped.
+
+## Images
+
+Download same-origin Canvas page images with these limits:
+
+- PNG, JPEG, GIF, WebP, SVG.
+- 10 MB per image.
+- 50 MB total.
+- 200 images.
+
+Rewrite local image references in `materials.md`. List external image URLs under external images. Do not fetch images from third-party hosts.
+
+## External materials
+
+List but do not fetch:
+
+- External URL module items.
+- LTI tools.
+- Google Drive, Panopto, Perusall, and similar links.
+- Quizzes.
+
+Write them to `materials.md` and `manifest.json` under external materials. Report them in the final summary.
+
 ## HTML to text
 
 Convert Canvas HTML with the skill converter. Preserve:

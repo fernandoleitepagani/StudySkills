@@ -105,6 +105,21 @@ test("token: guide creates an empty 0600 token file", async () => {
   }
 });
 
+test("token: reports an unreadable token path", async () => {
+  const home = await makeTempDir();
+  try {
+    const dir = path.join(home, ".studyskills", "canvas-token.txt");
+    await fs.mkdir(dir, { recursive: true });
+    const mod = await loadTokenModule(home);
+    const status = await mod.getTokenStatus();
+    assert.equal(status.found, false);
+    assert.equal(status.error.code, "UNREADABLE_TOKEN_FILE");
+    await assert.rejects(mod.createTokenGuide(), /directory/);
+  } finally {
+    await cleanupDir(home);
+  }
+});
+
 test("token: redacts bearer tokens and query secrets", () => {
   return import("../skills/study/canvas-study/scripts/lib/token.mjs").then((mod) => {
     const secret = "abc.def.ghi";

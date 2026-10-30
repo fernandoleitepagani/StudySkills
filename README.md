@@ -10,7 +10,7 @@ The skill fetches Canvas materials read-only, asks you what you want through the
 
 | Skill | Status | What it does |
 | --- | --- | --- |
-| `canvas-study` | v0.1.0 | Fetch a Canvas course read-only and generate study documents. |
+| `canvas-study` | v0.1.1 | Fetch a Canvas course read-only and generate study documents. |
 | `file-study` | Planned | Study from local files you attach or name. See `roadmap2.md`. |
 
 ## Install
@@ -143,6 +143,14 @@ The agent's harness provides DOCX, PDF, and PPTX generation. The skill provides 
 - The skill will not modify your Canvas account or course content.
 - Revoke the token in Canvas when you are done with it.
 
+## Known limitations
+
+- Semantic document checks are agent-side. The validator checks file signatures, requested-versus-produced coverage, extra files, and token leakage. It cannot independently read the contents of a PDF, DOCX, or PPTX.
+- External tools, LTI links, cloud drives, and quizzes are listed in the manifest but not downloaded.
+- Inline images are downloaded only from the Canvas host. External images are listed as links.
+- Document generation depends on the harness document skill. If the harness cannot render a requested format, the skill reports it and produces the rest.
+- A Canvas course with more than 500 pages reports the pages that were not fetched.
+
 ## Troubleshooting
 
 | Problem | What to do |
@@ -164,6 +172,7 @@ See [roadmap.md](./roadmap.md) for the StudySkills roadmap and [roadmap2.md](./r
 git clone <repository>
 cd StudySkills
 node --test
+npm run check:version
 ```
 
 There are no dependencies to install. To link the skill into local harness directories:

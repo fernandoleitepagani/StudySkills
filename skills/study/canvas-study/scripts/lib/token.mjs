@@ -6,12 +6,12 @@ export const STUDY_DIR = path.join(os.homedir(), ".studyskills");
 export const TOKEN_TXT = path.join(STUDY_DIR, "canvas-token.txt");
 export const TOKEN_ENV = path.join(STUDY_DIR, "canvas-token.env");
 
-async function readIfExists(file) {
+async function readTokenFile(file) {
   try {
-    return await fs.readFile(file, "utf8");
+    return { text: await fs.readFile(file, "utf8"), missing: false, error: null };
   } catch (error) {
-    if (error?.code === "ENOENT") return null;
-    throw error;
+    if (error?.code === "ENOENT") return { text: null, missing: true, error: null };
+    return { text: null, missing: false, error };
   }
 }
 
@@ -38,18 +38,34 @@ function parseEnvToken(text) {
   return "";
 }
 
+function unreadable(pathValue, error) {
+  return {
+    found: false,
+    source: null,
+    path: pathValue,
+    token: null,
+    error: {
+      code: "UNREADABLE_TOKEN_FILE",
+      path: pathValue,
+      message: `Cannot read ${pathValue}: ${error?.message ?? "unknown error"}`,
+    },
+  };
+}
+
 export async function getTokenStatus() {
-  const txt = await readIfExists(TOKEN_TXT);
-  if (txt !== null) {
-    const token = cleanToken(txt);
+  const txt = await readTokenFile(TOKEN_TXT);
+  if (txt.error) return unreadable(TOKEN_TXT, txt.error);
+  if (txt.text !== null) {
+    const token = cleanToken(txt.text);
     if (token) {
       return { found: true, source: "canvas-token.txt", path: TOKEN_TXT, token };
     }
   }
 
-  const env = await readIfExists(TOKEN_ENV);
-  if (env !== null) {
-    const token = parseEnvToken(env);
+  const env = await readTokenFile(TOKEN_ENV);
+  if (env.error) return unreadable(TOKEN_ENV, env.error);
+  if (env.text !== null) {
+    const token = parseEnvToken(env.text);
     if (token) {
       return { found: true, source: "canvas-token.env", path: TOKEN_ENV, token };
     }
@@ -68,10 +84,12 @@ export async function requireToken() {
   const status = await getTokenStatus();
   if (!status.found) {
     const error = new Error(
-      `No Canvas token found at ${TOKEN_TXT} or ${TOKEN_ENV}.`,
+      status.error
+        ? status.error.message
+        : `No Canvas token found at ${TOKEN_TXT} or ${TOKEN_ENV}.`,
     );
-    error.code = "NO_TOKEN";
-    error.paths = [TOKEN_TXT, TOKEN_ENV];
+    error.code = status.error?.code ?? "NO_TOKEN";
+    error.paths = status.error ? [status.error.path] : [TOKEN_TXT, TOKEN_ENV];
     throw error;
   }
   return status;
@@ -111,19 +129,43 @@ export function tokenGuideText() {
 }
 
 export async function createTokenGuide() {
-  await fs.mkdir(STUDY_DIR, { recursive: true });
-  let created = false;
   try {
-    await fs.access(TOKEN_TXT);
-  } catch {
+    await fs.mkdir(STUDY_DIR, { recursive: true });
+  } catch (error) {
+    const wrapped = new Error(`Cannot create ${STUDY_DIR}: ${error.message}`);
+    wrapped.code = "TOKEN_DIRECTORY_ERROR";
+    throw wrapped;
+  }
+
+  let created = false;
+  let stat = null;
+  try {
+    stat = await fs.stat(TOKEN_TXT);
+  } catch (error) {
+    if (error?.code !== "ENOENT") {
+      const wrapped = new Error(`Cannot inspect ${TOKEN_TXT}: ${error.message}`);
+      wrapped.code = "TOKEN_PATH_ERROR";
+      throw wrapped;
+    }
+  }
+
+  if (stat?.isDirectory()) {
+    const error = new Error(`${TOKEN_TXT} is a directory, not a token file.`);
+    error.code = "TOKEN_PATH_NOT_FILE";
+    throw error;
+  }
+
+  if (!stat) {
     await fs.writeFile(TOKEN_TXT, "", { encoding: "utf8", mode: 0o600 });
     created = true;
   }
+
   try {
     await fs.chmod(TOKEN_TXT, 0o600);
   } catch {
     // Windows does not use POSIX modes.
   }
+
   return {
     created,
     directory: STUDY_DIR,
