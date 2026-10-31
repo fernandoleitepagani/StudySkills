@@ -9,7 +9,7 @@
     {
       "name": "study-skills",
       "source": "./",
-      "description": "Agent skills for studying, learning, and creating. First skill: Canvas Study.",
+      "description": "Agent skills for studying, learning, and creating.",
       "category": "productivity",
       "keywords": [
         "study",
