@@ -22,6 +22,8 @@ const SKILLS = [
   "math-practice",
   "exam-debrief",
   "code-kata-coach",
+  "paper-reader",
+  "thesis-organizer",
 ];
 
 const REFERENCES = [

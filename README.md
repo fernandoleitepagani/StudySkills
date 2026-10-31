@@ -2,14 +2,14 @@
 
 Agent skills for studying, learning, and creating.
 
-Current release: `v0.7.0`.
+Current release: `v0.8.0`.
 
 [![License: MIT](https://img.shields.io/badge/license-MIT-1f3a5f.svg)](./LICENSE)
 [![Node](https://img.shields.io/badge/node-%3E%3D20-1f3a5f.svg)](https://nodejs.org)
 
 StudySkills is a collection of user-invoked skills for coding agents. Each skill asks the questions it needs through the harness native question UI, shows a plan before doing the work, and writes only the files you request.
 
-The collection covers Canvas courses, lecture notes, flashcards, practice exams, explanations, study planning, note organization, local files, document revision, language learning, active recall, math practice, exam debriefs, and programming katas.
+The collection covers Canvas courses, lecture notes, flashcards, practice exams, explanations, study planning, note organization, local files, document revision, language learning, active recall, math practice, exam debriefs, programming katas, paper reading, and thesis organization.
 
 ## Install
 
@@ -67,6 +67,8 @@ npx skills@latest update
 | [`math-practice`](./skills/study/math-practice/README.md) | Generates graded math problems with hints and worked solutions. |
 | [`exam-debrief`](./skills/study/exam-debrief/README.md) | Analyzes an exam attempt and builds a remediation plan. |
 | [`code-kata-coach`](./skills/study/code-kata-coach/README.md) | Generates programming katas with tests and review questions. |
+| [`paper-reader`](./skills/study/paper-reader/README.md) | Produces a structured brief and critique of a research paper. |
+| [`thesis-organizer`](./skills/study/thesis-organizer/README.md) | Organizes a thesis question, evidence, outline, and writing plan. |
 
 ## Why these skills exist
 
@@ -93,6 +95,8 @@ Run a skill by name in Claude Code, OpenCode, or Codex:
 /math-practice
 /exam-debrief
 /code-kata-coach
+/paper-reader
+/thesis-organizer
 ```
 
 Each skill:

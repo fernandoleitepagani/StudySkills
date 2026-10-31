@@ -23,6 +23,8 @@ const USER_SKILLS = [
   "math-practice",
   "exam-debrief",
   "code-kata-coach",
+  "paper-reader",
+  "thesis-organizer",
 ];
 
 async function read(relative) {
@@ -320,4 +322,18 @@ test("skills: run 4 contracts", async () => {
   assert.match(kata, /No dependency installation/);
   assert.match(kata, /No execution required/);
   assert.match(kata, /Each kata has requirements, tests, and a solution/);
+});
+
+test("skills: run 5 contracts", async () => {
+  const paper = await read("skills/study/paper-reader/SKILL.md");
+  assert.match(paper, /Do not invent metadata/);
+  assert.match(paper, /Do not invent citations/);
+  assert.match(paper, /No paywall bypass/);
+  assert.match(paper, /Paper claims and web context|paper claims from outside context|outside context/i);
+
+  const thesis = await read("skills/study/thesis-organizer/SKILL.md");
+  assert.match(thesis, /Do not write the final thesis unless explicitly requested/);
+  assert.match(thesis, /Separate evidence from interpretation/);
+  assert.match(thesis, /Do not fabricate sources/);
+  assert.match(thesis, /evidence-matrix\.csv/);
 });

@@ -142,6 +142,13 @@ There is no plan to add other harnesses.
 - Per-skill READMEs, root listing, plugin entries, and harness matrix entries.
 - v1.0.0 remains gated on the remaining harness and document checks.
 
+## v0.8.0 - Reading and Research
+
+- `paper-reader`: structured paper briefs, critique, evidence maps, and follow-up questions.
+- `thesis-organizer`: research question, argument map, outline, evidence matrix, gaps, and writing plan.
+- Final 16-skill collection integration.
+- v1.0.0 remains gated on the remaining harness and document checks.
+
 ## v1.0.0 - Stable
 
 - Stable skill contract, migration guide, and security audit.

@@ -114,6 +114,20 @@ Full page: [canvas-study.md](./canvas-study.md).
 - **Common questions:** no packages are installed. Unexecuted tests are marked unexecuted.
 - **It's working if:** each kata has tests and a solution, and the tests match the requirements.
 
+## paper-reader
+
+- **What it does:** reads a research paper and produces a structured brief with method, results, limitations, critique, evidence, and follow-up questions.
+- **When to use it:** you need to understand or critique a paper efficiently.
+- **Common questions:** metadata is marked unknown when absent. No paywall bypass and no invented citations.
+- **It's working if:** paper claims are separate from web context, evidence is classified, and page references are present.
+
+## thesis-organizer
+
+- **What it does:** turns a thesis topic, notes, sources, or draft into a research question, argument map, outline, evidence matrix, source gaps, and writing plan.
+- **When to use it:** you are planning or revising a thesis or substantial research project.
+- **Common questions:** the default is planning, not final thesis prose. Evidence and interpretation are separate.
+- **It's working if:** unsupported claims are marked, the outline matches the question, and the writing plan is realistic.
+
 ## Skill guides
 
 Every skill has its own README:
@@ -132,3 +146,5 @@ Every skill has its own README:
 - [math-practice](../../skills/study/math-practice/README.md)
 - [exam-debrief](../../skills/study/exam-debrief/README.md)
 - [code-kata-coach](../../skills/study/code-kata-coach/README.md)
+- [paper-reader](../../skills/study/paper-reader/README.md)
+- [thesis-organizer](../../skills/study/thesis-organizer/README.md)

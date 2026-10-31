@@ -18,6 +18,8 @@ A collection of user-invoked skills for studying, learning, and creating.
 - [math-practice](./math-practice/README.md): generate graded math problems with worked solutions.
 - [exam-debrief](./exam-debrief/README.md): analyze an exam attempt and build a remediation plan.
 - [code-kata-coach](./code-kata-coach/README.md): generate programming katas with tests and review.
+- [paper-reader](./paper-reader/README.md): produce a structured brief and critique of a research paper.
+- [thesis-organizer](./thesis-organizer/README.md): organize a thesis question, evidence, outline, and writing plan.
 
 
 Every skill vendors its own `references/core/` and `scripts/core.mjs`. Install the whole collection or a single skill; there is no runtime skill dependency.

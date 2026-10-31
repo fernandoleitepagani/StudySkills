@@ -1,0 +1,6 @@
+interface:
+  display_name: "Paper Reader"
+  short_description: "Read a paper and produce a structured critical brief"
+  brand_color: "#1F3A5F"
+policy:
+  allow_implicit_invocation: false
