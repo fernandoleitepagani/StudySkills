@@ -2,7 +2,7 @@
 
 ## What it does
 
-`canvas-study` turns one Canvas course into finished study documents. It fetches the course materials read-only, asks what you want through the harness native question UI, and generates only the formats you request. The current release is v0.4.3.
+`canvas-study` turns one Canvas course into finished study documents. It fetches the course materials read-only, asks what you want through the harness native question UI, and generates only the formats you request. The current release is v0.4.4.
 
 Outputs can include a study plan, summary, flashcards, practice exam, concept map, or a custom study document. Files are saved in `~/Documents/StudySkills/<course>/<run>/`.
 

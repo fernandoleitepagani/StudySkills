@@ -1,35 +1,36 @@
 # Canonical install block
 
-One install route per harness. Do not install both the plugin and the copied skill for the same harness.
+One install route per harness. Do not install both the plugin and the copied skills for the same harness.
 
 Every skill is self-contained. Install the whole collection or a single skill.
-
-These commands install the latest published release or the pinned v0.4.0 release. They do not install from `main`.
-
-## OpenCode
-
-```bash
-DISABLE_TELEMETRY=1 DO_NOT_TRACK=1 npx skills@latest add 'fernandoleitepagani/StudySkills#v0.4.3' \
-  --skill '*' -a opencode -g -y
-```
-
-Update later with `npx skills@latest update`.
-
-The `#v0.4.3` ref is the release tag. Update it when a newer release is published.
 
 ## Claude Code
 
 ```bash
-claude plugin marketplace add fernandoleitepagani/StudySkills@v0.4.3
+claude plugin marketplace add fernandoleitepagani/StudySkills
 claude plugin install study-skills@studyskills
 ```
+
+The marketplace refreshes from `main`.
 
 ## Codex
 
 ```bash
-codex plugin marketplace add fernandoleitepagani/StudySkills --ref v0.4.3
+codex plugin marketplace add fernandoleitepagani/StudySkills
 codex plugin add study-skills@studyskills
 ```
+
+The marketplace refreshes from `main`.
+
+## OpenCode
+
+```bash
+DISABLE_TELEMETRY=1 DO_NOT_TRACK=1 npx skills@latest add \
+  fernandoleitepagani/StudySkills \
+  --skill '*' -a opencode -g -y
+```
+
+Update later with `npx skills@latest update`.
 
 ## Local development
 
@@ -44,5 +45,6 @@ If the installer does not support local paths, run `./scripts/link-skills.sh`.
 - The commands above assume the repository is hosted at `fernandoleitepagani/StudySkills`.
 - No `npm install` is required. StudySkills has no runtime dependencies.
 - Every skill is self-contained. Install the whole collection or a single skill.
-- Claude Code and Codex pin the release tag. OpenCode can use the latest-release asset.
+- Plugin marketplaces and OpenCode track `main`, not a release tag.
+- Use `dev` for development; merge to `main` for stable installs.
 - Do not promise automatic updates for routes that require a manual command.
