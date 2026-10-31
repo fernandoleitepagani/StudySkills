@@ -26,23 +26,12 @@ Pick one route per harness. Do not install both the plugin and the copied skill 
 
 Install the **whole collection**. The study skills call the shared internal `study-core` skill, so installing a single skill on its own is not supported.
 
-These commands install the latest published release or the pinned v0.4.0 release. They do not install from `main`.
+These commands install the pinned `v0.4.1` release. They do not install from `main`.
 
 ### OpenCode
 
-Latest published release:
-
 ```bash
-npx skills@latest add \
-  https://github.com/fernandoleitepagani/StudySkills/releases/latest/download/StudySkills.zip \
-  --skill '*' -a opencode -g -y
-```
-
-Pinned v0.4.0 fallback:
-
-```bash
-npx skills@latest add \
-  https://github.com/fernandoleitepagani/StudySkills/archive/refs/tags/v0.4.0.zip \
+npx skills@latest add 'fernandoleitepagani/StudySkills#v0.4.1' \
   --skill '*' -a opencode -g -y
 ```
 
@@ -52,21 +41,23 @@ Update later with:
 npx skills@latest update
 ```
 
+The `#v0.4.1` ref is the release tag. Update this tag when a newer release is published.
+
 ### Claude Code
 
 ```bash
-claude plugin marketplace add fernandoleitepagani/StudySkills@v0.4.0
+claude plugin marketplace add fernandoleitepagani/StudySkills@v0.4.1
 claude plugin install study-skills@studyskills
 ```
 
 ### Codex
 
 ```bash
-codex plugin marketplace add fernandoleitepagani/StudySkills --ref v0.4.0
+codex plugin marketplace add fernandoleitepagani/StudySkills --ref v0.4.1
 codex plugin add study-skills@studyskills
 ```
 
-Claude Code and Codex pin the release tag. OpenCode can use the dynamic latest-release asset URL.
+Claude Code and Codex pin the release tag. OpenCode pins the same tag through the `#ref` form.
 
 ## Quick start
 

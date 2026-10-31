@@ -81,6 +81,13 @@ There is no plan to add other harnesses.
 - Local file exports only. No MCP, NotebookLM, web auth, cloud-drive integrations, or external services.
 - Manual harness verification tracked separately; v1.0.0 remains gated on it.
 
+## v0.4.1 - Release Install Fix
+
+- Pin every documented install to the published release tag.
+- Use the `#v0.4.1` ref for OpenCode because the skills CLI does not support archive links.
+- Keep the release asset for manual download.
+- No skill behavior changes.
+
 ## v1.0.0 - Stable
 
 - Stable skill contract, migration guide, and security audit.
