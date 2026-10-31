@@ -1,4 +1,0 @@
-interface:
-  display_name: "Study Core"
-  short_description: "Shared engine for StudySkills study workflows"
-  brand_color: "#1F3A5F"

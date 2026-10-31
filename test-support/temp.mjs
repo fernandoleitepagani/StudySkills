@@ -11,7 +11,7 @@ export const CANVAS_SCRIPT = path.join(
 );
 export const CORE_SCRIPT = path.join(
   REPO_ROOT,
-  "skills/study/study-core/scripts/core.mjs",
+  "core/scripts/core.mjs",
 );
 export const CARDS_SCRIPT = path.join(
   REPO_ROOT,

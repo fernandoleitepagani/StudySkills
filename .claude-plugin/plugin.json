@@ -1,6 +1,6 @@
 {
   "name": "study-skills",
-  "version": "0.4.1",
+  "version": "0.4.2",
   "description": "Agent skills for studying, learning, and creating: Canvas Study, Lecture Notes, Flashcard Forge, Explain Back, Exam Sim, Study Planner, Note Organizer, and File Study.",
   "author": {
     "name": "Fernando Pagani",
@@ -19,7 +19,6 @@
   ],
   "skills": [
     "./skills/study/canvas-study",
-    "./skills/study/study-core",
     "./skills/study/lecture-notes",
     "./skills/study/flashcard-forge",
     "./skills/study/explain-back",

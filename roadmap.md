@@ -88,6 +88,28 @@ There is no plan to add other harnesses.
 - Keep the release asset for manual download.
 - No skill behavior changes.
 
+## v0.4.2 - Self-contained Skills
+
+- One canonical core source under `core/`.
+- Generated local core copies in every skill.
+- Removed the internal `study-core` skill dependency.
+- Individual skill installs work.
+- Canvas uses local core commands for directories and validation.
+
+## v0.4.3 - Canvas Safety and Fallbacks
+
+- Per-host Canvas token storage.
+- Explicit Markdown fallback reporting.
+- Failed generation cleanup.
+- Token warnings and telemetry-free install commands.
+
+## v0.4.4 - Main-Branch Distribution
+
+- Install and update from `main`, as in Matt's repository.
+- `dev` branch for development; `main` for stable installs.
+- Plugin marketplace verification and README rewrite.
+- Real `AGENTS.md` file.
+
 ## v1.0.0 - Stable
 
 - Stable skill contract, migration guide, and security audit.

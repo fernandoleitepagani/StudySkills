@@ -20,13 +20,6 @@ One collection page. Per-skill details live in each `SKILL.md`.
 
 Full page: [canvas-study.md](./canvas-study.md).
 
-## study-core
-
-- **What it does:** shared engine for the v0.2 and v0.3 study skills.
-- **When to use it:** never directly. A user-invoked skill loads it.
-- **Common questions:** why it exists, why it is internal, where it writes.
-- **It's working if:** the calling skill can create work/output directories, validate, and report partial formats.
-
 ## lecture-notes
 
 - **What it does:** turns lecture slides, transcripts, or notes into structured, didactic study notes.

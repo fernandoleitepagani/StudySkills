@@ -6,7 +6,7 @@ disable-model-invocation: true
 
 # Study Planner
 
-Call the Skill tool with **study-core** before doing anything else. Follow its shared workflow and invariants.
+Read `references/core/workflow.md` before doing anything else. Follow its shared workflow and invariants.
 
 ## Input
 

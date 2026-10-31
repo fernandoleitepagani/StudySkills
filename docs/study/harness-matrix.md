@@ -1,6 +1,6 @@
 # Harness capability matrix
 
-Record the result of the v0.4.1 smoke test here.
+Record the result of the v0.4.2 smoke test here.
 
 ## Environment used for this run
 
@@ -38,7 +38,7 @@ For each cell:
 - `n/a`: surface does not expose that capability.
 - `pending`: not exercised yet.
 
-If a format is `no`, the skill must still produce the other requested formats and report the failure. See `skills/study/study-core/references/output-conventions.md`.
+If a format is `no`, the skill must still produce the other requested formats and report the failure. See `skills/study/<skill>/references/core/output-conventions.md`.
 
 ## Script layer verified
 

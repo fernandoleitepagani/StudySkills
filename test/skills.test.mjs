@@ -2,8 +2,11 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import path from "node:path";
 import fs from "node:fs/promises";
+import { execFile } from "node:child_process";
+import { promisify } from "node:util";
 import { REPO_ROOT } from "../test-support/temp.mjs";
 
+const execFileAsync = promisify(execFile);
 const SKILLS_ROOT = path.join(REPO_ROOT, "skills/study");
 const USER_SKILLS = [
   "canvas-study",
@@ -15,7 +18,6 @@ const USER_SKILLS = [
   "note-organizer",
   "file-study",
 ];
-const MODEL_SKILLS = ["study-core"];
 
 async function read(relative) {
   return fs.readFile(path.join(REPO_ROOT, relative), "utf8");
@@ -42,28 +44,22 @@ function frontmatter(text) {
 }
 
 test("skills: frontmatter and invocation metadata", async () => {
-  for (const name of [...USER_SKILLS, ...MODEL_SKILLS]) {
+  for (const name of USER_SKILLS) {
     const file = path.join(SKILLS_ROOT, name, "SKILL.md");
     const text = await fs.readFile(file, "utf8");
     const meta = frontmatter(text);
     assert.equal(meta.name, name);
     assert.ok(meta.description);
-    if (USER_SKILLS.includes(name)) {
-      assert.equal(meta["disable-model-invocation"], "true", `${name} must be user-invoked`);
-    }
+    assert.equal(meta["disable-model-invocation"], "true", `${name} must be user-invoked`);
     const yaml = await fs.readFile(path.join(SKILLS_ROOT, name, "agents/openai.yaml"), "utf8");
-    if (USER_SKILLS.includes(name)) {
-      assert.match(yaml, /allow_implicit_invocation:\s*false/, `${name} policy`);
-    } else {
-      assert.equal(/allow_implicit_invocation/.test(yaml), false, `${name} is model-invoked`);
-    }
+    assert.match(yaml, /allow_implicit_invocation:\s*false/, `${name} policy`);
   }
 });
 
 test("skills: plugin, collection README, and docs list every skill", async () => {
   const plugin = JSON.parse(await read(".claude-plugin/plugin.json"));
-  assert.ok(Array.isArray(plugin.skills));
-  for (const name of [...USER_SKILLS, ...MODEL_SKILLS]) {
+  assert.equal(await exists("skills/study/study-core"), false);
+  for (const name of USER_SKILLS) {
     assert.equal(
       plugin.skills.some((entry) => entry.endsWith(`/${name}`)),
       true,
@@ -74,17 +70,33 @@ test("skills: plugin, collection README, and docs list every skill", async () =>
     const docs = await read("docs/study/README.md");
     assert.match(docs, new RegExp(name));
   }
+  assert.equal(plugin.skills.some((entry) => entry.endsWith("/study-core")), false);
 });
 
-test("skills: required files exist", async () => {
-  assert.equal(await exists("skills/study/study-core/references/plan-contract.md"), true);
-  assert.equal(await exists("skills/study/study-core/references/output-conventions.md"), true);
-  assert.equal(await exists("skills/study/study-core/scripts/core.mjs"), true);
+test("skills: every skill is self-contained", async () => {
+  for (const name of USER_SKILLS) {
+    assert.equal(await exists(`skills/study/${name}/references/core/workflow.md`), true, name);
+    assert.equal(await exists(`skills/study/${name}/scripts/core.mjs`), true, name);
+    assert.equal(await exists(`skills/study/${name}/scripts/lib/files.mjs`), true, name);
+    assert.equal(await exists(`skills/study/${name}/scripts/lib/validate.mjs`), true, name);
+    assert.equal(await exists(`skills/study/${name}/scripts/lib/inventory.mjs`), true, name);
+    assert.equal(await exists(`skills/study/${name}/assets/theme.json`), true, name);
+    assert.equal(await exists(`skills/study/${name}/scripts/lib/html-to-text.mjs`), name === "canvas-study");
+  }
   assert.equal(await exists("skills/study/flashcard-forge/scripts/cards.mjs"), true);
 });
 
-test("skills: new skills do not import Canvas or token code", async () => {
-  for (const name of ["lecture-notes", "flashcard-forge", "explain-back", "exam-sim", "study-planner", "note-organizer", "file-study", "study-core"]) {
+test("skills: generated core is in sync", async () => {
+  const result = await execFileAsync(
+    process.execPath,
+    ["scripts/sync-skills.mjs", "--check"],
+    { cwd: REPO_ROOT },
+  );
+  assert.match(result.stdout, /in sync/);
+});
+
+test("skills: non-Canvas skills do not import Canvas or token code", async () => {
+  for (const name of USER_SKILLS.filter((item) => item !== "canvas-study")) {
     const dir = path.join(SKILLS_ROOT, name);
     const files = [];
     async function walk(current) {
@@ -126,7 +138,7 @@ test("skills: v0.2.1 skill constraints", async () => {
 
 test("skills: file-study constraints", async () => {
   const text = await read("skills/study/file-study/SKILL.md");
-  assert.match(text, /Call the Skill tool with \*\*study-core\*\*/);
+  assert.match(text, /references\/core\/workflow\.md/);
   assert.match(text, /No Canvas/);
   assert.match(text, /No network/);
   assert.match(text, /Read-only sources/);
@@ -140,31 +152,31 @@ test("skills: file-study constraints", async () => {
   assert.match(text, /Only the requested files/);
 });
 
-test("skills: v0.4.0 language, accessibility, and privacy contracts", async () => {
+test("skills: language, accessibility, and privacy contracts", async () => {
   for (const name of USER_SKILLS) {
     const text = await read(`skills/study/${name}/SKILL.md`);
     assert.match(text, /language/i, `${name} must ask for output language`);
   }
 
-  const plan = await read("skills/study/study-core/references/plan-contract.md");
+  const plan = await read("core/references/plan-contract.md");
   assert.match(plan, /"language"/);
 
-  const core = await read("skills/study/study-core/SKILL.md");
-  assert.match(core, /No telemetry/);
-  assert.match(core, /Large sources|over 100 pages/);
-  assert.match(core, /Cite filenames, not absolute paths/);
+  const workflow = await read("core/references/workflow.md");
+  assert.match(workflow, /No telemetry/);
+  assert.match(workflow, /over 100 pages/);
+  assert.match(workflow, /Cite filenames, not absolute paths/);
 
   const canvas = await read("skills/study/canvas-study/SKILL.md");
   assert.match(canvas, /exceed the model context/);
 
-  for (const style of ["study-core", "canvas-study"]) {
-    const text = await read(`skills/study/${style}/references/style.md`);
+  for (const style of ["core/references/style.md", "skills/study/canvas-study/references/core/style.md"]) {
+    const text = await read(style);
     assert.match(text, /## Accessibility/);
     assert.match(text, /Use real heading levels/);
     assert.match(text, /Set the document language metadata/);
   }
 
-  const conventions = await read("skills/study/study-core/references/output-conventions.md");
+  const conventions = await read("core/references/output-conventions.md");
   assert.match(conventions, /Cite source filenames, not absolute paths/);
 
   await assert.rejects(fs.access(path.join(REPO_ROOT, "docs/study/file-study.md")));
