@@ -111,6 +111,11 @@ There is no plan to add other harnesses.
 - Plugin marketplace verification and release flow.
 - No release-tag install commands.
 
+## v0.4.5 - Release Alignment
+
+- Docs-only patch so the release tag includes the post-v0.4.4 corrections.
+- Aligns the README release marker, security reference, roadmap, and marketplace description with `main`.
+
 ## v1.0.0 - Stable
 
 - Stable skill contract, migration guide, and security audit.
