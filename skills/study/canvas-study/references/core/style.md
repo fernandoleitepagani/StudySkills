@@ -46,6 +46,49 @@ Every topic section:
 - Numbered steps for procedures.
 - No decorative clip art.
 
+## Visual communication
+
+Use visuals when they improve comprehension. Do not decorate.
+
+- Start each summary with a one-page "at a glance" view: a concept map, comparison table, timeline, or key-idea diagram.
+- Use tables for comparisons, schedules, formulas, definitions, and decision rules.
+- Use diagrams or concept maps for relationships, processes, and hierarchies.
+- Use numbered flows for procedures.
+- Use callout boxes for definitions, warnings, and key takeaways.
+- Add a caption to every figure and table.
+- Add alt text for every meaningful image.
+- Keep diagrams readable in grayscale.
+- Keep the reading order logical for screen readers.
+- Use no decorative clip art, stock photos, or color as the only signal.
+
+### Summary template
+
+1. At a glance: one visual or table that shows the whole topic.
+2. Big picture and learning objectives.
+3. Key ideas, one section each.
+4. Definitions and comparisons.
+5. Worked example or analogy.
+6. Common mistakes.
+7. Retrieval questions.
+8. Sources.
+
+### Study plan template
+
+1. Timeline or calendar overview.
+2. Course and deadline table.
+3. Weekly progression.
+4. Review checkpoints.
+5. Buffers and risk areas.
+
+### Concept map template
+
+1. Central question.
+2. Nodes grouped by theme.
+3. Labeled relationships.
+4. Legend.
+5. Reading order.
+6. Source references.
+
 ## Typography
 
 - Headings: bold, high contrast.

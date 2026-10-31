@@ -43,6 +43,21 @@ Use the harness native question tool. Do not replace it with plain text unless t
 
 This is the only fallback.
 
+## Source selection
+
+When the skill has multiple source groups, ask one question after inventory:
+
+Question: **Which materials should I use?**
+
+Options:
+
+1. **Everything within safe limits** (recommended)
+2. **Choose specific materials**
+
+The custom typed answer is the path for specific names. Do not add a separate "Type your answer" option when the harness provides one.
+
+If the user chooses specific materials and does not type names, ask a follow-up text question. Do not guess.
+
 ## Rules
 
 - Maximum 4 questions per call and 4 options per question.

@@ -16,6 +16,25 @@
 - Include page, slide, or heading when available.
 - Do not include home-directory paths, usernames, or full folder trees in outputs.
 - Do not copy source files into Documents.
+- Keep local-source citations and web citations in separate groups.
+- Do not put private source content, filenames, paths, Canvas details, or personal data in a web search.
+
+## Quality and presentation
+
+- Follow `quality.md` and `style.md`.
+- Read outputs back and record quality evidence in `checks.json`.
+- Use a one-page visual overview for summaries when the format allows.
+- Use tables, diagrams, callouts, captions, and alt text when they improve comprehension.
+- Keep accessibility, heading hierarchy, and language metadata.
+- Record web research status in `research` and report it at the end.
+
+## Web sources
+
+- Use web research when it improves accuracy, examples, or references.
+- Cite title, URL, and access date.
+- Mark weak or single-source claims.
+- Local course sources win for course-specific facts.
+- Never send anything on the `web-research.md` do-not-send list to a web tool.
 
 ## Partial format report
 
@@ -42,6 +61,8 @@ Before reporting success:
 - DOCX and PPTX are valid ZIP containers.
 - Every produced file has a `checks.json` entry.
 - Required sections and counts are present.
+- The quality block is present when required and scores meet the rubric.
+- Research metadata is valid when web research was used.
 - No extra files are in the output directory.
 - No source file was modified.
 

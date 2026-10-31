@@ -64,14 +64,18 @@ async function readPlan(planPath) {
 }
 
 async function readChecks(checksPath) {
-  if (!checksPath) return null;
+  if (!checksPath) return { files: null, quality: null, research: null };
   const text = await fs.readFile(checksPath, "utf8");
   const parsed = JSON.parse(text);
   const files = parsed.files ?? parsed;
   if (!files || typeof files !== "object" || Array.isArray(files)) {
     throw new Error("Checks must contain a files object keyed by file name.");
   }
-  return files;
+  return {
+    files,
+    quality: parsed.quality ?? null,
+    research: parsed.research ?? null,
+  };
 }
 
 async function signatureMatches(file, format) {
@@ -132,6 +136,97 @@ function validateSemantic(checks, produced) {
     missing,
     invalid,
   };
+}
+
+const QUALITY_CRITERIA = [
+  "grounding",
+  "coverage",
+  "learningDesign",
+  "accuracy",
+  "clarity",
+  "accessibility",
+  "formatIntegrity",
+];
+
+function validateQuality(plan, quality) {
+  const required = plan.quality?.required === true;
+  if (quality === null || quality === undefined) {
+    return {
+      provided: false,
+      required,
+      ok: !required,
+      issues: required ? ["Quality block is required but missing."] : [],
+    };
+  }
+  if (typeof quality !== "object" || Array.isArray(quality)) {
+    return { provided: true, required, ok: false, issues: ["Quality block must be an object."] };
+  }
+
+  const issues = [];
+  const rubric = quality.rubric;
+  if (!rubric || typeof rubric !== "object" || Array.isArray(rubric)) {
+    issues.push("Quality rubric must be an object.");
+  } else {
+    for (const criterion of QUALITY_CRITERIA) {
+      const score = rubric[criterion];
+      if (!Number.isFinite(Number(score)) || Number(score) < 1 || Number(score) > 5) {
+        issues.push(`Quality score ${criterion} must be between 1 and 5.`);
+      }
+    }
+    if (rubric.visualClarity !== undefined) {
+      const score = rubric.visualClarity;
+      if (!Number.isFinite(Number(score)) || Number(score) < 1 || Number(score) > 5) {
+        issues.push("Quality score visualClarity must be between 1 and 5.");
+      }
+    }
+  }
+
+  const coverage = quality.sourceCoverage;
+  if (!coverage || typeof coverage !== "object" || Array.isArray(coverage)) {
+    issues.push("Quality sourceCoverage must be an object.");
+  } else {
+    const selected = Number(coverage.selected);
+    const used = Number(coverage.used);
+    if (!Number.isInteger(selected) || selected < 0) issues.push("sourceCoverage.selected must be a non-negative integer.");
+    if (!Number.isInteger(used) || used < 0) issues.push("sourceCoverage.used must be a non-negative integer.");
+    if (Array.isArray(coverage.skipped) === false) issues.push("sourceCoverage.skipped must be an array.");
+    if (Number.isInteger(selected) && Number.isInteger(used) && used > selected) {
+      issues.push("sourceCoverage.used cannot exceed selected.");
+    }
+    if (Number.isInteger(selected) && Number.isInteger(used) && Array.isArray(coverage.skipped)) {
+      if (used + coverage.skipped.length !== selected) {
+        issues.push("sourceCoverage used plus skipped must equal selected.");
+      }
+    }
+  }
+
+  if (quality.review !== "pass") issues.push("Quality review must be pass.");
+
+  return { provided: true, required, ok: issues.length === 0, issues };
+}
+
+function validateResearch(plan, research) {
+  const expected = plan.research?.web;
+  if (research === null || research === undefined) {
+    return { provided: false, ok: expected !== "used", issues: expected === "used" ? ["Research metadata is required when web is used."] : [] };
+  }
+  if (typeof research !== "object" || Array.isArray(research)) {
+    return { provided: true, ok: false, issues: ["Research metadata must be an object."] };
+  }
+  const issues = [];
+  const web = research.web;
+  if (!["used", "not-used", "unavailable"].includes(web)) {
+    issues.push("research.web must be used, not-used, or unavailable.");
+  }
+  if (web === "used") {
+    if (!Number.isInteger(Number(research.sourceCount)) || Number(research.sourceCount) <= 0) {
+      issues.push("research.sourceCount must be a positive integer when web is used.");
+    }
+    if (!Array.isArray(research.domains) || research.domains.some((item) => typeof item !== "string" || !item.trim())) {
+      issues.push("research.domains must be an array of non-empty strings.");
+    }
+  }
+  return { provided: true, ok: issues.length === 0, issues };
 }
 
 export async function validateRun({ runDir, planPath, checksPath = null, token = null }) {
@@ -203,15 +298,25 @@ export async function validateRun({ runDir, planPath, checksPath = null, token =
     }
   }
 
-  const semantic = validateSemantic(checks, produced);
+  const semantic = validateSemantic(checks.files, produced);
+  const quality = validateQuality(plan, checks.quality);
+  const research = validateResearch(plan, checks.research);
 
   return {
-    ok: missing.length === 0 && invalid.length === 0 && extra.length === 0 && tokenLeak.length === 0 && semantic.ok,
+    ok: missing.length === 0
+      && invalid.length === 0
+      && extra.length === 0
+      && tokenLeak.length === 0
+      && semantic.ok
+      && quality.ok
+      && research.ok,
     runDir,
     plan: {
       topic: plan.topic ?? null,
       requested: requested.map((item) => item.name),
       fallbacks: declaredFallbacks,
+      qualityRequired: plan.quality?.required === true,
+      researchWeb: plan.research?.web ?? null,
     },
     requested,
     produced,
@@ -221,5 +326,7 @@ export async function validateRun({ runDir, planPath, checksPath = null, token =
     fallbacks: fallbackResults,
     tokenLeak,
     semantic,
+    quality,
+    research,
   };
 }

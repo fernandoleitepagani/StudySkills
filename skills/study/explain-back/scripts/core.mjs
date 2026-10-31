@@ -11,6 +11,7 @@ import {
 } from "./lib/files.mjs";
 import { validateRun } from "./lib/validate.mjs";
 import { inventory } from "./lib/inventory.mjs";
+import { catalogStudy } from "./lib/catalog.mjs";
 
 function parseArgs(argv) {
   const flags = {};
@@ -73,6 +74,7 @@ const help = {
     "cleanup-failed --dir DIR --name FILE [--name FILE ...]",
     "inventory --pack DIR",
     "inventory --path PATH [--path PATH ...]",
+    "catalog [--root DIR]",
   ],
 };
 
@@ -147,6 +149,13 @@ async function main() {
     if (!names.length) fail("MISSING_ARGUMENT", "Use at least one --name FILE.");
     const result = await removeOutputFiles(dir, names);
     print({ ok: true, ...result });
+    return;
+  }
+
+  if (command === "catalog") {
+    const root = flags.root && flags.root !== true ? String(flags.root) : null;
+    const result = await catalogStudy({ root });
+    print(result);
     return;
   }
 

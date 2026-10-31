@@ -184,3 +184,87 @@ test("validate: rejects requested names with path separators", async () => {
     await cleanupDir(root);
   }
 });
+
+test("validate: requires and accepts quality evidence", async () => {
+  const { root, runDir, planPath, checksPath } = await setup();
+  try {
+    await fs.writeFile(path.join(runDir, "summary.pdf"), "%PDF-1.4\n%%EOF\n");
+    await fs.writeFile(
+      planPath,
+      JSON.stringify({
+        topic: "Statistics",
+        requested: [{ output: "summary", files: ["summary.pdf"], formats: ["pdf"] }],
+        quality: { required: true },
+        research: { web: "used" },
+      }),
+      "utf8",
+    );
+    const quality = {
+      sourceCoverage: { selected: 1, used: 1, skipped: [] },
+      rubric: {
+        grounding: 5,
+        coverage: 5,
+        learningDesign: 4,
+        accuracy: 4,
+        clarity: 5,
+        visualClarity: 4,
+        accessibility: 4,
+        formatIntegrity: 5,
+      },
+      review: "pass",
+    };
+    await fs.writeFile(
+      checksPath,
+      JSON.stringify({
+        files: { "summary.pdf": { sections: ["cover"], counts: { pages: 1 } } },
+        quality,
+        research: { web: "used", sourceCount: 1, domains: ["example.edu"] },
+      }),
+      "utf8",
+    );
+    let result = await validateRun({ runDir, planPath, checksPath });
+    assert.equal(result.ok, true);
+    assert.equal(result.quality.provided, true);
+    assert.equal(result.research.provided, true);
+
+    quality.rubric.clarity = 6;
+    await fs.writeFile(
+      checksPath,
+      JSON.stringify({
+        files: { "summary.pdf": { sections: ["cover"], counts: { pages: 1 } } },
+        quality,
+        research: { web: "used", sourceCount: 1, domains: ["example.edu"] },
+      }),
+      "utf8",
+    );
+    result = await validateRun({ runDir, planPath, checksPath });
+    assert.equal(result.ok, false);
+    assert.equal(result.quality.ok, false);
+  } finally {
+    await cleanupDir(root);
+  }
+});
+
+test("validate: fails required quality and research metadata when missing", async () => {
+  const { root, runDir, planPath, checksPath } = await setup();
+  try {
+    await fs.writeFile(path.join(runDir, "summary.pdf"), "%PDF-1.4\n%%EOF\n");
+    await fs.writeFile(
+      planPath,
+      JSON.stringify({
+        topic: "Statistics",
+        requested: [{ output: "summary", files: ["summary.pdf"], formats: ["pdf"] }],
+        quality: { required: true },
+        research: { web: "used" },
+      }),
+      "utf8",
+    );
+    await writeChecks(checksPath, ["summary.pdf"]);
+    const result = await validateRun({ runDir, planPath, checksPath });
+    assert.equal(result.ok, false);
+    assert.equal(result.quality.ok, false);
+    assert.equal(result.research.ok, false);
+  } finally {
+    await cleanupDir(root);
+  }
+});

@@ -223,3 +223,27 @@ test("repo: Canvas security reference uses host-specific tokens and current clea
   assert.match(text, /Remove the work directory on success or failure/);
   assert.equal(/Keep the work directory on failure/.test(text), false);
 });
+
+test("skills: source selection, quality, web, and catalog contracts are generated", async () => {
+  for (const name of USER_SKILLS) {
+    for (const ref of ["source-selection.md", "quality.md", "web-research.md"]) {
+      assert.equal(await exists(`skills/study/${name}/references/core/${ref}`), true, `${name} missing ${ref}`);
+    }
+    assert.equal(await exists(`skills/study/${name}/scripts/lib/catalog.mjs`), true, `${name} missing catalog.mjs`);
+  }
+
+  const sourceSelection = await read("core/references/source-selection.md");
+  assert.match(sourceSelection, /Everything within safe limits/);
+  assert.match(sourceSelection, /Choose specific materials/);
+  assert.match(sourceSelection, /Do not truncate silently/);
+
+  const web = await read("core/references/web-research.md");
+  assert.match(web, /do-not-send list is a hard rule/);
+  assert.match(web, /local filenames, paths, folder names, hashes, or directory listings/);
+  assert.match(web, /Canvas URL, Canvas host, course name, institution, or token/);
+  assert.match(web, /Never send any of these to a web tool/);
+
+  const quality = await read("core/references/quality.md");
+  assert.match(quality, /Two-pass review/);
+  assert.match(quality, /visualClarity/);
+});
