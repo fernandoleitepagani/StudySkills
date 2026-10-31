@@ -113,6 +113,51 @@ test("validate: detects token leakage", async () => {
   }
 });
 
+test("validate: accepts a declared Markdown fallback", async () => {
+  const { root, runDir, planPath, checksPath } = await setup();
+  try {
+    await fs.writeFile(path.join(runDir, "summary.md"), "# Summary\n");
+    await fs.writeFile(
+      planPath,
+      JSON.stringify({
+        topic: "Statistics",
+        requested: [{ output: "summary", files: ["summary.pdf"], formats: ["pdf"] }],
+        fallbacks: { "summary.pdf": "summary.md" },
+      }),
+      "utf8",
+    );
+    await writeChecks(checksPath, ["summary.md"]);
+    const result = await validateRun({ runDir, planPath, checksPath });
+    assert.equal(result.ok, true);
+    assert.equal(result.missing.length, 0);
+    assert.deepEqual(result.fallbacks, [{ requested: "summary.pdf", produced: "summary.md" }]);
+    assert.equal(result.produced[0].fallbackFor, "summary.pdf");
+  } finally {
+    await cleanupDir(root);
+  }
+});
+
+test("validate: fails when a fallback is declared but missing", async () => {
+  const { root, runDir, planPath, checksPath } = await setup();
+  try {
+    await fs.writeFile(
+      planPath,
+      JSON.stringify({
+        topic: "Statistics",
+        requested: [{ output: "summary", files: ["summary.pdf"], formats: ["pdf"] }],
+        fallbacks: { "summary.pdf": "summary.md" },
+      }),
+      "utf8",
+    );
+    await writeChecks(checksPath, ["summary.md"]);
+    const result = await validateRun({ runDir, planPath, checksPath });
+    assert.equal(result.ok, false);
+    assert.equal(result.missing[0].name, "summary.pdf");
+  } finally {
+    await cleanupDir(root);
+  }
+});
+
 test("validate: fails when semantic checks are missing", async () => {
   const { root, runDir, planPath, checksPath } = await setup();
   try {

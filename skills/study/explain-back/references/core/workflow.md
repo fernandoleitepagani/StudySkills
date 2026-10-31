@@ -107,9 +107,10 @@ If the source set exceeds the model context, or a source is over 100 pages or 50
 If a format cannot be produced:
 
 - Produce the formats that can be produced.
-- Do not substitute another format.
-- Keep the failure in `plan.json`.
-- Report it at the end.
+- Create a Markdown fallback with the same content.
+- Add `fallbacks: { "<requested file>": "<markdown file>" }` to `plan.json`.
+- Report the fallback and the reason.
+- Delete the failed partial output.
 
 ## Step 6 - Validate
 
@@ -125,7 +126,7 @@ If validation reports missing, invalid, extra, token leakage, or missing semanti
 
 - Fix what can be fixed.
 - Re-run validation.
-- If a requested format still fails, report it.
+- Report every fallback and every requested file that still has no fallback.
 - Never leave invalid or empty files in `outputDir`.
 
 ## Step 7 - Report and clean up
@@ -135,10 +136,17 @@ Report:
 - Output directory.
 - Produced files.
 - Requested files not produced, with reasons.
+- Markdown fallbacks and the formats they replaced.
 - Inventory truncation, skipped files, or external materials.
 - Reminder that source files were not modified.
 
-On success:
+If any requested output failed, remove its partial files before cleanup:
+
+```bash
+node <skill-dir>/scripts/core.mjs cleanup-failed --dir <outputDir> --name <failed-file> --json
+```
+
+Always remove the work directory after reporting:
 
 ```bash
 node <skill-dir>/scripts/core.mjs cleanup --work-dir <workDir> --json
@@ -150,4 +158,4 @@ If no output file was produced, remove the empty output directory:
 node <skill-dir>/scripts/core.mjs cleanup-output --dir <outputDir> --json
 ```
 
-On partial failure, keep both directories and report their paths.
+Delete failed partial output files. Keep only successful outputs and declared fallbacks. Materials and temporary chunk notes are never kept.

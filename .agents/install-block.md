@@ -9,25 +9,25 @@ These commands install the latest published release or the pinned v0.4.0 release
 ## OpenCode
 
 ```bash
-npx skills@latest add 'fernandoleitepagani/StudySkills#v0.4.2' \
+DISABLE_TELEMETRY=1 DO_NOT_TRACK=1 npx skills@latest add 'fernandoleitepagani/StudySkills#v0.4.3' \
   --skill '*' -a opencode -g -y
 ```
 
 Update later with `npx skills@latest update`.
 
-The `#v0.4.2` ref is the release tag. Update it when a newer release is published.
+The `#v0.4.3` ref is the release tag. Update it when a newer release is published.
 
 ## Claude Code
 
 ```bash
-claude plugin marketplace add fernandoleitepagani/StudySkills@v0.4.2
+claude plugin marketplace add fernandoleitepagani/StudySkills@v0.4.3
 claude plugin install study-skills@studyskills
 ```
 
 ## Codex
 
 ```bash
-codex plugin marketplace add fernandoleitepagani/StudySkills --ref v0.4.2
+codex plugin marketplace add fernandoleitepagani/StudySkills --ref v0.4.3
 codex plugin add study-skills@studyskills
 ```
 

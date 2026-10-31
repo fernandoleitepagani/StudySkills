@@ -47,7 +47,20 @@ async function readPlan(planPath) {
       });
     }
   }
-  return { plan: parsed, files };
+  const fallbacks = {};
+  const declaredFallbacks = parsed.fallbacks ?? {};
+  if (declaredFallbacks && typeof declaredFallbacks === "object" && !Array.isArray(declaredFallbacks)) {
+    for (const [requestedName, fallbackName] of Object.entries(declaredFallbacks)) {
+      const from = String(requestedName ?? "").trim();
+      const to = String(fallbackName ?? "").trim();
+      if (!from || !to) throw new Error("Fallback entries need a requested and fallback file name.");
+      if (path.basename(from) !== from || path.basename(to) !== to) {
+        throw new Error("Fallback file names must be plain names.");
+      }
+      fallbacks[from] = to;
+    }
+  }
+  return { plan: parsed, files, fallbacks };
 }
 
 async function readChecks(checksPath) {
@@ -122,39 +135,62 @@ function validateSemantic(checks, produced) {
 }
 
 export async function validateRun({ runDir, planPath, checksPath = null, token = null }) {
-  const { plan, files: requested } = await readPlan(planPath);
+  const { plan, files: requested, fallbacks: declaredFallbacks } = await readPlan(planPath);
   const checks = await readChecks(checksPath);
   const entries = await listTopLevelFiles(runDir);
   const actualFiles = entries.filter((entry) => entry.isFile).map((entry) => entry.name);
   const directories = entries.filter((entry) => entry.isDirectory).map((entry) => entry.name);
-  const requestedNames = new Set(requested.map((item) => item.name));
+  const allowedNames = new Set(requested.map((item) => item.name));
+  for (const fallbackName of Object.values(declaredFallbacks)) allowedNames.add(fallbackName);
 
   const produced = [];
   const missing = [];
   const invalid = [];
+  const fallbackResults = [];
 
   for (const item of requested) {
     const file = path.join(runDir, item.name);
-    let stat;
+    let valid = false;
+    let missingFile = false;
     try {
-      stat = await fs.stat(file);
+      const stat = await fs.stat(file);
+      if (stat.isFile() && stat.size > 0 && await signatureMatches(file, item.format)) valid = true;
     } catch {
-      missing.push(item);
+      missingFile = true;
+    }
+
+    if (valid) {
+      produced.push(item);
       continue;
     }
-    if (!stat.isFile() || stat.size === 0) {
-      invalid.push({ ...item, reason: "File is empty or not a regular file." });
-      continue;
+
+    const fallbackName = declaredFallbacks[item.name];
+    if (fallbackName) {
+      const fallbackFile = path.join(runDir, fallbackName);
+      const fallbackFormat = formatFromName(fallbackName);
+      try {
+        const stat = await fs.stat(fallbackFile);
+        if (stat.isFile() && stat.size > 0 && await signatureMatches(fallbackFile, fallbackFormat)) {
+          produced.push({
+            name: fallbackName,
+            format: fallbackFormat,
+            output: item.output,
+            fallbackFor: item.name,
+          });
+          fallbackResults.push({ requested: item.name, produced: fallbackName });
+          continue;
+        }
+      } catch {
+        // Fall through to the normal missing/invalid report.
+      }
     }
-    if (!(await signatureMatches(file, item.format))) {
-      invalid.push({ ...item, reason: `File signature does not match ${item.format}.` });
-      continue;
-    }
-    produced.push(item);
+
+    if (missingFile) missing.push(item);
+    else invalid.push({ ...item, reason: `File is invalid for ${item.format}.` });
   }
 
   const extra = [
-    ...actualFiles.filter((name) => !requestedNames.has(name)),
+    ...actualFiles.filter((name) => !allowedNames.has(name)),
     ...directories,
   ];
 
@@ -175,12 +211,14 @@ export async function validateRun({ runDir, planPath, checksPath = null, token =
     plan: {
       topic: plan.topic ?? null,
       requested: requested.map((item) => item.name),
+      fallbacks: declaredFallbacks,
     },
     requested,
     produced,
     missing,
     invalid,
     extra,
+    fallbacks: fallbackResults,
     tokenLeak,
     semantic,
   };

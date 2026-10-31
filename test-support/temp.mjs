@@ -64,3 +64,12 @@ export function runCore(args, options = {}) {
 export function runCards(args, options = {}) {
   return runScript(CARDS_SCRIPT, args, options);
 }
+export async function writeHostToken(home, baseUrl, token) {
+  const url = new URL(baseUrl);
+  const key = url.host.toLowerCase().replace(/[^a-z0-9.-]/g, "_");
+  const dir = path.join(home, ".studyskills", "canvas", key);
+  await mkdir(dir, { recursive: true });
+  const file = path.join(dir, "token.txt");
+  await writeFile(file, token, "utf8");
+  return file;
+}

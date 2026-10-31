@@ -51,6 +51,9 @@ Machine-readable source of truth:
       "files": ["summary.pdf", "summary.docx"]
     }
   ],
+  "fallbacks": {
+    "summary.pdf": "summary.md"
+  },
   "settings": {},
   "checks": {}
 }
@@ -60,6 +63,7 @@ Rules:
 
 - Include every requested output and every requested file.
 - Never remove a failed format from `plan.json`.
+- Add a `fallbacks` entry when a failed requested format is replaced by a Markdown file.
 - Use plain file names, no folders.
 - `validate` treats `plan.json` as the requested set.
 

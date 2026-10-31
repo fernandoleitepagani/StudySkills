@@ -39,22 +39,26 @@ Read these references before asking anything:
 - `references/outputs.md`
 - `references/security.md`
 
-## Step 1 - Token
+## Step 1 - Connection and token
 
-Run:
+Ask for the Canvas URL first. It is a text answer, not a multiple-choice decision. Accept a domain such as `school.instructure.com` and normalize it to `https://school.instructure.com`.
+
+Then run:
 
 ```bash
-node <skill-dir>/scripts/canvas.mjs token-status --json
+node <skill-dir>/scripts/canvas.mjs token-status --base-url <url> --json
 ```
 
-The script checks, in order:
+The script checks the host-specific paths:
 
-1. `~/.studyskills/canvas-token.txt`
-2. `~/.studyskills/canvas-token.env`
+1. `~/.studyskills/canvas/<host>/token.txt`
+2. `~/.studyskills/canvas/<host>/token.env`
+
+It falls back to the legacy global files only to help migration. A legacy fallback is reported as `legacy: true`.
 
 If `found` is false, or the token is empty, or `error` is present:
 
-1. Warn the user that no readable token was found in either path. If `error` is present, show its message.
+1. Warn the user that no readable token was found for that Canvas host. If `error` is present, show its message.
 2. Use the native question tool with exactly two options:
    - **Exit**
    - **Guide me to create it**
@@ -62,12 +66,12 @@ If `found` is false, or the token is empty, or `error` is present:
 4. If the user chooses **Guide me**, run:
 
 ```bash
-node <skill-dir>/scripts/canvas.mjs token-guide --json
+node <skill-dir>/scripts/canvas.mjs token-guide --base-url <url> --json
 ```
 
-Show the returned guide. Tell the user to save the token and run `/canvas-study` again from the beginning. Then **stop**. Do not retry, validate, or continue.
+Show the returned guide. It includes the full-account-access warning, the dedicated-token recommendation, and the revoke reminder. Tell the user to save the token and run `/canvas-study` again from the beginning. Then **stop**. Do not retry, validate, or continue.
 
-If a token is found, continue. Do not validate it until the Canvas URL is known.
+If a token is found, continue.
 
 ## Step 2 - Interview
 
@@ -84,9 +88,7 @@ Rules:
 
 ### Round 1 - Connection
 
-Ask for the Canvas URL. It is a text answer, not a multiple-choice decision. Accept a domain such as `school.instructure.com` and normalize it to `https://school.instructure.com`.
-
-Validate it by listing courses:
+Validate the Canvas URL from Step 1 by listing courses:
 
 ```bash
 node <skill-dir>/scripts/canvas.mjs courses --base-url <url> --json
@@ -251,8 +253,10 @@ If the course materials exceed the model context, process them by module, page, 
 Generate every explicitly requested format. If a format cannot be produced:
 
 - Produce the formats that can be produced.
-- Do not substitute another format.
-- Record the failure for the final report.
+- Create a Markdown fallback with the same content.
+- Add `fallbacks: { "<requested file>": "<markdown file>" }` to `plan.json`.
+- Report the fallback and the reason.
+- Delete the failed partial output.
 - Do not write an empty placeholder.
 
 Do not create prompts, zip files, source copies, or extra formats in `outputDir`.
@@ -278,19 +282,19 @@ After generating, read each output back with the harness document skill and writ
 }
 ```
 
-Every produced file needs an entry. The counts and sections are the agent’s attestation after reading the generated file back. They are not a substitute for opening the document.
+Every produced file needs an entry, including fallback files. The counts and sections are the agent’s attestation after reading the generated file back. They are not a substitute for opening the document.
 
 Run:
 
 ```bash
-node <skill-dir>/scripts/core.mjs validate --run-dir <outputDir> --plan <workDir>/plan.json --checks <workDir>/checks.json --token-file ~/.studyskills/canvas-token.txt --json
+node <skill-dir>/scripts/canvas.mjs validate --base-url <url> --run-dir <outputDir> --plan <workDir>/plan.json --checks <workDir>/checks.json --json
 ```
 
 If validation reports missing, invalid, extra, token leakage, or missing semantic checks:
 
 - Fix what can be fixed.
 - Re-run validation.
-- If a requested format still cannot be produced, keep it in `plan.json`, leave it missing, and report it.
+- Report every fallback and every requested file that still has no fallback.
 - Never leave invalid or empty files in `outputDir`.
 
 ## Step 6 - Report and clean up
@@ -305,7 +309,13 @@ Show a concise report:
 - External materials and external images.
 - Reminder to revoke the Canvas token if it is no longer needed.
 
-On success, remove the work directory:
+If any requested output failed, remove its partial files before cleanup:
+
+```bash
+node <skill-dir>/scripts/core.mjs cleanup-failed --dir <outputDir> --name <failed-file> --json
+```
+
+Always remove the work directory after reporting, on success or failure:
 
 ```bash
 node <skill-dir>/scripts/core.mjs cleanup --work-dir <workDir> --json
@@ -317,7 +327,8 @@ If generation failed before producing any file, remove the empty output director
 node <skill-dir>/scripts/core.mjs cleanup-output --dir <outputDir> --json
 ```
 
-On failure with partial outputs, keep the output directory and work directory and report both paths.
+Delete failed partial output files. Keep only successful outputs and declared fallbacks.
+Materials and temporary chunk notes are never kept.
 
 ## Stop conditions
 

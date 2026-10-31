@@ -10,14 +10,14 @@ The skill fetches Canvas materials read-only, asks you what you want through the
 
 | Skill | Status | What it does |
 | --- | --- | --- |
-| `canvas-study` | v0.4.2 | Fetch a Canvas course read-only and generate study documents. |
-| `lecture-notes` | v0.4.2 | Turn lecture slides, transcripts, or notes into structured notes. |
-| `flashcard-forge` | v0.4.2 | Create Anki-ready CSV and Markdown flashcards. |
-| `explain-back` | v0.4.2 | Explain concepts in layers with the Feynman technique. |
-| `exam-sim` | v0.4.2 | Generate timed practice exams. |
-| `study-planner` | v0.4.2 | Plan multiple courses and deadlines. |
-| `note-organizer` | v0.4.2 | Organize Markdown and Obsidian notes read-only. |
-| `file-study` | v0.4.2 | Turn local folders, files, or attachments into study documents. |
+| `canvas-study` | v0.4.3 | Fetch a Canvas course read-only and generate study documents. |
+| `lecture-notes` | v0.4.3 | Turn lecture slides, transcripts, or notes into structured notes. |
+| `flashcard-forge` | v0.4.3 | Create Anki-ready CSV and Markdown flashcards. |
+| `explain-back` | v0.4.3 | Explain concepts in layers with the Feynman technique. |
+| `exam-sim` | v0.4.3 | Generate timed practice exams. |
+| `study-planner` | v0.4.3 | Plan multiple courses and deadlines. |
+| `note-organizer` | v0.4.3 | Organize Markdown and Obsidian notes read-only. |
+| `file-study` | v0.4.3 | Turn local folders, files, or attachments into study documents. |
 
 ## Install
 
@@ -25,12 +25,12 @@ Pick one route per harness. Do not install both the plugin and the copied skill 
 
 Every skill is self-contained and carries its own local copy of the shared workflow. You can install the whole collection or a single skill.
 
-These commands install the pinned `v0.4.2` release. They do not install from `main`.
+These commands install the pinned `v0.4.3` release. They do not install from `main`.
 
 ### OpenCode
 
 ```bash
-npx skills@latest add 'fernandoleitepagani/StudySkills#v0.4.2' \
+DISABLE_TELEMETRY=1 DO_NOT_TRACK=1 npx skills@latest add 'fernandoleitepagani/StudySkills#v0.4.3' \
   --skill '*' -a opencode -g -y
 ```
 
@@ -40,19 +40,19 @@ Update later with:
 npx skills@latest update
 ```
 
-The `#v0.4.2` ref is the release tag. Update this tag when a newer release is published.
+The `#v0.4.3` ref is the release tag. Update this tag when a newer release is published.
 
 ### Claude Code
 
 ```bash
-claude plugin marketplace add fernandoleitepagani/StudySkills@v0.4.2
+claude plugin marketplace add fernandoleitepagani/StudySkills@v0.4.3
 claude plugin install study-skills@studyskills
 ```
 
 ### Codex
 
 ```bash
-codex plugin marketplace add fernandoleitepagani/StudySkills --ref v0.4.2
+codex plugin marketplace add fernandoleitepagani/StudySkills --ref v0.4.3
 codex plugin add study-skills@studyskills
 ```
 
@@ -65,17 +65,18 @@ Each skill vendors its own copy of the shared workflow under `references/core/` 
 ## Quick start
 
 1. Create a Canvas personal access token.
-2. Save it in one of these files:
-   - `~/.studyskills/canvas-token.txt`, containing only the token.
-   - `~/.studyskills/canvas-token.env`, containing `CANVAS_TOKEN=...`.
+2. Save it in one of these host-specific files:
+   - `~/.studyskills/canvas/<host>/token.txt`, containing only the token.
+   - `~/.studyskills/canvas/<host>/token.env`, containing `CANVAS_TOKEN=...`.
+   The legacy global files are read only as a migration fallback.
 3. Run `/canvas-study` in Claude Code, OpenCode, or Codex.
 4. Answer the questions. The skill shows a plan before fetching anything.
 5. Approve the plan.
 6. Find the requested files in `~/Documents/StudySkills/<course>/<run>/`.
 
-If no token is found, the skill warns you and offers two choices: exit, or guide you through creating the file. The guide creates `~/.studyskills/` and an empty `canvas-token.txt`, then exits so you can paste the token and run the skill again.
+If no token is found, the skill warns you and offers two choices: exit, or guide you through creating the file. The guide creates `~/.studyskills/canvas/<host>/` and an empty `token.txt`, then exits so you can paste the token and run the skill again.
 
-The token is never requested in chat. It is never printed, stored in the plan, or written to the output files.
+The token is never requested in chat. It is never printed, stored in the plan, or written to the output files. A Canvas PAT can access the whole account: use a dedicated token, keep it outside the repository, and revoke it after use.
 
 ## Using the v0.2 skills
 
@@ -166,7 +167,7 @@ The agent's harness provides DOCX, PDF, and PPTX generation. The skill provides 
 
 ## Security and privacy
 
-- The token is read only from `~/.studyskills/canvas-token.txt` or `~/.studyskills/canvas-token.env`.
+- The token is read from `~/.studyskills/canvas/<host>/token.txt` or `.env`, with a legacy global fallback.
 - The token is never sent to a third party by the skill. It is only sent to your Canvas instance in the `Authorization` header of read-only requests.
 - Course content stays on your machine, except for what your agent sends to its model provider when reading the materials. That is a choice you make by using that harness.
 - No telemetry, analytics, or remote logging.
@@ -183,6 +184,8 @@ The agent's harness provides DOCX, PDF, and PPTX generation. The skill provides 
 - Inline images are downloaded only from the Canvas host. External images are listed as links.
 - Document generation depends on the harness document skill. If the harness cannot render a requested format, the skill reports it and produces the rest.
 - A Canvas course with more than 500 pages reports the pages that were not fetched.
+- If a requested format cannot be produced, the skill writes a Markdown fallback and reports the replacement.
+- Failed generation removes partial work; materials are not kept.
 - Sources are read fresh on every run. There is no cache.
 
 ## Troubleshooting
