@@ -143,3 +143,28 @@ test("core: inventory scans files, folders, Markdown metadata, and packs", async
     await cleanupDir(home);
   }
 });
+
+test("core: cleanup-failed removes only named output files", async () => {
+  const home = await makeTempDir("studyskills-core-home-");
+  const docs = path.join(home, "Docs");
+  const env = { XDG_DOCUMENTS_DIR: docs };
+  try {
+    let result = await runCore(["output-dir", "--topic", "Statistics", "--json"], { home, env });
+    const data = await json(result);
+    await fs.writeFile(path.join(data.runDir, "broken.pdf"), "broken");
+    await fs.writeFile(path.join(data.runDir, "summary.md"), "# Summary\n");
+    result = await runCore(
+      ["cleanup-failed", "--dir", data.runDir, "--name", "broken.pdf", "--json"],
+      { home, env },
+    );
+    assert.equal(result.code, 0);
+    const cleaned = await json(result);
+    assert.deepEqual(cleaned.removed, ["broken.pdf"]);
+    await assert.rejects(fs.access(path.join(data.runDir, "broken.pdf")));
+    await fs.access(path.join(data.runDir, "summary.md"));
+    const outside = await runCore(["cleanup-failed", "--dir", home, "--name", "x"], { home, env });
+    assert.notEqual(outside.code, 0);
+  } finally {
+    await cleanupDir(home);
+  }
+});

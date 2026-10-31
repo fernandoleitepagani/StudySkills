@@ -181,3 +181,16 @@ test("skills: language, accessibility, and privacy contracts", async () => {
 
   await assert.rejects(fs.access(path.join(REPO_ROOT, "docs/study/file-study.md")));
 });
+
+test("skills: v0.4.3 token, fallback, and cleanup contracts", async () => {
+  const canvas = await read("skills/study/canvas-study/SKILL.md");
+  assert.match(canvas, /token-status --base-url/);
+  assert.match(canvas, /full-account-access warning/);
+  assert.match(canvas, /cleanup-failed/);
+  assert.match(canvas, /Markdown fallback/);
+
+  const workflow = await read("core/references/workflow.md");
+  assert.match(workflow, /fallbacks/);
+  assert.match(workflow, /cleanup-failed/);
+  assert.match(workflow, /Materials and temporary chunk notes are never kept/);
+});

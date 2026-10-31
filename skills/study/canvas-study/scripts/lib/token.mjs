@@ -3,8 +3,8 @@ import os from "node:os";
 import fs from "node:fs/promises";
 
 export const STUDY_DIR = path.join(os.homedir(), ".studyskills");
-export const TOKEN_TXT = path.join(STUDY_DIR, "canvas-token.txt");
-export const TOKEN_ENV = path.join(STUDY_DIR, "canvas-token.env");
+export const LEGACY_TOKEN_TXT = path.join(STUDY_DIR, "canvas-token.txt");
+export const LEGACY_TOKEN_ENV = path.join(STUDY_DIR, "canvas-token.env");
 
 async function readTokenFile(file) {
   try {
@@ -38,6 +38,41 @@ function parseEnvToken(text) {
   return "";
 }
 
+export function canvasHost(baseUrl) {
+  let raw = String(baseUrl ?? "").trim();
+  if (!raw) {
+    const error = new Error("A Canvas URL is required to locate the token.");
+    error.code = "INVALID_URL";
+    throw error;
+  }
+  if (!/^https?:\/\//i.test(raw)) raw = `https://${raw}`;
+  let url;
+  try {
+    url = new URL(raw);
+  } catch {
+    const error = new Error(`Invalid Canvas URL: ${baseUrl}`);
+    error.code = "INVALID_URL";
+    throw error;
+  }
+  const host = url.host.toLowerCase();
+  return {
+    host,
+    key: host.replace(/[^a-z0-9.-]/g, "_"),
+  };
+}
+
+export function tokenPaths(baseUrl) {
+  const { host, key } = canvasHost(baseUrl);
+  const directory = path.join(STUDY_DIR, "canvas", key);
+  return {
+    host,
+    key,
+    directory,
+    txt: path.join(directory, "token.txt"),
+    env: path.join(directory, "token.env"),
+  };
+}
+
 function unreadable(pathValue, error) {
   return {
     found: false,
@@ -52,22 +87,60 @@ function unreadable(pathValue, error) {
   };
 }
 
-export async function getTokenStatus() {
-  const txt = await readTokenFile(TOKEN_TXT);
-  if (txt.error) return unreadable(TOKEN_TXT, txt.error);
+async function readPair(paths) {
+  const txt = await readTokenFile(paths.txt);
+  if (txt.error) return { error: unreadable(paths.txt, txt.error) };
   if (txt.text !== null) {
     const token = cleanToken(txt.text);
+    if (token) return { found: true, source: "token.txt", path: paths.txt, token };
+  }
+
+  const env = await readTokenFile(paths.env);
+  if (env.error) return { error: unreadable(paths.env, env.error) };
+  if (env.text !== null) {
+    const token = parseEnvToken(env.text);
+    if (token) return { found: true, source: "token.env", path: paths.env, token };
+  }
+  return { found: false };
+}
+
+export async function getTokenStatus(baseUrl) {
+  const paths = tokenPaths(baseUrl);
+  const host = await readPair(paths);
+  if (host.error) return host.error;
+  if (host.found) return { ...host, paths: [paths.txt, paths.env], legacy: false, host: paths.host };
+
+  const legacyTxt = await readTokenFile(LEGACY_TOKEN_TXT);
+  if (legacyTxt.error) return unreadable(LEGACY_TOKEN_TXT, legacyTxt.error);
+  if (legacyTxt.text !== null) {
+    const token = cleanToken(legacyTxt.text);
     if (token) {
-      return { found: true, source: "canvas-token.txt", path: TOKEN_TXT, token };
+      return {
+        found: true,
+        source: "legacy canvas-token.txt",
+        path: LEGACY_TOKEN_TXT,
+        token,
+        paths: [paths.txt, paths.env],
+        legacy: true,
+        host: paths.host,
+      };
     }
   }
 
-  const env = await readTokenFile(TOKEN_ENV);
-  if (env.error) return unreadable(TOKEN_ENV, env.error);
-  if (env.text !== null) {
-    const token = parseEnvToken(env.text);
+  const legacyEnv = await readTokenFile(LEGACY_TOKEN_ENV);
+  if (legacyEnv.error) return unreadable(LEGACY_TOKEN_ENV, legacyEnv.error);
+  if (legacyEnv.text !== null) {
+    const token = parseEnvToken(legacyEnv.text);
     if (token) {
-      return { found: true, source: "canvas-token.env", path: TOKEN_ENV, token };
+      return {
+        found: true,
+        source: "legacy canvas-token.env",
+        path: LEGACY_TOKEN_ENV,
+        token,
+        paths: [paths.txt, paths.env],
+        legacy: true,
+        host: paths.host,
+      };
     }
   }
 
@@ -76,40 +149,48 @@ export async function getTokenStatus() {
     source: null,
     path: null,
     token: null,
-    paths: [TOKEN_TXT, TOKEN_ENV],
+    paths: [paths.txt, paths.env],
+    legacy: false,
+    host: paths.host,
   };
 }
 
-export async function requireToken() {
-  const status = await getTokenStatus();
+export async function requireToken(baseUrl) {
+  const status = await getTokenStatus(baseUrl);
   if (!status.found) {
     const error = new Error(
       status.error
         ? status.error.message
-        : `No Canvas token found at ${TOKEN_TXT} or ${TOKEN_ENV}.`,
+        : `No Canvas token found at ${status.paths[0]} or ${status.paths[1]}.`,
     );
     error.code = status.error?.code ?? "NO_TOKEN";
-    error.paths = status.error ? [status.error.path] : [TOKEN_TXT, TOKEN_ENV];
+    error.paths = status.error ? [status.error.path] : status.paths;
     throw error;
   }
   return status;
 }
 
-export function tokenGuideText() {
+export function tokenGuideText(baseUrl) {
+  const paths = tokenPaths(baseUrl);
   return [
-    "Canvas token setup",
+    `Canvas token setup for ${paths.host}`,
     "",
-    `Save your token in one of these files:`,
-    `  ${TOKEN_TXT}`,
-    `  ${TOKEN_ENV}`,
+    "Security warning:",
+    "  A Canvas personal access token can access your whole account, not just one course.",
+    "  Create a dedicated token, keep it outside the repository, and revoke it after use.",
+    "  Never paste the token into chat.",
+    "",
+    "Save your token in one of these files:",
+    `  ${paths.txt}`,
+    `  ${paths.env}`,
     "",
     "Option A: plain text file",
-    `  1. Open ${TOKEN_TXT}`,
+    `  1. Open ${paths.txt}`,
     "  2. Paste only the token, with no label and no quotes.",
     "  3. Save the file.",
     "",
     "Option B: env file",
-    `  1. Open ${TOKEN_ENV}`,
+    `  1. Open ${paths.env}`,
     "  2. Add this line:",
     "     CANVAS_TOKEN=your-token-here",
     "  3. Save the file.",
@@ -121,18 +202,19 @@ export function tokenGuideText() {
     "  4. Copy it immediately. Canvas does not show it again.",
     "",
     "Permissions:",
-    "  On Unix, run: chmod 600 " + TOKEN_TXT,
+    "  On Unix, run: chmod 600 " + paths.txt,
     "  Never commit the token to a repository.",
     "",
     "After saving the token, run /canvas-study again from the beginning.",
   ].join("\n");
 }
 
-export async function createTokenGuide() {
+export async function createTokenGuide(baseUrl) {
+  const paths = tokenPaths(baseUrl);
   try {
-    await fs.mkdir(STUDY_DIR, { recursive: true });
+    await fs.mkdir(paths.directory, { recursive: true });
   } catch (error) {
-    const wrapped = new Error(`Cannot create ${STUDY_DIR}: ${error.message}`);
+    const wrapped = new Error(`Cannot create ${paths.directory}: ${error.message}`);
     wrapped.code = "TOKEN_DIRECTORY_ERROR";
     throw wrapped;
   }
@@ -140,38 +222,39 @@ export async function createTokenGuide() {
   let created = false;
   let stat = null;
   try {
-    stat = await fs.stat(TOKEN_TXT);
+    stat = await fs.stat(paths.txt);
   } catch (error) {
     if (error?.code !== "ENOENT") {
-      const wrapped = new Error(`Cannot inspect ${TOKEN_TXT}: ${error.message}`);
+      const wrapped = new Error(`Cannot inspect ${paths.txt}: ${error.message}`);
       wrapped.code = "TOKEN_PATH_ERROR";
       throw wrapped;
     }
   }
 
   if (stat?.isDirectory()) {
-    const error = new Error(`${TOKEN_TXT} is a directory, not a token file.`);
+    const error = new Error(`${paths.txt} is a directory, not a token file.`);
     error.code = "TOKEN_PATH_NOT_FILE";
     throw error;
   }
 
   if (!stat) {
-    await fs.writeFile(TOKEN_TXT, "", { encoding: "utf8", mode: 0o600 });
+    await fs.writeFile(paths.txt, "", { encoding: "utf8", mode: 0o600 });
     created = true;
   }
 
   try {
-    await fs.chmod(TOKEN_TXT, 0o600);
+    await fs.chmod(paths.txt, 0o600);
   } catch {
     // Windows does not use POSIX modes.
   }
 
   return {
     created,
-    directory: STUDY_DIR,
-    tokenFile: TOKEN_TXT,
-    envFile: TOKEN_ENV,
-    guide: tokenGuideText(),
+    host: paths.host,
+    directory: paths.directory,
+    tokenFile: paths.txt,
+    envFile: paths.env,
+    guide: tokenGuideText(baseUrl),
   };
 }
 

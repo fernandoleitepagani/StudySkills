@@ -180,3 +180,27 @@ export async function uniquePath(dir, filename) {
     }
   }
 }
+export async function removeOutputFiles(dir, names) {
+  const base = path.join(await resolveDocumentsDir(), "StudySkills");
+  const resolvedBase = path.resolve(base);
+  const resolvedDir = path.resolve(dir);
+  const relative = path.relative(resolvedBase, resolvedDir);
+  if (!relative || relative.startsWith("..") || path.isAbsolute(relative)) {
+    throw new Error("Refusing to remove files outside the StudySkills output root.");
+  }
+  const removed = [];
+  const missing = [];
+  for (const name of names) {
+    if (path.basename(name) !== name) throw new Error(`Refusing non-plain file name: ${name}`);
+    const file = path.join(resolvedDir, name);
+    try {
+      const stat = await fs.stat(file);
+      if (!stat.isFile()) throw new Error("not a file");
+      await fs.rm(file);
+      removed.push(name);
+    } catch {
+      missing.push(name);
+    }
+  }
+  return { removed, missing };
+}

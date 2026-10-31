@@ -7,6 +7,7 @@ import {
   makeDocumentsRunDir,
   makeWorkDir,
   resolveDocumentsDir,
+  removeOutputFiles,
 } from "./lib/files.mjs";
 import { validateRun } from "./lib/validate.mjs";
 import { inventory } from "./lib/inventory.mjs";
@@ -20,9 +21,9 @@ function parseArgs(argv) {
       const key = arg.slice(2);
       const next = argv[i + 1];
       const value = next !== undefined && !next.startsWith("--") ? next : true;
-      if (key === "path") {
-        if (!Array.isArray(flags.path)) flags.path = [];
-        if (value !== true) flags.path.push(value);
+      if (key === "path" || key === "name") {
+        if (!Array.isArray(flags[key])) flags[key] = [];
+        if (value !== true) flags[key].push(value);
       } else {
         flags[key] = value;
       }
@@ -69,6 +70,7 @@ const help = {
     "validate --run-dir DIR --plan PLAN --checks CHECKS",
     "cleanup --work-dir DIR",
     "cleanup-output --dir DIR",
+    "cleanup-failed --dir DIR --name FILE [--name FILE ...]",
     "inventory --pack DIR",
     "inventory --path PATH [--path PATH ...]",
   ],
@@ -119,9 +121,7 @@ async function main() {
     const runDir = requireFlag("run-dir");
     const planPath = requireFlag("plan");
     const checksPath = requireFlag("checks");
-    const tokenFile = flags["token-file"] && flags["token-file"] !== true ? String(flags["token-file"]) : null;
-    const token = tokenFile ? (await import("node:fs/promises")).readFile(tokenFile, "utf8").then((value) => value.trim()) : null;
-    const result = await validateRun({ runDir, planPath, checksPath, token: token ? await token : null });
+    const result = await validateRun({ runDir, planPath, checksPath });
     print(result);
     if (!result.ok) process.exitCode = 1;
     return;
@@ -138,6 +138,15 @@ async function main() {
     const dir = requireFlag("dir");
     const removed = await cleanupEmptyOutputDir(dir);
     print({ ok: true, removed });
+    return;
+  }
+
+  if (command === "cleanup-failed") {
+    const dir = requireFlag("dir");
+    const names = Array.isArray(flags.name) ? flags.name : [];
+    if (!names.length) fail("MISSING_ARGUMENT", "Use at least one --name FILE.");
+    const result = await removeOutputFiles(dir, names);
+    print({ ok: true, ...result });
     return;
   }
 

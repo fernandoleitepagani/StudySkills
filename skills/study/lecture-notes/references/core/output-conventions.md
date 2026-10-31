@@ -6,7 +6,8 @@
 - Several explicit formats produce several files.
 - No explicit format means the active skill chooses one best format.
 - Only requested files go to Documents.
-- Never create a substitute format.
+- If a requested format fails, produce a Markdown fallback only when explicitly allowed by the skill.
+- Add the fallback mapping to `plan.json` and report the replacement.
 - Never create prompts, zips, source copies, or duplicate formats.
 
 ## Citations and privacy

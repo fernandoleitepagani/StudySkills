@@ -8,7 +8,7 @@ import {
   cleanupDir,
   runCli,
   runCore,
-  writeTokenFile,
+  writeHostToken,
 } from "../test-support/temp.mjs";
 
 async function json(result) {
@@ -28,7 +28,7 @@ test("cli: token, courses, inspect, fetch, output, validate, cleanup", async () 
   const env = { XDG_DOCUMENTS_DIR: docs };
   const mock = await startMockCanvas();
   try {
-    let result = await runCli(["token-status", "--json"], { home, env });
+    let result = await runCli(["token-status", "--base-url", mock.origin, "--json"], { home, env });
     assert.equal(result.code, 0);
     let data = await json(result);
     assert.equal(data.found, false);
@@ -38,13 +38,13 @@ test("cli: token, courses, inspect, fetch, output, validate, cleanup", async () 
     data = await json(result);
     assert.equal(data.code, "NO_TOKEN");
 
-    result = await runCli(["token-guide", "--json"], { home, env });
+    result = await runCli(["token-guide", "--base-url", mock.origin, "--json"], { home, env });
     assert.equal(result.code, 0);
     data = await json(result);
     assert.equal(data.created, true);
-    await fs.access(path.join(home, ".studyskills", "canvas-token.txt"));
+    await fs.access(path.join(home, ".studyskills", "canvas", new URL(mock.origin).host.replace(/[^a-z0-9.-]/g, "_"), "token.txt"));
 
-    await writeTokenFile(home, "test-token");
+    await writeHostToken(home, mock.origin, "test-token");
     result = await runCore(["doctor", "--json"], { home, env });
     assert.equal(result.code, 0);
     data = await json(result);

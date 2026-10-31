@@ -11,8 +11,6 @@ import {
   getTokenStatus,
   redactSecrets,
   requireToken,
-  TOKEN_ENV,
-  TOKEN_TXT,
 } from "./lib/token.mjs";
 import {
   ensureDir,
@@ -22,6 +20,7 @@ import {
   writeJson,
 } from "./lib/files.mjs";
 import { extractImageSources, htmlToText } from "./lib/html-to-text.mjs";
+import { validateRun } from "./lib/validate.mjs";
 
 const MAX_FILE_BYTES = 50 * 1024 * 1024;
 const MAX_TOTAL_BYTES = 300 * 1024 * 1024;
@@ -554,11 +553,12 @@ async function main() {
       {
         ok: true,
         commands: [
-          "token-status",
-          "token-guide",
+          "token-status --base-url URL",
+          "token-guide --base-url URL",
           "courses --base-url URL",
           "inspect --base-url URL --course-id ID",
           "fetch --base-url URL --course-id ID --out WORKDIR",
+          "validate --base-url URL --run-dir DIR --plan PLAN --checks CHECKS",
         ],
         core: "Use scripts/core.mjs for doctor, workdir, output-dir, validate, cleanup, and cleanup-output.",
       },
@@ -566,11 +566,12 @@ async function main() {
         "StudySkills canvas script",
         "",
         "Commands:",
-        "  token-status",
-        "  token-guide",
+        "  token-status --base-url URL",
+        "  token-guide --base-url URL",
         "  courses --base-url URL",
         "  inspect --base-url URL --course-id ID",
         "  fetch --base-url URL --course-id ID --out WORKDIR",
+        "  validate --base-url URL --run-dir DIR --plan PLAN --checks CHECKS",
         "",
         "Core commands: use scripts/core.mjs for doctor, workdir, output-dir,",
         "validate, cleanup, and cleanup-output.",
@@ -582,38 +583,40 @@ async function main() {
   }
 
   if (command === "token-status") {
-    const status = await getTokenStatus();
+    const baseUrl = requireFlag("base-url");
+    const status = await getTokenStatus(baseUrl);
     const safe = {
       ok: true,
       found: status.found,
       source: status.source,
       path: status.path,
-      paths: [TOKEN_TXT, TOKEN_ENV],
+      paths: status.paths ?? [],
+      legacy: status.legacy ?? false,
     };
     if (status.error) safe.error = status.error;
     respond(
       safe,
       status.found
-        ? `Canvas token found in ${status.path}.`
+        ? `Canvas token found in ${status.path}.${status.legacy ? " This is a legacy global token; move it to the host-specific path." : ""}`
         : status.error
           ? status.error.message
-          : `No Canvas token found.\nLooked in:\n  ${TOKEN_TXT}\n  ${TOKEN_ENV}`,
+          : `No Canvas token found.\nLooked in:\n  ${(status.paths ?? []).join("\n  ")}`,
     );
     return;
   }
 
   if (command === "token-guide") {
-    const guide = await createTokenGuide();
+    const baseUrl = requireFlag("base-url");
+    const guide = await createTokenGuide(baseUrl);
     respond(guide, guide.guide);
     return;
   }
 
-  const tokenStatus = await requireToken().catch((error) => {
-    fail(error.code ?? "NO_TOKEN", error.message, { paths: error.paths ?? [TOKEN_TXT, TOKEN_ENV] });
-  });
-
   if (command === "courses") {
     const baseUrl = requireFlag("base-url");
+    const tokenStatus = await requireToken(baseUrl).catch((error) => {
+      fail(error.code ?? "NO_TOKEN", error.message, { paths: error.paths ?? [] });
+    });
     const client = new CanvasClient({ baseUrl, token: tokenStatus.token });
     const user = await validateToken(client);
     const coursePage = await client.getAllWithMeta("/api/v1/courses", {
@@ -642,6 +645,9 @@ async function main() {
   if (command === "inspect") {
     const baseUrl = requireFlag("base-url");
     const courseId = requireFlag("course-id");
+    const tokenStatus = await requireToken(baseUrl).catch((error) => {
+      fail(error.code ?? "NO_TOKEN", error.message, { paths: error.paths ?? [] });
+    });
     const client = new CanvasClient({ baseUrl, token: tokenStatus.token });
     const result = await inspectCourse(client, courseId);
     respond(result);
@@ -653,9 +659,26 @@ async function main() {
     const courseId = requireFlag("course-id");
     const workDir = requireFlag("out");
     await ensureDir(workDir);
+    const tokenStatus = await requireToken(baseUrl).catch((error) => {
+      fail(error.code ?? "NO_TOKEN", error.message, { paths: error.paths ?? [] });
+    });
     const client = new CanvasClient({ baseUrl, token: tokenStatus.token });
     const result = await fetchCourse(client, courseId, workDir);
     respond(result);
+    return;
+  }
+
+  if (command === "validate") {
+    const baseUrl = requireFlag("base-url");
+    const runDir = requireFlag("run-dir");
+    const planPath = requireFlag("plan");
+    const checksPath = requireFlag("checks");
+    const tokenStatus = await requireToken(baseUrl).catch((error) => {
+      fail(error.code ?? "NO_TOKEN", error.message, { paths: error.paths ?? [] });
+    });
+    const result = await validateRun({ runDir, planPath, checksPath, token: tokenStatus.token });
+    respond(result);
+    if (!result.ok) process.exitCode = 1;
     return;
   }
 
