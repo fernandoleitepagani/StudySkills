@@ -274,3 +274,106 @@ test("cli: inspect exposes choices and fetch honors a specific selection", async
     await cleanupDir(home);
   }
 });
+
+test("cli: forbidden Files and Pages are partial, not fatal", async () => {
+  const home = await makeTempDir("studyskills-cli-home-");
+  const env = { XDG_DOCUMENTS_DIR: path.join(home, "Documents") };
+  const mock = await startMockCanvas();
+  try {
+    await writeHostToken(home, mock.origin, "test-token");
+    mock.state.forbiddenSections.add("files");
+    mock.state.forbiddenSections.add("pages");
+
+    let result = await runCli(
+      ["inspect", "--base-url", mock.origin, "--course-id", "1", "--json"],
+      { home, env },
+    );
+    assert.equal(result.code, 0);
+    let data = await json(result);
+    assert.equal(data.ok, true);
+    assert.equal(data.partial, true);
+    assert.equal(data.allForbidden, false);
+    assert.deepEqual(data.forbiddenSections, ["pages", "files"]);
+    assert.equal(data.sections.pages.status, 403);
+    assert.equal(data.sections.files.status, 403);
+    assert.equal(data.availableSections.includes("assignments"), true);
+    assert.ok(data.usableSources > 0);
+
+    result = await runCore(["workdir", "--topic", "Statistics 101", "--json"], { home, env });
+    const work = (await json(result)).workDir;
+    try {
+      result = await runCli(
+        [
+          "fetch",
+          "--base-url", mock.origin,
+          "--course-id", "1",
+          "--out", work,
+          "--json",
+        ],
+        { home, env },
+      );
+      assert.equal(result.code, 0);
+      data = await json(result);
+      assert.equal(data.partial, true);
+      assert.equal(data.allForbidden, false);
+      assert.deepEqual(data.forbiddenSections, ["pages", "files"]);
+      assert.equal(data.downloadedFiles, 0);
+      const materials = await fs.readFile(path.join(work, "sources", "materials.md"), "utf8");
+      assert.match(materials, /Problem Set 1/);
+      assert.match(materials, /Exam date/);
+      assert.equal(materials.includes("Week one content"), false);
+    } finally {
+      await cleanupDir(work);
+    }
+  } finally {
+    await mock.close();
+    await cleanupDir(home);
+  }
+});
+
+test("cli: all core sections forbidden stops the fetch", async () => {
+  const home = await makeTempDir("studyskills-cli-home-");
+  const env = { XDG_DOCUMENTS_DIR: path.join(home, "Documents") };
+  const mock = await startMockCanvas();
+  try {
+    await writeHostToken(home, mock.origin, "test-token");
+    for (const section of ["modules", "pages", "assignments", "discussions", "announcements", "files"]) {
+      mock.state.forbiddenSections.add(section);
+    }
+
+    let result = await runCli(
+      ["inspect", "--base-url", mock.origin, "--course-id", "1", "--json"],
+      { home, env },
+    );
+    assert.equal(result.code, 0);
+    let data = await json(result);
+    assert.equal(data.ok, false);
+    assert.equal(data.allForbidden, true);
+    assert.equal(data.forbiddenSections.length, 6);
+
+    result = await runCore(["workdir", "--topic", "Statistics 101", "--json"], { home, env });
+    const work = (await json(result)).workDir;
+    try {
+      result = await runCli(
+        [
+          "fetch",
+          "--base-url", mock.origin,
+          "--course-id", "1",
+          "--out", work,
+          "--json",
+          "--quiet",
+        ],
+        { home, env },
+      );
+      assert.notEqual(result.code, 0);
+      data = await json(result);
+      assert.equal(data.code, "ALL_SECTIONS_FORBIDDEN");
+      assert.equal(JSON.stringify(data).includes("expire"), false);
+    } finally {
+      await cleanupDir(work);
+    }
+  } finally {
+    await mock.close();
+    await cleanupDir(home);
+  }
+});

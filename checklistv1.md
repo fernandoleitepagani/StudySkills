@@ -23,12 +23,6 @@ Release gate: every box must be checked or explicitly removed from v1 scope. No 
 - [ ] Make Claude Code GUI available.
 - [ ] Make OpenCode GUI available.
 - [ ] Make Codex GUI available.
-- [ ] Obtain a Canvas sandbox course.
-- [ ] Obtain a read-only Canvas token for that course.
-- [ ] Prepare representative local sources: PDF, DOCX, PPTX, Markdown, transcript, folder tree, attachments.
-- [ ] Install document viewers and validators: PDF viewer, Word/LibreOffice, PowerPoint/LibreOffice, CSV parser, `pdfinfo`, `pdftotext`, `unzip`.
-- [ ] Prepare a clean home directory and a clean harness profile for install tests.
-- [ ] Prepare a second machine or clean VM if OS support requires it.
 
 ## 2. Automated quality gate
 
@@ -79,11 +73,11 @@ Release gate: every box must be checked or explicitly removed from v1 scope. No 
 
 ### OpenCode
 
-- [ ] Install the whole collection from `main` on a clean profile.
-- [ ] Confirm all 8 skills are listed.
-- [ ] Install a single skill independently.
-- [ ] Confirm a single-skill install has all local core files.
-- [ ] Confirm no duplicate skills when both plugin and copied installs are present.
+- [x] Install the whole collection from `main` on a clean profile.
+- [x] Confirm all 8 skills are listed.
+- [x] Install a single skill independently.
+- [x] Confirm a single-skill install has all local core files.
+- [x] Confirm no duplicate skills when both plugin and copied installs are present.
 - [ ] Confirm `npx skills@latest update` works.
 - [ ] Remove and reinstall.
 - [ ] Repeat in the GUI.

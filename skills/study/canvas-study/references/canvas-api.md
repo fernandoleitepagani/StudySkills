@@ -169,12 +169,25 @@ Record and continue when a single item fails:
 - File too large.
 - Unsupported extension.
 
-Stop when the course itself cannot be fetched, the token is invalid, or the base URL is wrong.
+A section-level 403 is a partial failure. Continue with sections that work. Stop only when the course root is forbidden or every core section returns 403.
+
+Core sections:
+
+- modules
+- pages
+- assignments
+- discussions
+- announcements
+- files
+
+Stop when the course itself cannot be fetched, the token is invalid, every core section is forbidden, or the base URL is wrong.
 
 Error codes:
 
 - `UNAUTHORIZED` for 401.
-- `FORBIDDEN` for 403 without a rate-limit marker.
+- `FORBIDDEN` for 403 without a rate-limit marker. It is not a token-expiry error.
+- `ALL_SECTIONS_FORBIDDEN` when every core section returns 403.
+- `NO_USABLE_MATERIALS` when the accessible sections contain no readable content.
 - `RATE_LIMITED` for 429 or a 403 with `Rate Limit Exceeded`.
 - `NOT_FOUND` for 404.
 - `SERVER_ERROR` for 5xx.

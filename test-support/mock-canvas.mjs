@@ -26,7 +26,13 @@ export async function startMockCanvas({ token = "test-token" } = {}) {
   const state = {
     rateLimitOnce: false,
     rateLimitHits: 0,
+    forbiddenSections: new Set(),
     requests: [],
+  };
+  const forbidden = (res, section) => {
+    if (!state.forbiddenSections.has(section)) return false;
+    json(res, 403, { error: `forbidden: ${section}` });
+    return true;
   };
 
   const server = http.createServer(async (req, res) => {
@@ -77,42 +83,50 @@ export async function startMockCanvas({ token = "test-token" } = {}) {
     }
 
     if (url.pathname === "/api/v1/courses/1/modules") {
+      if (forbidden(res, "modules")) return;
       json(res, 200, fixture.modules);
       return;
     }
 
     if (url.pathname === "/api/v1/courses/1/pages") {
+      if (forbidden(res, "pages")) return;
       json(res, 200, fixture.pages);
       return;
     }
 
     if (url.pathname === "/api/v1/courses/1/pages/intro") {
+      if (forbidden(res, "pages")) return;
       json(res, 200, fixture.page);
       return;
     }
 
     if (url.pathname === "/api/v1/courses/1/pages/week%201") {
+      if (forbidden(res, "pages")) return;
       json(res, 200, fixture.pageWeek);
       return;
     }
 
     if (url.pathname === "/api/v1/courses/1/assignments") {
+      if (forbidden(res, "assignments")) return;
       json(res, 200, fixture.assignments);
       return;
     }
 
     if (url.pathname === "/api/v1/courses/1/discussion_topics") {
       const onlyAnnouncements = url.searchParams.get("only_announcements");
+      if (forbidden(res, onlyAnnouncements === "true" ? "announcements" : "discussions")) return;
       json(res, 200, onlyAnnouncements === "true" ? fixture.announcements : fixture.discussions);
       return;
     }
 
     if (url.pathname === "/api/v1/courses/1/files") {
+      if (forbidden(res, "files")) return;
       json(res, 200, fixture.files);
       return;
     }
 
     if (url.pathname === "/api/v1/courses/1/front_page") {
+      if (forbidden(res, "front_page")) return;
       json(res, 200, fixture.frontPage);
       return;
     }

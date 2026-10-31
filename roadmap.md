@@ -149,6 +149,15 @@ There is no plan to add other harnesses.
 - Final 16-skill collection integration.
 - v1.0.0 remains gated on the remaining harness and document checks.
 
+## v0.9.0 - Partial Canvas Access
+
+- A section-level Canvas 403 is a partial failure, not a total stop.
+- Continue with readable modules, assignments, discussions, announcements, syllabus, and front page.
+- Stop only when every core section is forbidden or no readable material remains.
+- Keep token-expiry guidance for 401 only.
+- Added regression coverage for partial and all-forbidden Canvas access.
+- v1.0.0 remains gated on Codex and final release checks.
+
 ## v1.0.0 - Stable
 
 - Stable skill contract, migration guide, and security audit.

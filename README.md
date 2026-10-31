@@ -2,7 +2,7 @@
 
 Agent skills for studying, learning, and creating.
 
-Current release: `v0.8.0`.
+Current release: `v0.9.0`.
 
 [![License: MIT](https://img.shields.io/badge/license-MIT-1f3a5f.svg)](./LICENSE)
 [![Node](https://img.shields.io/badge/node-%3E%3D20-1f3a5f.svg)](https://nodejs.org)

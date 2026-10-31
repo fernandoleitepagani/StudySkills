@@ -58,5 +58,7 @@ Outputs go to:
 
 - **No token found:** choose **Guide me** and follow the host-specific path.
 - **Token found but rejected:** Canvas commonly expires tokens after 30 days. Create a new token and replace the value in the token file.
-- **403:** the token is valid but lacks access to that endpoint.
+- **403 on one section:** the token is valid but that section is restricted. The skill continues with other sections.
+- **403 on every core section:** the course has no accessible core section. Try another course or use local files.
+- **401:** the token was rejected. Expiry is the most likely cause; Canvas tokens commonly expire after 30 days.
 - **Rate limit:** wait and retry later.

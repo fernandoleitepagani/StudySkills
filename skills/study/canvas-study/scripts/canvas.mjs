@@ -116,6 +116,33 @@ async function attempt(label, fn, errors) {
   }
 }
 
+async function attemptSection(label, fn) {
+  try {
+    return { ok: true, value: await fn(), error: null };
+  } catch (error) {
+    return { ok: false, value: null, error: { label, ...safeError(error) } };
+  }
+}
+
+const CORE_SECTIONS = ["modules", "pages", "assignments", "discussions", "announcements", "files"];
+
+function summarizeAccess(sections, counts, optional = {}) {
+  const forbiddenSections = CORE_SECTIONS.filter((name) => sections[name]?.status === 403);
+  const availableSections = CORE_SECTIONS.filter((name) => (counts[name] ?? 0) > 0);
+  const accessibleSections = CORE_SECTIONS.filter((name) => sections[name]?.ok);
+  const allForbidden = CORE_SECTIONS.every((name) => sections[name]?.status === 403);
+  const optionalSources = (optional.syllabus ? 1 : 0) + (optional.frontPage ? 1 : 0);
+  return {
+    sections,
+    forbiddenSections,
+    availableSections,
+    accessibleSections,
+    partial: forbiddenSections.length > 0,
+    allForbidden,
+    usableSources: availableSections.length + optionalSources,
+  };
+}
+
 function pickCourse(course) {
   return {
     id: String(course.id),
@@ -155,15 +182,38 @@ async function loadCourseLists(client, courseId, { errors, truncations = {}, pro
   const course = await client.getJson(`/api/v1/courses/${courseId}`, { "include[]": ["syllabus", "term"] });
   progress(`${progressLabel} ${course.name ?? courseId}...`);
 
+  const sections = {
+    syllabus: {
+      ok: Boolean(course.syllabus_body),
+      status: 200,
+      count: course.syllabus_body ? 1 : 0,
+    },
+  };
+
   async function getList(label, pathname, params, maxPages = 100) {
-    const result = await attempt(
+    const result = await attemptSection(
       label,
       () => client.getAllWithMeta(pathname, params, { maxPages }),
-      errors,
     );
-    if (!result) return [];
-    truncations[label] = result.truncated;
-    return result.items;
+    if (!result.ok) {
+      sections[label] = {
+        ok: false,
+        status: result.error.status,
+        code: result.error.code,
+        message: result.error.message,
+        count: 0,
+      };
+      errors.push(result.error);
+      return [];
+    }
+    truncations[label] = result.value.truncated;
+    sections[label] = {
+      ok: true,
+      status: 200,
+      count: result.value.items.length,
+      truncated: Boolean(result.value.truncated),
+    };
+    return result.value.items;
   }
 
   const modules = await getList("modules", `/api/v1/courses/${courseId}/modules`, { "include[]": "items", per_page: 100 });
@@ -172,7 +222,34 @@ async function loadCourseLists(client, courseId, { errors, truncations = {}, pro
   const discussions = await getList("discussions", `/api/v1/courses/${courseId}/discussion_topics`, { per_page: 100 });
   const announcements = await getList("announcements", `/api/v1/courses/${courseId}/discussion_topics`, { only_announcements: true, per_page: 100 });
   const files = await getList("files", `/api/v1/courses/${courseId}/files`, { per_page: 100, sort: "position", order: "asc" });
-  const frontPage = await attempt("front_page", () => client.getJson(`/api/v1/courses/${courseId}/front_page`), errors);
+  const frontPageResult = await attemptSection(
+    "front_page",
+    () => client.getJson(`/api/v1/courses/${courseId}/front_page`),
+  );
+  sections.front_page = frontPageResult.ok
+    ? { ok: true, status: 200, count: 1 }
+    : {
+        ok: false,
+        status: frontPageResult.error.status,
+        code: frontPageResult.error.code,
+        message: frontPageResult.error.message,
+        count: 0,
+      };
+  if (!frontPageResult.ok) errors.push(frontPageResult.error);
+  const frontPage = frontPageResult.value;
+
+  const counts = {
+    modules: modules.length,
+    pages: pagesList.length,
+    assignments: assignments.length,
+    discussions: discussions.length,
+    announcements: announcements.length,
+    files: files.length,
+  };
+  const access = summarizeAccess(sections, counts, {
+    syllabus: Boolean(course.syllabus_body),
+    frontPage: Boolean(frontPage),
+  });
 
   return {
     course,
@@ -183,6 +260,8 @@ async function loadCourseLists(client, courseId, { errors, truncations = {}, pro
     announcements,
     files,
     frontPage,
+    sections,
+    access,
     truncations,
   };
 }
@@ -343,7 +422,7 @@ async function inspectCourse(client, courseId) {
   const allowed = files.filter((file) => allowedFile(file) && fileSize(file) <= MAX_FILE_BYTES);
   const estimatedBytes = allowed.reduce((sum, file) => sum + fileSize(file), 0);
   return {
-    ok: true,
+    ok: !data.access.allForbidden,
     course: pickCourse(data.course),
     counts: {
       modules: data.modules.length,
@@ -359,6 +438,13 @@ async function inspectCourse(client, courseId) {
     estimatedSize: formatBytes(estimatedBytes),
     frontPage: Boolean(data.frontPage),
     choices: buildChoices(data, allowed),
+    sections: data.access.sections,
+    forbiddenSections: data.access.forbiddenSections,
+    availableSections: data.access.availableSections,
+    accessibleSections: data.access.accessibleSections,
+    partial: data.access.partial,
+    allForbidden: data.access.allForbidden,
+    usableSources: data.access.usableSources,
     errors,
     truncated: data.truncations,
   };
@@ -445,6 +531,31 @@ async function fetchCourse(client, courseId, workDir, selection = null) {
   const errors = [];
   const truncations = {};
   let data = await loadCourseLists(client, courseId, { errors, truncations, progressLabel: "Fetching" });
+  if (data.access.allForbidden) {
+    throw new CanvasError(
+      "Canvas accepted the token, but every core course section is forbidden.",
+      {
+        code: "ALL_SECTIONS_FORBIDDEN",
+        body: {
+          forbiddenSections: data.access.forbiddenSections,
+          sections: data.access.sections,
+        },
+      },
+    );
+  }
+  if (data.access.usableSources === 0) {
+    throw new CanvasError(
+      "Canvas did not return any readable course material.",
+      {
+        code: "NO_USABLE_MATERIALS",
+        body: {
+          forbiddenSections: data.access.forbiddenSections,
+          availableSections: data.access.availableSections,
+          sections: data.access.sections,
+        },
+      },
+    );
+  }
   data = applySelection(data, selection);
   const course = data.course;
   const sourcesDir = path.join(workDir, "sources");
@@ -475,6 +586,12 @@ async function fetchCourse(client, courseId, workDir, selection = null) {
     baseUrl: client.baseUrl,
     fetchedAt: new Date().toISOString(),
     selection: data.selection ?? selection ?? { mode: "everything" },
+    sections: data.access.sections,
+    forbiddenSections: data.access.forbiddenSections,
+    availableSections: data.access.availableSections,
+    partial: data.access.partial,
+    allForbidden: data.access.allForbidden,
+    usableSources: data.access.usableSources,
     stats: {
       modules: data.modules.length,
       pages: pages.length,
@@ -686,6 +803,12 @@ async function fetchCourse(client, courseId, workDir, selection = null) {
     truncated: manifest.truncated,
     externalMaterials: manifest.externalMaterials,
     selection: data.selection ?? selection ?? { mode: "everything" },
+    sections: data.access.sections,
+    forbiddenSections: data.access.forbiddenSections,
+    availableSections: data.access.availableSections,
+    partial: data.access.partial,
+    allForbidden: data.access.allForbidden,
+    usableSources: data.access.usableSources,
     errors,
   };
 }

@@ -2,7 +2,7 @@
 
 ## What it does
 
-`canvas-study` turns one Canvas course into finished study documents. It fetches the course materials read-only, asks what you want through the harness native question UI, and generates only the formats you request. The current release is v0.8.0.
+`canvas-study` turns one Canvas course into finished study documents. It fetches the course materials read-only, asks what you want through the harness native question UI, and generates only the formats you request. The current release is v0.9.0.
 
 Outputs can include a study plan, summary, flashcards, practice exam, concept map, or a custom study document. Files are saved in `~/Documents/StudySkills/<course>/<run>/`.
 
@@ -76,6 +76,8 @@ The skill shows a plan. After approval, it fetches the course and saves:
 - Inline images are downloaded only from Canvas. External images are listed as links.
 - Courses with more than 500 pages report skipped pages.
 - If a requested format fails, a Markdown fallback is written and reported.
+
+If Canvas forbids one section, such as Files or Pages, the skill continues with the sections it can read and reports the partial result. It stops only when every core section is forbidden or no readable material remains.
 
 ## It's working if
 

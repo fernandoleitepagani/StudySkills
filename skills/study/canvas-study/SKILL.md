@@ -150,7 +150,19 @@ Run:
 node <skill-dir>/scripts/canvas.mjs inspect --base-url <url> --course-id <id> --json
 ```
 
-Show the counts, estimated size, skipped categories, and `choices`. Then use the native question tool:
+Show the counts, estimated size, skipped categories, and `choices`.
+
+Before choosing materials, inspect the access fields:
+
+- `allForbidden`: all six core sections returned `403`. Stop. Explain that Canvas accepted the token but refused every core section. Do not ask for a new token automatically. Suggest checking the course role, Files and Pages visibility, another course, or local attachments.
+- `partial`: some core sections are forbidden. Report which sections are unavailable, then continue with the remaining sections. A section-level `403` is not a reason to stop.
+- `usableSources: 0` but `allForbidden` is false: no readable material was found. Stop and offer local attachments. This is not a token-expiry message.
+- `UNAUTHORIZED`: this is a token problem and keeps the existing expiry guidance.
+- `FORBIDDEN` on the course itself: stop; the course root is inaccessible.
+
+Do not try to replace the token for a section-level `403`.
+
+Then use the native question tool:
 
 Question: **Which materials should I use?**
 
@@ -162,8 +174,9 @@ Options:
 The custom typed answer is the specific selection path.
 
 - **Everything:** include all eligible text, pages, assignments, discussions, announcements, files, syllabus, and front page within caps. Media and quizzes remain skipped.
-- **Specific:** accept module, page, assignment, discussion, announcement, or file names or IDs. Resolve them against `choices`. If a name is not found, show the matches and ask once more.
+- **Specific:** accept module, page, assignment, discussion, announcement, or file names or IDs. Resolve them against `choices`. Only offer sections that are available. If a name is not found, show the matches and ask once more.
 - If the selection exceeds a cap, show the overage and ask the user to narrow it. Never truncate silently.
+- If Pages or Files are forbidden, say so in the plan and exclude them from the default "Everything" scope.
 
 Write `workDir/selection.json`:
 
@@ -292,6 +305,10 @@ The script writes:
 
 It handles pagination, truncation reporting, rate limits, file caps, image caps, HTML to text, external materials, and skipped files. Report any fetch errors, truncations, external materials, or skipped files to the user.
 
+A partial fetch is valid. Report `forbiddenSections` and `availableSections`, then continue with the readable material.
+
+`ALL_SECTIONS_FORBIDDEN` means Canvas accepted the token but refused every core section. Stop, explain the permission/course-visibility problem, and offer local attachments. `NO_USABLE_MATERIALS` means the accessible sections were empty. Stop and offer local attachments. Neither is a token-expiry case.
+
 Only after the fetch succeeds, create the output directory:
 
 ```bash
@@ -413,6 +430,8 @@ Show a concise report:
 - Truncated collections and skipped pages.
 - Skipped files and images.
 - Selected sources that were skipped, with reasons.
+- Forbidden Canvas sections and sections actually used.
+- Whether the run was partial.
 - External materials and external images.
 - Web research status and source count.
 - Quality review result.
@@ -446,7 +465,8 @@ Stop immediately and report when:
 - No token and the user declines the guide.
 - The token file is unreadable and the user declines the guide.
 - `UNAUTHORIZED`: the token was rejected, likely expired or revoked.
-- `FORBIDDEN`: the token lacks access to the course or endpoint.
+- `FORBIDDEN` on the course root, or `ALL_SECTIONS_FORBIDDEN` when every core section is forbidden. A single forbidden section is a partial run, not a stop.
+- `NO_USABLE_MATERIALS`: the accessible sections contained no readable material.
 - `RATE_LIMITED`: retries are exhausted and the user does not want to wait.
 - The Canvas URL is invalid after one attempt.
 - The user cancels the plan.
