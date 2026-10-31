@@ -1,6 +1,6 @@
 {
   "name": "study-skills",
-  "version": "0.4.3",
+  "version": "0.4.4",
   "private": true,
   "type": "module",
   "description": "Agent skills for studying, learning, and creating.",

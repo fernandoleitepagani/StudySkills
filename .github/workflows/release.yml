@@ -33,18 +33,10 @@ jobs:
       - name: Run tests
         run: node --test
 
-      - name: Build release asset
-        run: |
-          git archive \
-            --format=zip \
-            --prefix=StudySkills/ \
-            --output=StudySkills.zip \
-            "$GITHUB_REF_NAME"
-
       - name: Create release
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          gh release create "$GITHUB_REF_NAME" StudySkills.zip \
+          gh release create "$GITHUB_REF_NAME" \
             --generate-notes \
             --latest

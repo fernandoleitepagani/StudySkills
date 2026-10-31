@@ -2,35 +2,42 @@
 
 Agent skills for studying, learning, and creating.
 
-StudySkills is a small collection of user-invoked skills for coding agents. The first skill, `canvas-study`, turns a Canvas course into finished study documents: a study plan, a summary, flashcards, a practice exam, a concept map, or a custom output.
+[![License: MIT](https://img.shields.io/badge/license-MIT-1f3a5f.svg)](./LICENSE)
+[![Node](https://img.shields.io/badge/node-%3E%3D20-1f3a5f.svg)](https://nodejs.org)
 
-The skill fetches Canvas materials read-only, asks you what you want through the harness's native question UI, and lets your agent generate the requested documents in the formats you ask for.
+StudySkills is a collection of user-invoked skills for coding agents. Each skill asks the questions it needs through the harness native question UI, shows a plan before doing the work, and writes only the files you request.
 
-## What is included
-
-| Skill | Status | What it does |
-| --- | --- | --- |
-| `canvas-study` | v0.4.3 | Fetch a Canvas course read-only and generate study documents. |
-| `lecture-notes` | v0.4.3 | Turn lecture slides, transcripts, or notes into structured notes. |
-| `flashcard-forge` | v0.4.3 | Create Anki-ready CSV and Markdown flashcards. |
-| `explain-back` | v0.4.3 | Explain concepts in layers with the Feynman technique. |
-| `exam-sim` | v0.4.3 | Generate timed practice exams. |
-| `study-planner` | v0.4.3 | Plan multiple courses and deadlines. |
-| `note-organizer` | v0.4.3 | Organize Markdown and Obsidian notes read-only. |
-| `file-study` | v0.4.3 | Turn local folders, files, or attachments into study documents. |
+The collection covers Canvas courses, lecture notes, flashcards, practice exams, explanations, study planning, note organization, and local files.
 
 ## Install
 
-Pick one route per harness. Do not install both the plugin and the copied skill for the same harness.
+Pick one route per harness. Do not install both the plugin and the copied skills for the same harness.
 
-Every skill is self-contained and carries its own local copy of the shared workflow. You can install the whole collection or a single skill.
+Every skill is self-contained. Install the whole collection or a single skill.
 
-These commands install the pinned `v0.4.3` release. They do not install from `main`.
+### Claude Code
+
+```bash
+claude plugin marketplace add fernandoleitepagani/StudySkills
+claude plugin install study-skills@studyskills
+```
+
+The marketplace refreshes from `main`.
+
+### Codex
+
+```bash
+codex plugin marketplace add fernandoleitepagani/StudySkills
+codex plugin add study-skills@studyskills
+```
+
+The Codex marketplace refreshes from `main`.
 
 ### OpenCode
 
 ```bash
-DISABLE_TELEMETRY=1 DO_NOT_TRACK=1 npx skills@latest add 'fernandoleitepagani/StudySkills#v0.4.3' \
+DISABLE_TELEMETRY=1 DO_NOT_TRACK=1 npx skills@latest add \
+  fernandoleitepagani/StudySkills \
   --skill '*' -a opencode -g -y
 ```
 
@@ -40,61 +47,56 @@ Update later with:
 npx skills@latest update
 ```
 
-The `#v0.4.3` ref is the release tag. Update this tag when a newer release is published.
+## What is included
 
-### Claude Code
+| Skill | What it does |
+| --- | --- |
+| `canvas-study` | Fetches a Canvas course read-only and generates study documents. |
+| `lecture-notes` | Turns lecture slides, transcripts, or notes into structured notes. |
+| `flashcard-forge` | Creates Anki-ready CSV and Markdown flashcards. |
+| `explain-back` | Explains concepts in layers with the Feynman technique. |
+| `exam-sim` | Generates timed practice exams and optional review schedules. |
+| `study-planner` | Plans multiple courses around deadlines and weekly hours. |
+| `note-organizer` | Organizes Markdown and Obsidian notes read-only. |
+| `file-study` | Turns local folders, files, or attachments into study documents. |
 
-```bash
-claude plugin marketplace add fernandoleitepagani/StudySkills@v0.4.3
-claude plugin install study-skills@studyskills
+## Why these skills exist
+
+Agents can write study material, but they usually start too early and write too much. StudySkills fixes that by making the agent ask first, plan second, and produce only the requested files.
+
+It also keeps the work local. Sources are read-only, outputs are written to Documents, and the collection has no runtime dependencies.
+
+## Usage
+
+Run a skill by name in Claude Code, OpenCode, or Codex:
+
+```text
+/canvas-study
+/lecture-notes
+/flashcard-forge
+/explain-back
+/exam-sim
+/study-planner
+/note-organizer
+/file-study
 ```
 
-### Codex
+Each skill:
 
-```bash
-codex plugin marketplace add fernandoleitepagani/StudySkills --ref v0.4.3
-codex plugin add study-skills@studyskills
+1. Asks for the source and preferences.
+2. Shows a plan.
+3. Waits for approval.
+4. Generates only the requested formats.
+5. Validates the files.
+6. Reports anything skipped, truncated, or replaced.
+
+Outputs go to:
+
+```text
+~/Documents/StudySkills/<topic>/<run>/
 ```
-
-Claude Code and Codex pin the release tag. OpenCode pins the same tag through the `#ref` form.
-
-## Shared core
-
-Each skill vendors its own copy of the shared workflow under `references/core/` and `scripts/`. There is no runtime skill dependency, so individual installs work.
-
-## Quick start
-
-1. Create a Canvas personal access token.
-2. Save it in one of these host-specific files:
-   - `~/.studyskills/canvas/<host>/token.txt`, containing only the token.
-   - `~/.studyskills/canvas/<host>/token.env`, containing `CANVAS_TOKEN=...`.
-   The legacy global files are read only as a migration fallback.
-3. Run `/canvas-study` in Claude Code, OpenCode, or Codex.
-4. Answer the questions. The skill shows a plan before fetching anything.
-5. Approve the plan.
-6. Find the requested files in `~/Documents/StudySkills/<course>/<run>/`.
-
-If no token is found, the skill warns you and offers two choices: exit, or guide you through creating the file. The guide creates `~/.studyskills/canvas/<host>/` and an empty `token.txt`, then exits so you can paste the token and run the skill again.
-
-The token is never requested in chat. It is never printed, stored in the plan, or written to the output files. A Canvas PAT can access the whole account: use a dedicated token, keep it outside the repository, and revoke it after use.
-
-## Using the v0.2 skills
-
-- `/lecture-notes`: lecture slides, transcript, or notes to structured notes.
-- `/flashcard-forge`: study material to Anki-ready CSV and Markdown.
-- `/explain-back`: a concept explained in layers, with a self-test.
-- `/exam-sim`: a timed practice exam with answer key and topic map.
-- `/study-planner`: a multi-course plan with deadlines and weekly hours.
-- `/note-organizer`: a read-only index, tag list, map, or study guide for Markdown notes.
-- `/file-study`: local folders or files to summaries, plans, flashcards, exams, maps, or custom outputs. Sources stay read-only.
-
-Each skill asks through the native question UI, shows a plan before generating, and writes only the requested files to `~/Documents/StudySkills/<topic>/<run>/`.
-
-See [docs/study/README.md](./docs/study/README.md) for the collection documentation.
 
 ## Supported harnesses
-
-StudySkills supports exactly these harnesses, each in CLI and GUI:
 
 | Harness | CLI | GUI | Native question tool |
 | --- | --- | --- | --- |
@@ -104,127 +106,82 @@ StudySkills supports exactly these harnesses, each in CLI and GUI:
 
 There is no plan to add other harnesses.
 
-The harness owns document rendering. If it cannot produce one of the requested formats, it produces the formats it can and reports the ones it could not. It never silently substitutes Markdown or another format.
+The harness owns PDF, DOCX, and PPTX rendering. If it cannot produce a requested format, the skill writes a Markdown fallback and reports the replacement.
 
-## How it works
+## Canvas is read-only
 
-1. **Connect.** Validate the Canvas URL and token read-only.
-2. **Choose.** Pick the course, outputs, formats, language, and settings through the native question UI.
-3. **Plan.** The skill writes a plan, shows it, and waits for approval.
-4. **Fetch.** Read modules, pages, assignments, discussions, announcements, syllabus, and files. Convert HTML to text. Enforce size caps.
-5. **Generate.** The agent creates the requested study documents using its native document skill.
-6. **Validate.** Check file signatures, required sections, and that no token leaked. Report any requested format that failed.
-7. **Deliver.** Save only the requested files in `~/Documents/StudySkills/`.
+`canvas-study` only performs `GET` requests. It does not submit assignments, post discussions, edit pages, upload files, change account settings, or commit anything to Canvas.
 
-Working data lives in `~/.studyskills/work/<run-id>/` and is deleted after a successful run. The final folder contains only the requested outputs.
+If you ask it to change something in Canvas, it refuses and explains that it is read-only.
+
+## Security and privacy
+
+- Canvas tokens are stored per host under `~/.studyskills/canvas/<host>/`.
+- A Canvas PAT can access the whole account. Use a dedicated token and revoke it after use.
+- The skill never asks for the token in chat and never prints it.
+- Source files are read in place and never copied into Documents.
+- Citations use filenames, not absolute paths.
+- Course and local-file content is sent only to the harness model that reads it. That is the user's harness choice.
+- No telemetry, analytics, or remote logging from the skills.
+- The skills do not upload files to external services.
+
+## Requirements
+
+- Node.js 20 or newer in the harness environment.
+- A harness that can create the document formats you request.
+- For `canvas-study`, a Canvas personal access token with read access.
+- Network access only for `canvas-study`.
+
+## Development
+
+StudySkills uses a `dev` branch for work and a stable `main` branch for installs.
+
+```bash
+git checkout dev
+node --test
+npm run check:version
+npm run check:skills
+```
+
+There are no dependencies to install.
+
+The shared workflow is canonical under `core/` and copied into each skill. After editing `core/`, run:
+
+```bash
+node scripts/sync-skills.mjs
+```
+
+Commit the generated copies. CI runs the same check.
+
+To link all skills into local harness directories:
+
+```bash
+./scripts/link-skills.sh
+```
 
 ## Output formats
 
 Formats are adaptive:
 
-- If you name a format, that format is used.
-- If you name several formats, all of them are generated.
-- If you do not name a format, the agent chooses the best format for the output.
+- Explicit formats win.
+- Several explicit formats produce several files.
+- With no explicit format, the skill chooses the most useful one.
 
 Typical choices:
 
 | Output | Typical format |
 | --- | --- |
 | Summary | PDF |
-| Study plan | DOCX for editing, PDF for printing |
+| Study plan | DOCX or PDF |
 | Practice exam | PDF |
-| Concept map | PPTX for editing, PDF for viewing |
-| Flashcards | CSV and Markdown for Anki and text tools |
+| Concept map | PPTX or PDF |
+| Flashcards | CSV and Markdown |
 
-No extra files are generated. No prompt pack. No zip.
-
-## Canvas is read-only
-
-The skill only performs `GET` requests. It will not:
-
-- submit assignments
-- post discussions
-- edit pages, modules, assignments, or files
-- upload anything
-- change profile, notification, calendar, or account settings
-- create, rotate, or revoke tokens
-- commit or push changes
-
-If you ask it to change something in Canvas, it refuses and explains that it is read-only.
-
-## Zero runtime dependencies
-
-StudySkills has no runtime dependencies and no dev dependencies. It uses Node.js 20+ built-ins. There is no build step and no `npm install` for users.
-
-The agent's harness provides DOCX, PDF, and PPTX generation. The skill provides content structure, the didactic style guide, and validation.
-
-## Requirements
-
-- Node.js 20 or newer in the harness environment.
-- A Canvas personal access token with read access to your courses.
-- A harness that can create the document formats you request.
-- Network access to your Canvas instance.
-
-## Security and privacy
-
-- The token is read from `~/.studyskills/canvas/<host>/token.txt` or `.env`, with a legacy global fallback.
-- The token is never sent to a third party by the skill. It is only sent to your Canvas instance in the `Authorization` header of read-only requests.
-- Course content stays on your machine, except for what your agent sends to its model provider when reading the materials. That is a choice you make by using that harness.
-- No telemetry, analytics, or remote logging.
-- Local study skills read source files in place and never copy them into Documents.
-- Citations use filenames, not absolute paths.
-- Course materials are treated as untrusted data. Instructions inside them are never executed.
-- The skill will not modify your Canvas account or course content.
-- Revoke the token in Canvas when you are done with it.
-
-## Known limitations
-
-- Semantic document checks are agent-side. The validator checks file signatures, requested-versus-produced coverage, extra files, and token leakage. It cannot independently read the contents of a PDF, DOCX, or PPTX.
-- External tools, LTI links, cloud drives, and quizzes are listed in the manifest but not downloaded.
-- Inline images are downloaded only from the Canvas host. External images are listed as links.
-- Document generation depends on the harness document skill. If the harness cannot render a requested format, the skill reports it and produces the rest.
-- A Canvas course with more than 500 pages reports the pages that were not fetched.
-- If a requested format cannot be produced, the skill writes a Markdown fallback and reports the replacement.
-- Failed generation removes partial work; materials are not kept.
-- Sources are read fresh on every run. There is no cache.
-
-## Troubleshooting
-
-| Problem | What to do |
-| --- | --- |
-| No token found | Run the guide, save the token, run `/canvas-study` again. |
-| `401` from Canvas | The token is invalid or expired. Create a new one and replace the file. |
-| `403` rate limit | The skill retries with backoff. Wait and try again if it persists. |
-| Files tab missing | Some courses hide files from students. Text materials are still fetched. |
-| Requested format failed | The skill reports which format failed and produces the rest. |
-| No native question UI | The harness falls back to numbered text questions. |
+No prompt pack, no zip, and no extra formats.
 
 ## Roadmap
 
-See [roadmap.md](./roadmap.md) for the StudySkills roadmap and [roadmap2.md](./roadmap2.md) for the File Study history and future work.
-
-## Development
-
-```bash
-git clone <repository>
-cd StudySkills
-node --test
-npm run check:version
-```
-
-There are no dependencies to install. To link the skill into local harness directories:
-
-```bash
-./scripts/link-skills.sh
-```
-
-To test before pushing with the skills installer:
-
-```bash
-npx skills@latest add /absolute/path/to/StudySkills -a opencode
-```
-
-If the installer does not support local paths, use the link script.
+See [roadmap.md](./roadmap.md) for the current roadmap and [roadmap2.md](./roadmap2.md) for the File Study history.
 
 ## License
 

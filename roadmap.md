@@ -105,6 +105,12 @@ There is no plan to add other harnesses.
 
 ## v0.4.4 - Main-Branch Distribution
 
+- Stable main install channel; `dev` branch before main.
+- README rewritten in the Matt Pocock structure.
+- Real `AGENTS.md` file.
+- Plugin marketplace verification and release flow.
+- No release-tag install commands.
+
 - Install and update from `main`, as in Matt's repository.
 - `dev` branch for development; `main` for stable installs.
 - Plugin marketplace verification and README rewrite.
