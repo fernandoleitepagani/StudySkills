@@ -7,6 +7,7 @@ import {
   makeTempDir,
   cleanupDir,
   runCli,
+  runCore,
   writeTokenFile,
 } from "../test-support/temp.mjs";
 
@@ -44,10 +45,10 @@ test("cli: token, courses, inspect, fetch, output, validate, cleanup", async () 
     await fs.access(path.join(home, ".studyskills", "canvas-token.txt"));
 
     await writeTokenFile(home, "test-token");
-    result = await runCli(["doctor", "--json"], { home, env });
+    result = await runCore(["doctor", "--json"], { home, env });
     assert.equal(result.code, 0);
     data = await json(result);
-    assert.equal(data.token.found, true);
+    assert.equal(data.documentsDir, docs);
 
     result = await runCli(["courses", "--base-url", mock.origin, "--json"], { home, env });
     assert.equal(result.code, 0);
@@ -70,7 +71,7 @@ test("cli: token, courses, inspect, fetch, output, validate, cleanup", async () 
     assert.equal(data.counts.allowedFiles, 2);
     assert.equal(data.errors.length, 0);
 
-    const workResult = await runCli(["workdir", "--course-name", "Statistics 101", "--json"], { home, env });
+    const workResult = await runCore(["workdir", "--topic", "Statistics 101", "--json"], { home, env });
     assert.equal(workResult.code, 0);
     const workData = await json(workResult);
     const work = workData.workDir;
@@ -118,19 +119,19 @@ test("cli: token, courses, inspect, fetch, output, validate, cleanup", async () 
       await assert.rejects(fs.access(path.join(work, "sources", "files", "huge.pdf")));
       await assert.rejects(fs.access(path.join(work, "sources", "files", "lecture.mp4")));
 
-      result = await runCli(["output-dir", "--course-name", "Statistics 101", "--json"], { home, env });
+      result = await runCore(["output-dir", "--topic", "Statistics 101", "--json"], { home, env });
       assert.equal(result.code, 0);
       data = await json(result);
       let outputDir = data.runDir;
       assert.ok(outputDir.startsWith(path.join(docs, "StudySkills", "statistics-101")));
 
-      result = await runCli(["cleanup-output", "--dir", outputDir, "--json"], { home, env });
+      result = await runCore(["cleanup-output", "--dir", outputDir, "--json"], { home, env });
       assert.equal(result.code, 0);
       data = await json(result);
       assert.equal(data.removed, true);
       await assert.rejects(fs.access(outputDir));
 
-      result = await runCli(["output-dir", "--course-name", "Statistics 101", "--json"], { home, env });
+      result = await runCore(["output-dir", "--topic", "Statistics 101", "--json"], { home, env });
       assert.equal(result.code, 0);
       data = await json(result);
       outputDir = data.runDir;
@@ -157,7 +158,7 @@ test("cli: token, courses, inspect, fetch, output, validate, cleanup", async () 
         }),
         "utf8",
       );
-      result = await runCli(
+      result = await runCore(
         ["validate", "--run-dir", outputDir, "--plan", planPath, "--checks", checksPath, "--json"],
         { home, env },
       );
@@ -176,7 +177,7 @@ test("cli: token, courses, inspect, fetch, output, validate, cleanup", async () 
         }),
         "utf8",
       );
-      result = await runCli(
+      result = await runCore(
         ["validate", "--run-dir", outputDir, "--plan", partialPlan, "--checks", checksPath, "--json"],
         { home, env },
       );
@@ -185,7 +186,7 @@ test("cli: token, courses, inspect, fetch, output, validate, cleanup", async () 
       assert.equal(data.ok, false);
       assert.equal(data.missing[0].name, "summary.docx");
 
-      result = await runCli(["cleanup", "--work-dir", work, "--json"], { home, env });
+      result = await runCore(["cleanup", "--work-dir", work, "--json"], { home, env });
       assert.equal(result.code, 0);
       await assert.rejects(fs.access(work));
     } finally {

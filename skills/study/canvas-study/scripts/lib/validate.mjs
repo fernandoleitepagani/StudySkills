@@ -1,6 +1,5 @@
 import path from "node:path";
 import fs from "node:fs/promises";
-import { getTokenStatus } from "./token.mjs";
 import { listTopLevelFiles } from "./files.mjs";
 
 function formatFromName(name) {
@@ -122,7 +121,7 @@ function validateSemantic(checks, produced) {
   };
 }
 
-export async function validateRun({ runDir, planPath, checksPath = null }) {
+export async function validateRun({ runDir, planPath, checksPath = null, token = null }) {
   const { plan, files: requested } = await readPlan(planPath);
   const checks = await readChecks(checksPath);
   const entries = await listTopLevelFiles(runDir);
@@ -159,10 +158,9 @@ export async function validateRun({ runDir, planPath, checksPath = null }) {
     ...directories,
   ];
 
-  const tokenStatus = await getTokenStatus();
   const tokenLeak = [];
-  if (tokenStatus.found) {
-    const tokenBuffer = Buffer.from(tokenStatus.token);
+  if (token) {
+    const tokenBuffer = Buffer.from(token);
     for (const name of actualFiles) {
       const buffer = await fs.readFile(path.join(runDir, name));
       if (buffer.includes(tokenBuffer)) tokenLeak.push(name);
@@ -172,15 +170,10 @@ export async function validateRun({ runDir, planPath, checksPath = null }) {
   const semantic = validateSemantic(checks, produced);
 
   return {
-    ok:
-      missing.length === 0 &&
-      invalid.length === 0 &&
-      extra.length === 0 &&
-      tokenLeak.length === 0 &&
-      semantic.ok,
+    ok: missing.length === 0 && invalid.length === 0 && extra.length === 0 && tokenLeak.length === 0 && semantic.ok,
     runDir,
     plan: {
-      course: plan.course ?? null,
+      topic: plan.topic ?? null,
       requested: requested.map((item) => item.name),
     },
     requested,

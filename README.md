@@ -10,28 +10,27 @@ The skill fetches Canvas materials read-only, asks you what you want through the
 
 | Skill | Status | What it does |
 | --- | --- | --- |
-| `canvas-study` | v0.1.1 | Fetch a Canvas course read-only and generate study documents. |
-| `lecture-notes` | v0.2.0 | Turn lecture slides, transcripts, or notes into structured notes. |
-| `flashcard-forge` | v0.2.0 | Create Anki-ready CSV and Markdown flashcards. |
-| `explain-back` | v0.2.0 | Explain concepts in layers with the Feynman technique. |
-| `study-core` | internal | Shared engine for the study skills. Not invoked directly. |
-| `exam-sim` | v0.2.1 | Generate timed practice exams. |
-| `study-planner` | v0.2.1 | Plan multiple courses and deadlines. |
-| `note-organizer` | v0.2.1 | Organize Markdown and Obsidian notes read-only. |
-| `file-study` | v0.3.0 | Turn local folders, files, or attachments into study documents. |
+| `canvas-study` | v0.4.2 | Fetch a Canvas course read-only and generate study documents. |
+| `lecture-notes` | v0.4.2 | Turn lecture slides, transcripts, or notes into structured notes. |
+| `flashcard-forge` | v0.4.2 | Create Anki-ready CSV and Markdown flashcards. |
+| `explain-back` | v0.4.2 | Explain concepts in layers with the Feynman technique. |
+| `exam-sim` | v0.4.2 | Generate timed practice exams. |
+| `study-planner` | v0.4.2 | Plan multiple courses and deadlines. |
+| `note-organizer` | v0.4.2 | Organize Markdown and Obsidian notes read-only. |
+| `file-study` | v0.4.2 | Turn local folders, files, or attachments into study documents. |
 
 ## Install
 
 Pick one route per harness. Do not install both the plugin and the copied skill for the same harness.
 
-Install the **whole collection**. The study skills call the shared internal `study-core` skill, so installing a single skill on its own is not supported.
+Every skill is self-contained and carries its own local copy of the shared workflow. You can install the whole collection or a single skill.
 
-These commands install the pinned `v0.4.1` release. They do not install from `main`.
+These commands install the pinned `v0.4.2` release. They do not install from `main`.
 
 ### OpenCode
 
 ```bash
-npx skills@latest add 'fernandoleitepagani/StudySkills#v0.4.1' \
+npx skills@latest add 'fernandoleitepagani/StudySkills#v0.4.2' \
   --skill '*' -a opencode -g -y
 ```
 
@@ -41,23 +40,27 @@ Update later with:
 npx skills@latest update
 ```
 
-The `#v0.4.1` ref is the release tag. Update this tag when a newer release is published.
+The `#v0.4.2` ref is the release tag. Update this tag when a newer release is published.
 
 ### Claude Code
 
 ```bash
-claude plugin marketplace add fernandoleitepagani/StudySkills@v0.4.1
+claude plugin marketplace add fernandoleitepagani/StudySkills@v0.4.2
 claude plugin install study-skills@studyskills
 ```
 
 ### Codex
 
 ```bash
-codex plugin marketplace add fernandoleitepagani/StudySkills --ref v0.4.1
+codex plugin marketplace add fernandoleitepagani/StudySkills --ref v0.4.2
 codex plugin add study-skills@studyskills
 ```
 
 Claude Code and Codex pin the release tag. OpenCode pins the same tag through the `#ref` form.
+
+## Shared core
+
+Each skill vendors its own copy of the shared workflow under `references/core/` and `scripts/`. There is no runtime skill dependency, so individual installs work.
 
 ## Quick start
 

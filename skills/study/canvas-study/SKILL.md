@@ -27,15 +27,15 @@ The skill directory is the folder containing this `SKILL.md`. Use its absolute p
 Run:
 
 ```bash
-node <skill-dir>/scripts/canvas.mjs doctor --json
+node <skill-dir>/scripts/core.mjs doctor --json
 ```
 
 Read these references before asking anything:
 
-- `references/harness-questions.md`
-- `references/grilling.md`
+- `references/core/harness-questions.md`
+- `references/core/grilling.md`
 - `references/options.md`
-- `references/style.md`
+- `references/core/style.md`
 - `references/outputs.md`
 - `references/security.md`
 
@@ -71,7 +71,7 @@ If a token is found, continue. Do not validate it until the Canvas URL is known.
 
 ## Step 2 - Interview
 
-Use the harness native question tool. Read `references/harness-questions.md` for exact limits.
+Use the harness native question tool. Read `references/core/harness-questions.md` for exact limits.
 
 Rules:
 
@@ -133,7 +133,7 @@ Also ask for material scope only if the user wants to change the default:
 Run:
 
 ```bash
-node <skill-dir>/scripts/canvas.mjs workdir --course-name "<course name>" --json
+node <skill-dir>/scripts/core.mjs workdir --topic "<course name>" --json
 ```
 
 This creates `~/.studyskills/work/<run-id>/` and returns `workDir`.
@@ -222,7 +222,7 @@ It handles pagination, truncation reporting, rate limits, file caps, image caps,
 Only after the fetch succeeds, create the output directory:
 
 ```bash
-node <skill-dir>/scripts/canvas.mjs output-dir --course-name "<course name>" --json
+node <skill-dir>/scripts/core.mjs output-dir --topic "<course name>" --json
 ```
 
 This creates `~/Documents/StudySkills/<course-slug>/<YYYY-MM-DD-HHmm>/` and returns `outputDir`.
@@ -234,7 +234,7 @@ If the fetch fails, stop and keep the work directory for debugging. Do not creat
 Read:
 
 - `references/outputs.md`
-- `references/style.md`
+- `references/core/style.md`
 - The matching templates in `assets/templates/`
 - `assets/theme.json`
 
@@ -283,7 +283,7 @@ Every produced file needs an entry. The counts and sections are the agent’s at
 Run:
 
 ```bash
-node <skill-dir>/scripts/canvas.mjs validate --run-dir <outputDir> --plan <workDir>/plan.json --checks <workDir>/checks.json --json
+node <skill-dir>/scripts/core.mjs validate --run-dir <outputDir> --plan <workDir>/plan.json --checks <workDir>/checks.json --token-file ~/.studyskills/canvas-token.txt --json
 ```
 
 If validation reports missing, invalid, extra, token leakage, or missing semantic checks:
@@ -308,13 +308,13 @@ Show a concise report:
 On success, remove the work directory:
 
 ```bash
-node <skill-dir>/scripts/canvas.mjs cleanup --work-dir <workDir> --json
+node <skill-dir>/scripts/core.mjs cleanup --work-dir <workDir> --json
 ```
 
 If generation failed before producing any file, remove the empty output directory:
 
 ```bash
-node <skill-dir>/scripts/canvas.mjs cleanup-output --dir <outputDir> --json
+node <skill-dir>/scripts/core.mjs cleanup-output --dir <outputDir> --json
 ```
 
 On failure with partial outputs, keep the output directory and work directory and report both paths.

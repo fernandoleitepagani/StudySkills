@@ -1,6 +1,6 @@
 {
   "name": "study-skills",
-  "version": "0.4.1",
+  "version": "0.4.2",
   "private": true,
   "type": "module",
   "description": "Agent skills for studying, learning, and creating.",
@@ -11,6 +11,8 @@
   "scripts": {
     "test": "node --test",
     "test:watch": "node --test --watch",
-    "check:version": "node scripts/check-version.mjs"
+    "check:version": "node scripts/check-version.mjs",
+    "sync:skills": "node scripts/sync-skills.mjs",
+    "check:skills": "node scripts/sync-skills.mjs --check"
   }
 }

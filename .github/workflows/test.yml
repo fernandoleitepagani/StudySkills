@@ -24,6 +24,9 @@ jobs:
       - name: Check version sync
         run: npm run check:version
 
+      - name: Check generated skill core
+        run: npm run check:skills
+
       - name: Run tests
         run: node --test
 

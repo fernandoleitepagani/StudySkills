@@ -1,6 +1,5 @@
 #!/usr/bin/env node
 import path from "node:path";
-import os from "node:os";
 import fs from "node:fs/promises";
 import {
   CanvasClient,
@@ -16,19 +15,13 @@ import {
   TOKEN_TXT,
 } from "./lib/token.mjs";
 import {
-  cleanupEmptyOutputDir,
-  cleanupWorkDir,
   ensureDir,
   formatBytes,
-  makeDocumentsRunDir,
-  makeWorkDir,
-  resolveDocumentsDir,
   sanitizeFilename,
   uniquePath,
   writeJson,
 } from "./lib/files.mjs";
 import { extractImageSources, htmlToText } from "./lib/html-to-text.mjs";
-import { validateRun } from "./lib/validate.mjs";
 
 const MAX_FILE_BYTES = 50 * 1024 * 1024;
 const MAX_TOTAL_BYTES = 300 * 1024 * 1024;
@@ -561,62 +554,28 @@ async function main() {
       {
         ok: true,
         commands: [
-          "doctor",
           "token-status",
           "token-guide",
           "courses --base-url URL",
           "inspect --base-url URL --course-id ID",
-          "workdir --course-name NAME",
-          "output-dir --course-name NAME",
           "fetch --base-url URL --course-id ID --out WORKDIR",
-          "validate --run-dir DIR --plan PLAN --checks CHECKS",
-          "cleanup --work-dir DIR",
-          "cleanup-output --dir DIR",
         ],
+        core: "Use scripts/core.mjs for doctor, workdir, output-dir, validate, cleanup, and cleanup-output.",
       },
       [
         "StudySkills canvas script",
         "",
         "Commands:",
-        "  doctor",
         "  token-status",
         "  token-guide",
         "  courses --base-url URL",
         "  inspect --base-url URL --course-id ID",
-        "  workdir --course-name NAME",
-        "  output-dir --course-name NAME",
         "  fetch --base-url URL --course-id ID --out WORKDIR",
-        "  validate --run-dir DIR --plan PLAN --checks CHECKS",
-        "  cleanup --work-dir DIR",
-        "  cleanup-output --dir DIR",
+        "",
+        "Core commands: use scripts/core.mjs for doctor, workdir, output-dir,",
+        "validate, cleanup, and cleanup-output.",
         "",
         "Add --json for machine-readable output.",
-      ].join("\n"),
-    );
-    return;
-  }
-
-  if (command === "doctor") {
-    const status = await getTokenStatus();
-    const documentsDir = await resolveDocumentsDir();
-    const token = status.found
-      ? { found: true, source: status.source, path: status.path }
-      : { found: false, paths: [TOKEN_TXT, TOKEN_ENV], error: status.error ?? null };
-    respond(
-      {
-        ok: true,
-        node: process.version,
-        platform: process.platform,
-        cwd: process.cwd(),
-        token,
-        documentsDir,
-        workRoot: path.join(os.homedir(), ".studyskills", "work"),
-      },
-      [
-        `Node: ${process.version}`,
-        `Platform: ${process.platform}`,
-        `Token: ${status.found ? `found in ${status.source}` : status.error ? status.error.message : "not found"}`,
-        `Documents: ${documentsDir}`,
       ].join("\n"),
     );
     return;
@@ -646,44 +605,6 @@ async function main() {
   if (command === "token-guide") {
     const guide = await createTokenGuide();
     respond(guide, guide.guide);
-    return;
-  }
-
-  if (command === "workdir") {
-    const courseName = requireFlag("course-name");
-    const result = await makeWorkDir(courseName);
-    respond({ ok: true, ...result }, `Work directory: ${result.workDir}`);
-    return;
-  }
-
-  if (command === "output-dir") {
-    const courseName = requireFlag("course-name");
-    const result = await makeDocumentsRunDir(courseName);
-    respond({ ok: true, ...result }, `Output directory: ${result.runDir}`);
-    return;
-  }
-
-  if (command === "cleanup") {
-    const workDir = requireFlag("work-dir");
-    const removed = await cleanupWorkDir(workDir);
-    respond({ ok: true, removed }, `Removed ${removed}`);
-    return;
-  }
-
-  if (command === "validate") {
-    const runDir = requireFlag("run-dir");
-    const planPath = requireFlag("plan");
-    const checksPath = requireFlag("checks");
-    const result = await validateRun({ runDir, planPath, checksPath });
-    respond(result);
-    if (!result.ok) process.exitCode = 1;
-    return;
-  }
-
-  if (command === "cleanup-output") {
-    const dir = requireFlag("dir");
-    const removed = await cleanupEmptyOutputDir(dir);
-    respond({ ok: true, removed }, removed ? `Removed ${dir}` : `${dir} is not empty; kept.`);
     return;
   }
 

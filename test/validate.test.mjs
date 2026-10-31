@@ -105,7 +105,7 @@ test("validate: detects token leakage", async () => {
     await fs.writeFile(path.join(runDir, "notes.txt"), "the token is secret-token");
     await writePlan(planPath, [{ name: "notes.txt", format: "txt" }]);
     await writeChecks(checksPath, ["notes.txt"]);
-    const result = await validateRun({ runDir, planPath, checksPath });
+    const result = await validateRun({ runDir, planPath, checksPath, token: "secret-token" });
     assert.equal(result.ok, false);
     assert.deepEqual(result.tokenLeak, ["notes.txt"]);
   } finally {

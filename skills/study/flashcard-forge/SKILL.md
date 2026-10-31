@@ -6,7 +6,7 @@ disable-model-invocation: true
 
 # Flashcard Forge
 
-Call the Skill tool with **study-core** before doing anything else. Follow its shared workflow and invariants.
+Read `references/core/workflow.md` before doing anything else. Follow its shared workflow and invariants.
 
 ## Input
 
@@ -67,7 +67,7 @@ node <skill-dir>/scripts/cards.mjs --input <workDir>/cards.json --out <outputDir
 ```
 
 3. Add every produced file to `plan.json` and `checks.json`. Use the actual card count as the check count.
-4. Validate with `study-core`.
+4. Validate with `scripts/core.mjs`.
 
 ## Rules
 

@@ -6,7 +6,7 @@ disable-model-invocation: true
 
 # Lecture Notes
 
-Call the Skill tool with **study-core** before doing anything else. Follow its shared workflow and invariants.
+Read `references/core/workflow.md` before doing anything else. Follow its shared workflow and invariants.
 
 ## Input
 
@@ -61,7 +61,7 @@ Cite the source slide, page, or file for each major claim.
 
 - Do not invent lecture content.
 - If the sources are incomplete, say what is missing.
-- Keep the didactic style from `study-core`.
+- Keep the didactic style from `references/core/style.md`.
 - Do not create a summary, flashcards, or an exam. Use the dedicated skill for that.
 - Never modify source files.
 - Never access Canvas.

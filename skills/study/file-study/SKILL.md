@@ -6,7 +6,7 @@ disable-model-invocation: true
 
 # File Study
 
-Call the Skill tool with **study-core** before doing anything else. Follow its shared workflow and invariants.
+Read `references/core/workflow.md` before doing anything else. Follow its shared workflow and invariants.
 
 ## Invariants
 
@@ -30,7 +30,7 @@ Use one of:
 Run:
 
 ```bash
-node <core-dir>/scripts/core.mjs inventory --path <folder-or-file> --json
+node <skill-dir>/scripts/core.mjs inventory --path <folder-or-file> --json
 ```
 
 Repeat `--path` for multiple inputs.
@@ -149,7 +149,7 @@ Do not create chunk files in Documents.
 
 ## Plan, generate, validate
 
-Use `study-core` for:
+Use `scripts/core.mjs` for:
 
 - `workdir`
 - `plan.json` and `study-plan.md`

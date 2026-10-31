@@ -28,9 +28,7 @@ export function formatBytes(bytes) {
 
 export async function resolveDocumentsDir() {
   const xdg = process.env.XDG_DOCUMENTS_DIR;
-  if (xdg && path.isAbsolute(expandHome(xdg))) {
-    return expandHome(xdg);
-  }
+  if (xdg && path.isAbsolute(expandHome(xdg))) return expandHome(xdg);
 
   const userDirsFile = path.join(os.homedir(), ".config", "user-dirs.dirs");
   try {
@@ -41,13 +39,13 @@ export async function resolveDocumentsDir() {
       if (path.isAbsolute(value)) return value;
     }
   } catch {
-    // Fall through to the conventional Documents directory.
+    // Fall through.
   }
 
   return path.join(os.homedir(), "Documents");
 }
 
-export function slugify(value, fallback = "course") {
+export function slugify(value, fallback = "topic") {
   const normalized = String(value ?? "")
     .normalize("NFD")
     .replace(/[\u0300-\u036f]/g, "")
@@ -82,21 +80,21 @@ async function uniqueDir(parent, name) {
   }
 }
 
-export async function makeDocumentsRunDir(courseName) {
+export async function makeDocumentsRunDir(topic) {
   const documents = await resolveDocumentsDir();
   const base = path.join(documents, "StudySkills");
-  const courseSlug = slugify(courseName, "course");
-  const courseDir = path.join(base, courseSlug);
-  await ensureDir(courseDir);
-  const runDir = await uniqueDir(courseDir, timestamp());
+  const topicSlug = slugify(topic, "topic");
+  const topicDir = path.join(base, topicSlug);
+  await ensureDir(topicDir);
+  const runDir = await uniqueDir(topicDir, timestamp());
   await ensureDir(runDir);
-  return { documentsDir: documents, base, courseDir, runDir };
+  return { documentsDir: documents, base, topicDir, runDir };
 }
 
-export async function makeWorkDir(courseName) {
+export async function makeWorkDir(topic) {
   const root = path.join(os.homedir(), ".studyskills", "work");
   await ensureDir(root);
-  const name = `${timestamp()}-${slugify(courseName, "course")}`;
+  const name = `${timestamp()}-${slugify(topic, "topic")}`;
   const workDir = await uniqueDir(root, name);
   await ensureDir(workDir);
   return { workRoot: root, workDir };
@@ -128,6 +126,14 @@ export async function cleanupEmptyOutputDir(dir) {
   return true;
 }
 
+export async function listTopLevelFiles(dir) {
+  const entries = await fs.readdir(dir, { withFileTypes: true });
+  return entries.map((entry) => ({
+    name: entry.name,
+    isFile: entry.isFile(),
+    isDirectory: entry.isDirectory(),
+  }));
+}
 const RESERVED_WINDOWS_NAMES = new Set([
   "con", "prn", "aux", "nul",
   "com1", "com2", "com3", "com4", "com5", "com6", "com7", "com8", "com9",
@@ -148,8 +154,7 @@ export function sanitizeFilename(value, fallback = "file") {
 
   const ext = path.extname(cleaned);
   const stem = cleaned.slice(0, cleaned.length - ext.length);
-  const reserved = RESERVED_WINDOWS_NAMES.has(stem.toLowerCase());
-  if (reserved) cleaned = `${stem}-file${ext}`;
+  if (RESERVED_WINDOWS_NAMES.has(stem.toLowerCase())) cleaned = `${stem}-file${ext}`;
 
   if (cleaned.length > 140) {
     const longExt = path.extname(cleaned).slice(0, 12);
@@ -174,17 +179,4 @@ export async function uniquePath(dir, filename) {
       return candidate;
     }
   }
-}
-
-export async function listTopLevelFiles(dir) {
-  const entries = await fs.readdir(dir, { withFileTypes: true });
-  return entries.map((entry) => ({
-    name: entry.name,
-    isFile: entry.isFile(),
-    isDirectory: entry.isDirectory(),
-  }));
-}
-
-export function isTextFormat(format) {
-  return ["md", "markdown", "csv", "txt"].includes(String(format).toLowerCase());
 }

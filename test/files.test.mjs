@@ -50,9 +50,9 @@ test("files: resolves XDG Documents and creates reusable run directories", async
     assert.equal(await resolveDocumentsDir(), documents);
     const first = await makeDocumentsRunDir("Statistics 101");
     const second = await makeDocumentsRunDir("Statistics 101");
-    assert.equal(first.courseDir, second.courseDir);
-    assert.equal(path.dirname(first.runDir), first.courseDir);
-    assert.equal(path.basename(first.courseDir), "statistics-101");
+    assert.equal(first.topicDir, second.topicDir);
+    assert.equal(path.dirname(first.runDir), first.topicDir);
+    assert.equal(path.basename(first.topicDir), "statistics-101");
     assert.notEqual(first.runDir, second.runDir);
   } finally {
     process.env.HOME = oldHome;

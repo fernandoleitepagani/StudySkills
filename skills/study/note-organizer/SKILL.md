@@ -6,7 +6,7 @@ disable-model-invocation: true
 
 # Note Organizer
 
-Call the Skill tool with **study-core** before doing anything else. Follow its shared workflow and invariants.
+Read `references/core/workflow.md` before doing anything else. Follow its shared workflow and invariants.
 
 ## Input
 
@@ -15,7 +15,7 @@ A Markdown or Obsidian folder, or attached Markdown files.
 Use the core inventory command:
 
 ```bash
-node <core-dir>/scripts/core.mjs inventory --path <folder> --json
+node <skill-dir>/scripts/core.mjs inventory --path <folder> --json
 ```
 
 Report the file count, Markdown titles, tags, wiki links, skipped files, and truncation before planning.
