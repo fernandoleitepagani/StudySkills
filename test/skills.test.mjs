@@ -182,7 +182,7 @@ test("skills: language, accessibility, and privacy contracts", async () => {
   await assert.rejects(fs.access(path.join(REPO_ROOT, "docs/study/file-study.md")));
 });
 
-test("skills: v0.4.3 token, fallback, and cleanup contracts", async () => {
+test("skills: token, fallback, and cleanup contracts", async () => {
   const canvas = await read("skills/study/canvas-study/SKILL.md");
   assert.match(canvas, /token-status --base-url/);
   assert.match(canvas, /full-account-access warning/);
@@ -207,4 +207,19 @@ test("repo: README uses main installs and no release tags", async () => {
   assert.match(text, /codex plugin marketplace add fernandoleitepagani\/StudySkills/);
   assert.match(text, /npx skills@latest add \\\n  fernandoleitepagani\/StudySkills/);
   assert.equal(/#v0\.|StudySkills@v|--ref v/.test(text), false);
+});
+
+test("repo: README names only the current release", async () => {
+  const pkg = JSON.parse(await read("package.json"));
+  const text = await read("README.md");
+  assert.match(text, new RegExp("Current release: `v" + pkg.version + "`"));
+  assert.equal(/v0\.4\.[0-3]/.test(text), false);
+});
+
+test("repo: Canvas security reference uses host-specific tokens and current cleanup", async () => {
+  const text = await read("skills/study/canvas-study/references/security.md");
+  assert.match(text, /canvas\/<host>\/token\.txt/);
+  assert.match(text, /migration fallback/);
+  assert.match(text, /Remove the work directory on success or failure/);
+  assert.equal(/Keep the work directory on failure/.test(text), false);
 });

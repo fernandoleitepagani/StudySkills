@@ -23,10 +23,14 @@ A PAT may have write permission. The policy is narrower than the token. Do not u
 
 ## Token handling
 
-The token is read only from:
+The token is read from the host-specific paths:
 
-1. `~/.studyskills/canvas-token.txt`
-2. `~/.studyskills/canvas-token.env`
+1. `~/.studyskills/canvas/<host>/token.txt`
+2. `~/.studyskills/canvas/<host>/token.env`
+
+The legacy global files `~/.studyskills/canvas-token.txt` and `~/.studyskills/canvas-token.env` are read only as a migration fallback. A legacy fallback is reported in `token-status`.
+
+A Canvas PAT can access the whole account. Use a dedicated token, keep the token file outside the repository, and revoke the token after use.
 
 Rules:
 
@@ -39,7 +43,7 @@ Rules:
 - API requests follow only same-origin redirects. A cross-origin API redirect is refused.
 - Drop the Authorization header when a file download redirects to a different host.
 - Never store the token in the repository.
-- If the token file is unreadable, is a directory, or has the wrong permissions, return the structured error and offer the Exit or Guide flow. Do not print a stack trace.
+- If the token file is unreadable or is a directory, return the structured error and offer the Exit or Guide flow. Do not print a stack trace.
 - Remind the user to revoke the token when it is no longer needed.
 
 Redact `Authorization`, `access_token`, `verifier`, and the token value from any error that leaves the script.
@@ -84,4 +88,4 @@ Before reporting success:
 - Scan every output for the token value.
 - Reject any output that contains it.
 - Report the failure without printing the token.
-- Keep the work directory on failure, but remove the token from any diagnostic text.
+- Remove the work directory on success or failure. Remove failed partial outputs and keep only successful outputs and declared fallbacks. Remove the token from any diagnostic text.
