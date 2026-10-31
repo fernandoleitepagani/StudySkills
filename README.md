@@ -2,7 +2,7 @@
 
 Agent skills for studying, learning, and creating.
 
-Current release: `v0.4.5`.
+Current release: `v0.5.0`.
 
 [![License: MIT](https://img.shields.io/badge/license-MIT-1f3a5f.svg)](./LICENSE)
 [![Node](https://img.shields.io/badge/node-%3E%3D20-1f3a5f.svg)](https://nodejs.org)
@@ -15,7 +15,7 @@ The collection covers Canvas courses, lecture notes, flashcards, practice exams,
 
 Pick one route per harness. Do not install both the plugin and the copied skills for the same harness.
 
-Every skill is self-contained. Install the whole collection or a single skill.
+Every skill is self-contained. Install the whole collection or a single skill. Each skill has its own README with a short usage guide.
 
 ### Claude Code
 
@@ -53,14 +53,14 @@ npx skills@latest update
 
 | Skill | What it does |
 | --- | --- |
-| `canvas-study` | Fetches a Canvas course read-only and generates study documents. |
-| `lecture-notes` | Turns lecture slides, transcripts, or notes into structured notes. |
-| `flashcard-forge` | Creates Anki-ready CSV and Markdown flashcards. |
-| `explain-back` | Explains concepts in layers with the Feynman technique. |
-| `exam-sim` | Generates timed practice exams and optional review schedules. |
-| `study-planner` | Plans multiple courses around deadlines and weekly hours. |
-| `note-organizer` | Organizes Markdown and Obsidian notes read-only. |
-| `file-study` | Turns local folders, files, or attachments into study documents. |
+| [`canvas-study`](./skills/study/canvas-study/README.md) | Fetches a Canvas course read-only and generates study documents. |
+| [`lecture-notes`](./skills/study/lecture-notes/README.md) | Turns lecture slides, transcripts, or notes into structured notes. |
+| [`flashcard-forge`](./skills/study/flashcard-forge/README.md) | Creates Anki-ready CSV and Markdown flashcards. |
+| [`explain-back`](./skills/study/explain-back/README.md) | Explains concepts in layers with the Feynman technique. |
+| [`exam-sim`](./skills/study/exam-sim/README.md) | Generates timed practice exams and optional review schedules. |
+| [`study-planner`](./skills/study/study-planner/README.md) | Builds a multi-course schedule or a progressive mastery path. |
+| [`note-organizer`](./skills/study/note-organizer/README.md) | Organizes Markdown and Obsidian notes read-only. |
+| [`file-study`](./skills/study/file-study/README.md) | Turns local folders, files, or attachments into study documents. |
 
 ## Why these skills exist
 
@@ -108,7 +108,7 @@ Outputs go to:
 
 There is no plan to add other harnesses.
 
-The harness owns PDF, DOCX, and PPTX rendering. If it cannot produce a requested format, the skill writes a Markdown fallback and reports the replacement.
+The harness owns PDF, DOCX, and PPTX rendering. If it cannot produce a requested format, the skill writes a Markdown fallback and reports the replacement. Quality checks cover grounding, coverage, accessibility, visual clarity, and format integrity.
 
 ## Canvas is read-only
 
@@ -125,6 +125,7 @@ If you ask it to change something in Canvas, it refuses and explains that it is 
 - Citations use filenames, not absolute paths.
 - Course and local-file content is sent only to the harness model that reads it. That is the user's harness choice.
 - No telemetry, analytics, or remote logging from the skills.
+- Web research is limited to public concepts. The hard do-not-send list forbids source content, filenames, paths, Canvas data, and personal data.
 - The skills do not upload files to external services.
 
 ## Requirements

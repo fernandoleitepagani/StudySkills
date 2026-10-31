@@ -11,7 +11,7 @@ Human-readable plan:
 
 ## Source
 
-- Mode: pack | paths | topic | manual | library
+- Mode: pack | paths | topic | manual | library | canvas
 - Inputs:
 - Inventory:
 

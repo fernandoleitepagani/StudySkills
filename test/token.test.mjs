@@ -128,6 +128,8 @@ test("token: guide creates a host-specific empty 0600 token file", async () => {
     assert.match(result.guide, /full account|whole account/i);
     assert.match(result.guide, /revoke/i);
     assert.match(result.guide, /school\.instructure\.com/);
+    assert.match(result.guide, /stopped working/);
+    assert.match(result.guide, /30 days/);
     const status = await mod.getTokenStatus(BASE);
     assert.equal(status.found, false);
   } finally {
@@ -160,4 +162,21 @@ test("token: redacts bearer tokens and query secrets", () => {
     assert.match(redacted, /access_token=\[REDACTED\]/);
     assert.match(redacted, /verifier=\[REDACTED\]/);
   });
+});
+
+test("token: warns when the token file is 30 or more days old", async () => {
+  const home = await makeTempDir();
+  try {
+    const paths = await writeHostToken(home, BASE, "old-token");
+    const old = new Date(Date.now() - 31 * 86400000);
+    await fs.utimes(paths.txt, old, old);
+    const mod = await loadTokenModule(home);
+    const status = await mod.getTokenStatus(BASE);
+    assert.equal(status.found, true);
+    assert.equal(status.stale, true);
+    assert.ok(status.ageDays >= 30);
+    assert.match(status.warning, /30 days/);
+  } finally {
+    await cleanupDir(home);
+  }
 });

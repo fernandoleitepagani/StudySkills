@@ -46,6 +46,7 @@ The active skill uses one of these modes:
 - `topic`: a concept or subject with no source files.
 - `manual`: user-entered courses, dates, and hours.
 - `library`: documents already under `~/Documents/StudySkills`.
+- `canvas`: the Canvas-specific workflow in `canvas-study`.
 
 If the active skill needs sources and none are provided, ask with the native question tool. If a pack path is given, run:
 
@@ -98,7 +99,7 @@ node <skill-dir>/scripts/core.mjs workdir --topic "<topic>" --json
 
 Write `plan.json` and `study-plan.md` in the work directory. Use the contract in `references/plan-contract.md`.
 
-`plan.json` contains every requested output and file. Never remove a failed format from the plan.
+`plan.json` contains every requested output and file. Never remove a failed format from the plan. Set `quality.required` to `true` for every run that produces a document or CSV. Record web research in `research.web` as `used`, `not-used`, or `unavailable`.
 
 Show the plan. Ask **Approve / Edit / Cancel**.
 

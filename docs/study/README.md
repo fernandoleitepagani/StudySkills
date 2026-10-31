@@ -1,6 +1,6 @@
 # Study skills documentation
 
-One collection page. Per-skill details live in each `SKILL.md`.
+One collection page. Per-skill guides live in each skill `README.md`.
 
 ## Collection conventions
 
@@ -10,6 +10,8 @@ One collection page. Per-skill details live in each `SKILL.md`.
 - Sources are read locally and never modified or copied into Documents.
 - Citations use filenames, not absolute paths.
 - No telemetry. Canvas access is limited to the read-only Canvas skill.
+- Web research follows the hard do-not-send list in `references/core/web-research.md`.
+- Every skill has its own README with a usage guide.
 
 ## canvas-study
 
@@ -50,10 +52,11 @@ Full page: [canvas-study.md](./canvas-study.md).
 
 ## study-planner
 
-- **What it does:** plans multiple courses around deadlines, weekly hours, and fixed commitments.
-- **When to use it:** you need a term plan without a source pack.
-- **Common questions:** deadlines are validated and never invented. Past deadlines require confirmation.
-- **It's working if:** every course and deadline appears in the weekly plan.
+- **What it does:** builds a multi-course schedule or a progressive mastery path.
+- **When to use it:** use schedule mode for deadlines and weekly hours; use mastery mode for a subject path from basics to full knowledge.
+- **Common questions:** deadlines are validated and never invented. Mastery mode starts with a diagnostic and prerequisite map.
+- **It's working if:** every course and deadline appears in the schedule, or the mastery path has stages, checkpoints, and evidence.
+- **Guide:** [study-planner README](../../skills/study/study-planner/README.md).
 
 ## note-organizer
 
@@ -68,3 +71,16 @@ Full page: [canvas-study.md](./canvas-study.md).
 - **When to use it:** you have local slides, readings, notes, or PDFs and want study outputs without Canvas.
 - **Common questions:** sources are read-only; exact and near duplicates are reported; attachments must be available as paths; no network.
 - **It's working if:** inventory is confirmed before planning, source hashes are unchanged, citations name the files, and only requested outputs are written.
+
+## Skill guides
+
+Every skill has its own README:
+
+- [canvas-study](../../skills/study/canvas-study/README.md)
+- [lecture-notes](../../skills/study/lecture-notes/README.md)
+- [flashcard-forge](../../skills/study/flashcard-forge/README.md)
+- [explain-back](../../skills/study/explain-back/README.md)
+- [exam-sim](../../skills/study/exam-sim/README.md)
+- [study-planner](../../skills/study/study-planner/README.md)
+- [note-organizer](../../skills/study/note-organizer/README.md)
+- [file-study](../../skills/study/file-study/README.md)

@@ -43,6 +43,8 @@ StudySkills is a collection of user-invoked agent skills for studying, learning,
 - The collection docs page has one section per skill with four parts: What it does, When to reach for it, Common questions, It's working if.
 - `canvas-study` keeps its dedicated page at `docs/study/canvas-study.md`.
 - Keep install commands in `.agents/install-block.md` and copy them verbatim.
+- Every skill has its own `README.md` with the standard headings.
+- The root README lists every skill and links to its README.
 - Do not use em dashes in repository prose. Use commas, colons, parentheses, or periods.
 
 ## Versioning

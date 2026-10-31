@@ -1,13 +1,13 @@
 # Harness capability matrix
 
-Record the result of the v0.4.5 smoke test here.
+Record the result of the v0.5.0 smoke test here.
 
 ## Environment used for this run
 
 - OpenCode `v2.0.25` is installed.
-- Claude Code CLI is not installed in this environment.
+- Claude Code CLI and GUI were reported working by the user.
 - Codex CLI is not installed in this environment.
-- GUI surfaces were not available from the terminal.
+- OpenCode GUI was not available from the terminal.
 
 The script layer is covered by the automated test suite. Native question rendering and document generation are manual checks.
 
@@ -15,8 +15,8 @@ The script layer is covered by the automated test suite. Native question renderi
 
 | Harness | Surface | PDF | DOCX | PPTX | Questions | Notes |
 | --- | --- | --- | --- | --- | --- | --- |
-| Claude Code | CLI | pending | pending | pending | pending | CLI not installed |
-| Claude Code | GUI | pending | pending | pending | pending | GUI not available |
+| Claude Code | CLI | yes | yes | yes | yes | User-reported end-to-end test |
+| Claude Code | GUI | yes | yes | yes | yes | User-reported end-to-end test |
 | OpenCode | CLI | pending | pending | pending | yes | Script layer and native question card verified; document generation still pending |
 | OpenCode | GUI | pending | pending | pending | pending | GUI not available |
 | Codex | CLI | pending | pending | pending | pending | CLI not installed |
@@ -57,7 +57,7 @@ The following are covered by `node --test` and pass:
 
 ## Manual checks still required
 
-1. Run `/canvas-study` in each harness CLI and confirm the native question cards appear.
-2. Generate a summary as PDF, DOCX, and PPTX and confirm the files open.
-3. Repeat in each GUI surface.
-4. Record the result in the matrix above.
+1. Run the remaining Codex CLI and GUI checks.
+2. Run the remaining document checks for OpenCode and Codex.
+3. Record the exact Claude Code version and tested formats if available.
+4. Keep any unverified cell marked `pending`.

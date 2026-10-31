@@ -197,3 +197,80 @@ test("cli: token, courses, inspect, fetch, output, validate, cleanup", async () 
     await cleanupDir(home);
   }
 });
+
+test("cli: rejected token includes the expiry hint", async () => {
+  const home = await makeTempDir("studyskills-cli-home-");
+  const mock = await startMockCanvas({ token: "right-token" });
+  try {
+    await writeHostToken(home, mock.origin, "wrong-token");
+    const result = await runCli(["courses", "--base-url", mock.origin, "--json"], { home });
+    assert.notEqual(result.code, 0);
+    const data = await json(result);
+    assert.equal(data.code, "UNAUTHORIZED");
+    assert.match(data.message, /30 days/);
+    assert.match(data.hint, /expired|expiry/i);
+  } finally {
+    await mock.close();
+    await cleanupDir(home);
+  }
+});
+
+test("cli: inspect exposes choices and fetch honors a specific selection", async () => {
+  const home = await makeTempDir("studyskills-cli-home-");
+  const env = { XDG_DOCUMENTS_DIR: path.join(home, "Documents") };
+  const mock = await startMockCanvas();
+  try {
+    await writeHostToken(home, mock.origin, "test-token");
+    let result = await runCli(
+      ["inspect", "--base-url", mock.origin, "--course-id", "1", "--json"],
+      { home, env },
+    );
+    assert.equal(result.code, 0);
+    let data = await json(result);
+    assert.equal(data.choices.modules[0].name, "Week 1");
+    assert.equal(data.choices.pages[0].title, "Introduction");
+    assert.equal(data.choices.files[0].name, "lecture.pdf");
+
+    result = await runCore(["workdir", "--topic", "Statistics 101", "--json"], { home, env });
+    const work = (await json(result)).workDir;
+    try {
+      const selectionPath = path.join(work, "selection.json");
+      await fs.writeFile(
+        selectionPath,
+        JSON.stringify({
+          mode: "specific",
+          pages: ["Introduction"],
+          files: ["lecture.pdf"],
+          includeSyllabus: false,
+          includeFrontPage: false,
+        }),
+      );
+      result = await runCli(
+        [
+          "fetch",
+          "--base-url", mock.origin,
+          "--course-id", "1",
+          "--out", work,
+          "--selection", selectionPath,
+          "--json",
+        ],
+        { home, env },
+      );
+      assert.equal(result.code, 0);
+      data = await json(result);
+      assert.equal(data.downloadedFiles, 1);
+      assert.equal(data.selection.mode, "specific");
+      const materials = await fs.readFile(path.join(work, "sources", "materials.md"), "utf8");
+      assert.match(materials, /Introduction/);
+      assert.match(materials, /Statistics studies/);
+      assert.equal(materials.includes("Problem Set 1"), false);
+      assert.equal(materials.includes("Week one content"), false);
+      assert.equal(materials.includes("Exam date"), false);
+    } finally {
+      await cleanupDir(work);
+    }
+  } finally {
+    await mock.close();
+    await cleanupDir(home);
+  }
+});

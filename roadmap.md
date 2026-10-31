@@ -116,6 +116,16 @@ There is no plan to add other harnesses.
 - Docs-only patch so the release tag includes the post-v0.4.4 corrections.
 - Aligns the README release marker, security reference, roadmap, and marketplace description with `main`.
 
+## v0.5.0 - Quality, Guidance, and Material Selection
+
+- Token age warnings and 30-day expiry guidance for rejected Canvas tokens.
+- Canvas material selection: everything within limits or specific materials.
+- Shared source selection, catalog, quality, visual style, and web research contracts.
+- Per-skill READMEs and root collection links.
+- Study Planner schedule and mastery modes.
+- Claude Code CLI and GUI reported working.
+- v1.0.0 remains gated on the remaining harness and document checks.
+
 ## v1.0.0 - Stable
 
 - Stable skill contract, migration guide, and security audit.

@@ -197,6 +197,145 @@ function fileSize(file) {
   return Number.isFinite(size) && size > 0 ? size : 0;
 }
 
+
+const CHOICE_LIMIT = 100;
+
+function choiceValue(value) {
+  return String(value ?? "").trim().toLowerCase();
+}
+
+function matchesAny(item, keys, terms) {
+  const values = keys.map((key) => choiceValue(typeof key === "function" ? key(item) : item?.[key])).filter(Boolean);
+  return terms.some((term) => values.includes(term));
+}
+
+function buildChoices(data, allowed) {
+  const cut = (items) => items.slice(0, CHOICE_LIMIT);
+  const modules = cut(data.modules).map((mod) => ({
+    id: String(mod.id),
+    name: mod.name ?? `Module ${mod.id}`,
+    itemCount: mod.items?.length ?? 0,
+  }));
+  const pages = cut(data.pagesList).map((page) => ({
+    id: String(page.url),
+    title: page.title ?? page.url,
+    url: page.url,
+  }));
+  const assignments = cut(data.assignments).map((item) => ({
+    id: String(item.id),
+    name: item.name ?? `Assignment ${item.id}`,
+  }));
+  const discussions = cut(data.discussions).map((item) => ({
+    id: String(item.id),
+    title: item.title ?? `Discussion ${item.id}`,
+  }));
+  const announcements = cut(data.announcements).map((item) => ({
+    id: String(item.id),
+    title: item.title ?? `Announcement ${item.id}`,
+  }));
+  const files = cut(allowed).map((file) => ({
+    id: String(file.id),
+    name: String(file.filename ?? file.display_name ?? `file-${file.id}`),
+    size: formatBytes(fileSize(file)),
+  }));
+  return {
+    modules,
+    pages,
+    assignments,
+    discussions,
+    announcements,
+    files,
+    includeSyllabus: Boolean(data.course?.syllabus_body),
+    includeFrontPage: Boolean(data.frontPage),
+    truncated: {
+      modules: data.modules.length > CHOICE_LIMIT,
+      pages: data.pagesList.length > CHOICE_LIMIT,
+      assignments: data.assignments.length > CHOICE_LIMIT,
+      discussions: data.discussions.length > CHOICE_LIMIT,
+      announcements: data.announcements.length > CHOICE_LIMIT,
+      files: allowed.length > CHOICE_LIMIT,
+    },
+  };
+}
+
+function normalizeSelection(input) {
+  if (!input) return null;
+  if (typeof input !== "object" || Array.isArray(input)) {
+    throw new CanvasError("Selection must be an object.", { code: "INVALID_SELECTION" });
+  }
+  const mode = String(input.mode ?? "specific").toLowerCase();
+  if (!["everything", "specific"].includes(mode)) {
+    throw new CanvasError("Selection mode must be everything or specific.", { code: "INVALID_SELECTION" });
+  }
+  const categories = ["modules", "pages", "assignments", "discussions", "announcements", "files"];
+  const result = { mode };
+  for (const category of categories) {
+    const value = input[category];
+    if (value === undefined) result[category] = [];
+    else if (!Array.isArray(value) || value.some((item) => typeof item !== "string" || !item.trim())) {
+      throw new CanvasError(`Selection ${category} must be an array of names or IDs.`, { code: "INVALID_SELECTION" });
+    } else {
+      result[category] = value.map((item) => item.trim()).filter(Boolean);
+    }
+  }
+  result.includeSyllabus = input.includeSyllabus === true;
+  result.includeFrontPage = input.includeFrontPage === true;
+  if (mode === "specific" && categories.every((category) => result[category].length === 0) && !result.includeSyllabus && !result.includeFrontPage) {
+    throw new CanvasError("Specific selection is empty.", { code: "EMPTY_SELECTION" });
+  }
+  return result;
+}
+
+function filterByTerms(items, terms, keys, label, missing) {
+  if (terms.length === 0) return [];
+  const normalized = terms.map(choiceValue);
+  const result = items.filter((item) => matchesAny(item, keys, normalized));
+  const matched = new Set();
+  for (const item of result) {
+    for (const term of normalized) {
+      if (matchesAny(item, keys, [term])) matched.add(term);
+    }
+  }
+  for (const term of normalized) {
+    if (!matched.has(term)) missing.push({ category: label, value: terms[normalized.indexOf(term)] });
+  }
+  return result;
+}
+
+function applySelection(data, selection) {
+  if (!selection || selection.mode === "everything") {
+    return { ...data, selection: selection ?? { mode: "everything" } };
+  }
+  const missing = [];
+  const modules = filterByTerms(data.modules, selection.modules, ["name", "id"], "modules", missing);
+  const pages = filterByTerms(data.pagesList, selection.pages, ["title", "url", "id"], "pages", missing);
+  const assignments = filterByTerms(data.assignments, selection.assignments, ["name", "id"], "assignments", missing);
+  const discussions = filterByTerms(data.discussions, selection.discussions, ["title", "id"], "discussions", missing);
+  const announcements = filterByTerms(data.announcements, selection.announcements, ["title", "id"], "announcements", missing);
+  const files = filterByTerms(data.files, selection.files, ["filename", "display_name", "id"], "files", missing);
+  if (missing.length) {
+    throw new CanvasError(`Selection did not match: ${missing.map((item) => `${item.category}/${item.value}`).join(", ")}`, {
+      code: "SELECTION_NOT_FOUND",
+      body: { missing },
+    });
+  }
+  return {
+    ...data,
+    course: {
+      ...data.course,
+      syllabus_body: selection.includeSyllabus ? data.course.syllabus_body : null,
+    },
+    frontPage: selection.includeFrontPage ? data.frontPage : null,
+    modules,
+    pagesList: pages,
+    assignments,
+    discussions,
+    announcements,
+    files,
+    selection,
+  };
+}
+
 async function inspectCourse(client, courseId) {
   const errors = [];
   const data = await loadCourseLists(client, courseId, { errors });
@@ -219,6 +358,7 @@ async function inspectCourse(client, courseId) {
     estimatedBytes,
     estimatedSize: formatBytes(estimatedBytes),
     frontPage: Boolean(data.frontPage),
+    choices: buildChoices(data, allowed),
     errors,
     truncated: data.truncations,
   };
@@ -301,10 +441,11 @@ async function fetchImages(client, sourcesDir, htmlSources, manifest) {
   return { imageMap, totalBytes, downloaded };
 }
 
-async function fetchCourse(client, courseId, workDir) {
+async function fetchCourse(client, courseId, workDir, selection = null) {
   const errors = [];
   const truncations = {};
-  const data = await loadCourseLists(client, courseId, { errors, truncations, progressLabel: "Fetching" });
+  let data = await loadCourseLists(client, courseId, { errors, truncations, progressLabel: "Fetching" });
+  data = applySelection(data, selection);
   const course = data.course;
   const sourcesDir = path.join(workDir, "sources");
   const filesDir = path.join(sourcesDir, "files");
@@ -333,6 +474,7 @@ async function fetchCourse(client, courseId, workDir) {
     },
     baseUrl: client.baseUrl,
     fetchedAt: new Date().toISOString(),
+    selection: data.selection ?? selection ?? { mode: "everything" },
     stats: {
       modules: data.modules.length,
       pages: pages.length,
@@ -543,6 +685,7 @@ async function fetchCourse(client, courseId, workDir) {
     pagesSkipped,
     truncated: manifest.truncated,
     externalMaterials: manifest.externalMaterials,
+    selection: data.selection ?? selection ?? { mode: "everything" },
     errors,
   };
 }
@@ -557,7 +700,7 @@ async function main() {
           "token-guide --base-url URL",
           "courses --base-url URL",
           "inspect --base-url URL --course-id ID",
-          "fetch --base-url URL --course-id ID --out WORKDIR",
+          "fetch --base-url URL --course-id ID --out WORKDIR [--selection FILE]",
           "validate --base-url URL --run-dir DIR --plan PLAN --checks CHECKS",
         ],
         core: "Use scripts/core.mjs for doctor, workdir, output-dir, validate, cleanup, and cleanup-output.",
@@ -570,7 +713,7 @@ async function main() {
         "  token-guide --base-url URL",
         "  courses --base-url URL",
         "  inspect --base-url URL --course-id ID",
-        "  fetch --base-url URL --course-id ID --out WORKDIR",
+        "  fetch --base-url URL --course-id ID --out WORKDIR [--selection FILE]",
         "  validate --base-url URL --run-dir DIR --plan PLAN --checks CHECKS",
         "",
         "Core commands: use scripts/core.mjs for doctor, workdir, output-dir,",
@@ -592,12 +735,19 @@ async function main() {
       path: status.path,
       paths: status.paths ?? [],
       legacy: status.legacy ?? false,
+      ageDays: status.ageDays ?? null,
+      stale: status.stale ?? false,
+      warning: status.warning ?? null,
     };
     if (status.error) safe.error = status.error;
     respond(
       safe,
       status.found
-        ? `Canvas token found in ${status.path}.${status.legacy ? " This is a legacy global token; move it to the host-specific path." : ""}`
+        ? [
+            `Canvas token found in ${status.path}.`,
+            status.legacy ? "This is a legacy global token; move it to the host-specific path." : "",
+            status.warning ?? "",
+          ].filter(Boolean).join("\n")
         : status.error
           ? status.error.message
           : `No Canvas token found.\nLooked in:\n  ${(status.paths ?? []).join("\n  ")}`,
@@ -658,12 +808,21 @@ async function main() {
     const baseUrl = requireFlag("base-url");
     const courseId = requireFlag("course-id");
     const workDir = requireFlag("out");
+    const selectionPath = flags.selection && flags.selection !== true ? String(flags.selection) : null;
+    let selection = null;
+    if (selectionPath) {
+      try {
+        selection = normalizeSelection(JSON.parse(await fs.readFile(selectionPath, "utf8")));
+      } catch (error) {
+        fail(error.code ?? "INVALID_SELECTION", error.message);
+      }
+    }
     await ensureDir(workDir);
     const tokenStatus = await requireToken(baseUrl).catch((error) => {
       fail(error.code ?? "NO_TOKEN", error.message, { paths: error.paths ?? [] });
     });
     const client = new CanvasClient({ baseUrl, token: tokenStatus.token });
-    const result = await fetchCourse(client, courseId, workDir);
+    const result = await fetchCourse(client, courseId, workDir, selection);
     respond(result);
     return;
   }
@@ -687,6 +846,14 @@ async function main() {
 
 main().catch((error) => {
   if (error instanceof CanvasError) {
+    if (error.code === "UNAUTHORIZED") {
+      const hint = "Canvas rejected the token. The most likely cause is expiry; Canvas tokens commonly expire after 30 days. Create a new token, replace the value in the host-specific token file, and try again. If it still fails, check that the token belongs to this Canvas host and was not revoked.";
+      fail(error.code, `${error.message}\n\n${hint}`, {
+        status: error.status,
+        body: error.body,
+        hint,
+      });
+    }
     fail(error.code ?? "CANVAS_ERROR", error.message, {
       status: error.status,
       body: error.body,

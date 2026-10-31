@@ -2,7 +2,7 @@
 
 ## What it does
 
-`canvas-study` turns one Canvas course into finished study documents. It fetches the course materials read-only, asks what you want through the harness native question UI, and generates only the formats you request. The current release is v0.4.5.
+`canvas-study` turns one Canvas course into finished study documents. It fetches the course materials read-only, asks what you want through the harness native question UI, and generates only the formats you request. The current release is v0.5.0.
 
 Outputs can include a study plan, summary, flashcards, practice exam, concept map, or a custom study document. Files are saved in `~/Documents/StudySkills/<course>/<run>/`.
 
@@ -25,7 +25,7 @@ Do not use it when:
 
 **Where does the token go?**
 
-In `~/.studyskills/canvas/<host>/token.txt` or `.env`. Legacy global files are read only as a migration fallback. The skill never asks for it in chat.
+In `~/.studyskills/canvas/<host>/token.txt` or `.env`. Legacy global files are read only as a migration fallback. A token file older than 30 days gets a warning. If Canvas rejects the token, expiry is the most likely cause; Canvas tokens commonly expire after 30 days. The skill never asks for it in chat.
 
 **Does it change anything in Canvas?**
 

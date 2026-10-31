@@ -87,6 +87,27 @@ function unreadable(pathValue, error) {
   };
 }
 
+
+async function withAge(status) {
+  if (!status.found || !status.path) return { ...status, ageDays: null, stale: false, warning: null };
+  let ageDays = null;
+  try {
+    const stat = await fs.stat(status.path);
+    ageDays = Math.max(0, Math.floor((Date.now() - stat.mtimeMs) / 86400000));
+  } catch {
+    // The token was readable, so age is only a hint.
+  }
+  const stale = ageDays !== null && ageDays >= 30;
+  return {
+    ...status,
+    ageDays,
+    stale,
+    warning: stale
+      ? `This token file is ${ageDays} days old. Canvas tokens commonly expire after 30 days. If Canvas rejects it, create a new token.`
+      : null,
+  };
+}
+
 async function readPair(paths) {
   const txt = await readTokenFile(paths.txt);
   if (txt.error) return { error: unreadable(paths.txt, txt.error) };
@@ -108,14 +129,14 @@ export async function getTokenStatus(baseUrl) {
   const paths = tokenPaths(baseUrl);
   const host = await readPair(paths);
   if (host.error) return host.error;
-  if (host.found) return { ...host, paths: [paths.txt, paths.env], legacy: false, host: paths.host };
+  if (host.found) return withAge({ ...host, paths: [paths.txt, paths.env], legacy: false, host: paths.host });
 
   const legacyTxt = await readTokenFile(LEGACY_TOKEN_TXT);
   if (legacyTxt.error) return unreadable(LEGACY_TOKEN_TXT, legacyTxt.error);
   if (legacyTxt.text !== null) {
     const token = cleanToken(legacyTxt.text);
     if (token) {
-      return {
+      return withAge({
         found: true,
         source: "legacy canvas-token.txt",
         path: LEGACY_TOKEN_TXT,
@@ -123,7 +144,7 @@ export async function getTokenStatus(baseUrl) {
         paths: [paths.txt, paths.env],
         legacy: true,
         host: paths.host,
-      };
+      });
     }
   }
 
@@ -132,7 +153,7 @@ export async function getTokenStatus(baseUrl) {
   if (legacyEnv.text !== null) {
     const token = parseEnvToken(legacyEnv.text);
     if (token) {
-      return {
+      return withAge({
         found: true,
         source: "legacy canvas-token.env",
         path: LEGACY_TOKEN_ENV,
@@ -140,11 +161,11 @@ export async function getTokenStatus(baseUrl) {
         paths: [paths.txt, paths.env],
         legacy: true,
         host: paths.host,
-      };
+      });
     }
   }
 
-  return {
+  return withAge({
     found: false,
     source: null,
     path: null,
@@ -152,7 +173,7 @@ export async function getTokenStatus(baseUrl) {
     paths: [paths.txt, paths.env],
     legacy: false,
     host: paths.host,
-  };
+  });
 }
 
 export async function requireToken(baseUrl) {
@@ -184,6 +205,8 @@ export function tokenGuideText(baseUrl) {
     `  ${paths.txt}`,
     `  ${paths.env}`,
     "",
+    "Recommended path: Option A, a plain text file with only the token.",
+    "",
     "Option A: plain text file",
     `  1. Open ${paths.txt}`,
     "  2. Paste only the token, with no label and no quotes.",
@@ -204,6 +227,12 @@ export function tokenGuideText(baseUrl) {
     "Permissions:",
     "  On Unix, run: chmod 600 " + paths.txt,
     "  Never commit the token to a repository.",
+    "",
+    "If your token stopped working:",
+    "  Canvas tokens commonly expire after 30 days, but your institution controls expiry.",
+    "  Create a new token, replace the old value in this file, save it, and run",
+    "  /canvas-study again. If it still fails, check that the token belongs to this",
+    "  Canvas host and that it was not revoked.",
     "",
     "After saving the token, run /canvas-study again from the beginning.",
   ].join("\n");

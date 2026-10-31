@@ -130,6 +130,8 @@ test("skills: v0.2.1 skill constraints", async () => {
   const planner = await read("skills/study/study-planner/SKILL.md");
   assert.match(planner, /Do not invent courses, deadlines, or hours/);
   assert.match(planner, /No Canvas access/);
+  assert.match(planner, /Mastery/);
+  assert.match(planner, /learning-path/);
 
   const exam = await read("skills/study/exam-sim/SKILL.md");
   assert.match(exam, /No live timer application/);
@@ -188,6 +190,9 @@ test("skills: token, fallback, and cleanup contracts", async () => {
   assert.match(canvas, /full-account-access warning/);
   assert.match(canvas, /cleanup-failed/);
   assert.match(canvas, /Markdown fallback/);
+  assert.match(canvas, /Replace token/);
+  assert.match(canvas, /Everything within safe limits/);
+  assert.match(canvas, /"quality":\s*\{\s*"required": true/);
 
   const workflow = await read("core/references/workflow.md");
   assert.match(workflow, /fallbacks/);
@@ -246,4 +251,30 @@ test("skills: source selection, quality, web, and catalog contracts are generate
   const quality = await read("core/references/quality.md");
   assert.match(quality, /Two-pass review/);
   assert.match(quality, /visualClarity/);
+});
+
+test("repo: every skill has a README and every index links to it", async () => {
+  const readmeHeadings = [
+    "## What it does",
+    "## When to use it",
+    "## What you need",
+    "## How to use it",
+    "## What it produces",
+    "## Example",
+    "## Safety and limits",
+    "## Troubleshooting",
+  ];
+  const root = await read("README.md");
+  const collection = await read("skills/study/README.md");
+  const docs = await read("docs/study/README.md");
+  for (const name of USER_SKILLS) {
+    const text = await read(`skills/study/${name}/README.md`);
+    for (const heading of readmeHeadings) {
+      assert.match(text, new RegExp(`^${heading}$`, "m"), `${name} missing ${heading}`);
+    }
+    assert.match(text, new RegExp(`/${name}`));
+    assert.match(root, new RegExp(`\\./skills/study/${name}/README\\.md`));
+    assert.match(collection, new RegExp(`\\./${name}/README\\.md`));
+    assert.match(docs, new RegExp(`\\.\\./\\.\\./skills/study/${name}/README\\.md`));
+  }
 });
