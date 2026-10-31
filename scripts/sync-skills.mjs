@@ -16,6 +16,9 @@ const SKILLS = [
   "study-planner",
   "note-organizer",
   "file-study",
+  "revisit-and-improve",
+  "language-coach",
+  "active-recall-coach",
 ];
 
 const REFERENCES = [

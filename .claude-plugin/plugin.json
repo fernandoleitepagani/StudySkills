@@ -1,7 +1,7 @@
 {
   "name": "study-skills",
-  "version": "0.5.0",
-  "description": "Agent skills for studying, learning, and creating: Canvas Study, Lecture Notes, Flashcard Forge, Explain Back, Exam Sim, Study Planner, Note Organizer, and File Study.",
+  "version": "0.6.0",
+  "description": "Agent skills for studying, learning, and creating: Canvas Study, Lecture Notes, Flashcard Forge, Explain Back, Exam Sim, Study Planner, Note Organizer, File Study, Revisit and Improve, Language Coach, and Active Recall Coach.",
   "author": {
     "name": "Fernando Pagani",
     "url": "https://github.com/fernandoleitepagani"
@@ -15,7 +15,9 @@
     "learning",
     "flashcards",
     "lecture-notes",
-    "agent-skills"
+    "agent-skills",
+    "language-learning",
+    "active-recall"
   ],
   "skills": [
     "./skills/study/canvas-study",
@@ -25,6 +27,9 @@
     "./skills/study/exam-sim",
     "./skills/study/study-planner",
     "./skills/study/note-organizer",
-    "./skills/study/file-study"
+    "./skills/study/file-study",
+    "./skills/study/revisit-and-improve",
+    "./skills/study/language-coach",
+    "./skills/study/active-recall-coach"
   ]
 }

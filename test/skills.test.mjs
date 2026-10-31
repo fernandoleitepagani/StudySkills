@@ -17,6 +17,9 @@ const USER_SKILLS = [
   "study-planner",
   "note-organizer",
   "file-study",
+  "revisit-and-improve",
+  "language-coach",
+  "active-recall-coach",
 ];
 
 async function read(relative) {
@@ -277,4 +280,24 @@ test("repo: every skill has a README and every index links to it", async () => {
     assert.match(collection, new RegExp(`\\./${name}/README\\.md`));
     assert.match(docs, new RegExp(`\\.\\./\\.\\./skills/study/${name}/README\\.md`));
   }
+});
+
+test("skills: run 3 contracts", async () => {
+  const revisit = await read("skills/study/revisit-and-improve/SKILL.md");
+  assert.match(revisit, /Never edit, move, rename, or delete/);
+  assert.match(revisit, /audit and revise/i);
+  assert.match(revisit, /unverified/i);
+  assert.match(revisit, /Never modify the original run/);
+
+  const language = await read("skills/study/language-coach/SKILL.md");
+  assert.match(language, /No audio generation/);
+  assert.match(language, /pronunciation scoring/);
+  assert.match(language, /front,back,tags/);
+  assert.match(language, /CEFR/);
+
+  const recall = await read("skills/study/active-recall-coach/SKILL.md");
+  assert.match(recall, /Retrieval practice, not an exam/);
+  assert.match(recall, /No timer/);
+  assert.match(recall, /Every question has an answer and source/);
+  assert.match(recall, /catalog --root/);
 });

@@ -126,6 +126,14 @@ There is no plan to add other harnesses.
 - Claude Code CLI and GUI reported working.
 - v1.0.0 remains gated on the remaining harness and document checks.
 
+## v0.6.0 - Revisit, Language, and Recall
+
+- `revisit-and-improve`: audit and revise existing StudySkills documents.
+- `language-coach`: vocabulary, grammar, drills, sentence mining, and review.
+- `active-recall-coach`: retrieval practice from StudySkills documents and added sources.
+- Per-skill READMEs, root listing, plugin entries, and harness matrix entries.
+- v1.0.0 remains gated on the remaining harness and document checks.
+
 ## v1.0.0 - Stable
 
 - Stable skill contract, migration guide, and security audit.

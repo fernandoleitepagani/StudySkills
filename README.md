@@ -2,14 +2,14 @@
 
 Agent skills for studying, learning, and creating.
 
-Current release: `v0.5.0`.
+Current release: `v0.6.0`.
 
 [![License: MIT](https://img.shields.io/badge/license-MIT-1f3a5f.svg)](./LICENSE)
 [![Node](https://img.shields.io/badge/node-%3E%3D20-1f3a5f.svg)](https://nodejs.org)
 
 StudySkills is a collection of user-invoked skills for coding agents. Each skill asks the questions it needs through the harness native question UI, shows a plan before doing the work, and writes only the files you request.
 
-The collection covers Canvas courses, lecture notes, flashcards, practice exams, explanations, study planning, note organization, and local files.
+The collection covers Canvas courses, lecture notes, flashcards, practice exams, explanations, study planning, note organization, local files, document revision, language learning, and active recall.
 
 ## Install
 
@@ -61,6 +61,9 @@ npx skills@latest update
 | [`study-planner`](./skills/study/study-planner/README.md) | Builds a multi-course schedule or a progressive mastery path. |
 | [`note-organizer`](./skills/study/note-organizer/README.md) | Organizes Markdown and Obsidian notes read-only. |
 | [`file-study`](./skills/study/file-study/README.md) | Turns local folders, files, or attachments into study documents. |
+| [`revisit-and-improve`](./skills/study/revisit-and-improve/README.md) | Audits and improves existing study documents without changing the originals. |
+| [`language-coach`](./skills/study/language-coach/README.md) | Builds a language-learning path with vocabulary, grammar, drills, and review. |
+| [`active-recall-coach`](./skills/study/active-recall-coach/README.md) | Builds retrieval practice and spaced review from StudySkills documents. |
 
 ## Why these skills exist
 
@@ -81,6 +84,9 @@ Run a skill by name in Claude Code, OpenCode, or Codex:
 /study-planner
 /note-organizer
 /file-study
+/revisit-and-improve
+/language-coach
+/active-recall-coach
 ```
 
 Each skill:

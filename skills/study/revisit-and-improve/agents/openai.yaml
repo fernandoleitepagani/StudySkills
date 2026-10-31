@@ -1,0 +1,6 @@
+interface:
+  display_name: "Revisit and Improve"
+  short_description: "Audit and improve existing study documents"
+  brand_color: "#1F3A5F"
+policy:
+  allow_implicit_invocation: false

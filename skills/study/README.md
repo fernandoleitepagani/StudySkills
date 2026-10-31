@@ -12,6 +12,9 @@ A collection of user-invoked skills for studying, learning, and creating.
 - [study-planner](./study-planner/README.md): build a multi-course schedule or a progressive mastery path.
 - [note-organizer](./note-organizer/README.md): organize Markdown and Obsidian notes read-only.
 - [file-study](./file-study/README.md): turn local files or folders into study documents, read-only.
+- [revisit-and-improve](./revisit-and-improve/README.md): audit and improve existing study documents.
+- [language-coach](./language-coach/README.md): build a language-learning path with vocabulary and practice.
+- [active-recall-coach](./active-recall-coach/README.md): build retrieval practice and spaced review.
 
 
 Every skill vendors its own `references/core/` and `scripts/core.mjs`. Install the whole collection or a single skill; there is no runtime skill dependency.

@@ -1,0 +1,6 @@
+interface:
+  display_name: "Language Coach"
+  short_description: "Build a language learning path with vocabulary and practice"
+  brand_color: "#1F3A5F"
+policy:
+  allow_implicit_invocation: false

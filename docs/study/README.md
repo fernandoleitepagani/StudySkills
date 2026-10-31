@@ -72,6 +72,27 @@ Full page: [canvas-study.md](./canvas-study.md).
 - **Common questions:** sources are read-only; exact and near duplicates are reported; attachments must be available as paths; no network.
 - **It's working if:** inventory is confirmed before planning, source hashes are unchanged, citations name the files, and only requested outputs are written.
 
+## revisit-and-improve
+
+- **What it does:** audits existing StudySkills documents, finds duplicates, ambiguity, errors, and weak sections, and writes improved copies.
+- **When to use it:** a previous run needs a correction or quality pass.
+- **Common questions:** originals are never modified. Revised files go to a new run.
+- **It's working if:** the audit identifies issues, changes are evidence-based, and the original hashes remain unchanged.
+
+## language-coach
+
+- **What it does:** builds a language-learning path with vocabulary, grammar, sentence mining, drills, and review.
+- **When to use it:** you want a structured path toward a language goal.
+- **Common questions:** no audio or pronunciation scoring. Vocabulary uses the Anki CSV contract.
+- **It's working if:** the path matches your level and goal, vocabulary is deduplicated, and the review schedule is realistic.
+
+## active-recall-coach
+
+- **What it does:** builds retrieval practice from StudySkills documents or added sources.
+- **When to use it:** you want to remember material through repeated recall, not rereading.
+- **Common questions:** this is not a timed exam. Every question has an answer and source.
+- **It's working if:** source coverage is complete, questions mix recall and application, and the schedule is usable.
+
 ## Skill guides
 
 Every skill has its own README:
@@ -84,3 +105,6 @@ Every skill has its own README:
 - [study-planner](../../skills/study/study-planner/README.md)
 - [note-organizer](../../skills/study/note-organizer/README.md)
 - [file-study](../../skills/study/file-study/README.md)
+- [revisit-and-improve](../../skills/study/revisit-and-improve/README.md)
+- [language-coach](../../skills/study/language-coach/README.md)
+- [active-recall-coach](../../skills/study/active-recall-coach/README.md)
