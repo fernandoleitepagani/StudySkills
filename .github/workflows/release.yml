@@ -15,7 +15,33 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Verify tag matches package version
+        run: |
+          node -e "const p=require('./package.json'); if ('v'+p.version !== process.env.GITHUB_REF_NAME) { console.error('Tag '+process.env.GITHUB_REF_NAME+' does not match package '+p.version); process.exit(1); }"
+
+      - name: Check version sync
+        run: npm run check:version
+
+      - name: Run tests
+        run: node --test
+
+      - name: Build release asset
+        run: |
+          git archive \
+            --format=zip \
+            --prefix=StudySkills/ \
+            --output=StudySkills.zip \
+            "$GITHUB_REF_NAME"
+
       - name: Create release
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: gh release create "${GITHUB_REF_NAME}" --generate-notes
+        run: |
+          gh release create "$GITHUB_REF_NAME" StudySkills.zip \
+            --generate-notes \
+            --latest

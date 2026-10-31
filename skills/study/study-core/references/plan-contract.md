@@ -39,6 +39,7 @@ Machine-readable source of truth:
 ```json
 {
   "topic": "Statistics 101",
+  "language": "pt-BR",
   "source": {
     "mode": "pack",
     "inputs": ["/path/to/pack"]

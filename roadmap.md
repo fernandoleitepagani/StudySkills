@@ -70,13 +70,16 @@ There is no plan to add other harnesses.
 - No Canvas, no token, no network, no source copies.
 - Detailed history in `roadmap2.md`.
 
-## v0.4.0 - Polish and Scale
+## v0.4.0 - Polish, Verification, and Release
 
-- PT-BR and EN output language coverage.
-- Large-course chunking and caching.
-- Documentation site, CI, and release automation.
+- PT-BR and EN output language contract.
+- Large-source chunking as a shared workflow rule. No caching.
+- CI on Node 20 and 22.
+- Release automation with a tagged archive asset.
+- Install from the latest release asset or a pinned release tag, never `main`.
 - Accessibility and privacy review.
-- Optional local file exports only. No MCP, NotebookLM, web auth, cloud-drive integrations, or external services.
+- Local file exports only. No MCP, NotebookLM, web auth, cloud-drive integrations, or external services.
+- Manual harness verification tracked separately; v1.0.0 remains gated on it.
 
 ## v1.0.0 - Stable
 

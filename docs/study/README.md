@@ -2,6 +2,15 @@
 
 One collection page. Per-skill details live in each `SKILL.md`.
 
+## Collection conventions
+
+- Output language is PT-BR or EN. Default to PT-BR when the user writes Portuguese; otherwise EN.
+- Source quotes stay in their original language.
+- Documents use the shared didactic style and accessibility rules.
+- Sources are read locally and never modified or copied into Documents.
+- Citations use filenames, not absolute paths.
+- No telemetry. Canvas access is limited to the read-only Canvas skill.
+
 ## canvas-study
 
 - **What it does:** fetches one Canvas course read-only and generates study documents.

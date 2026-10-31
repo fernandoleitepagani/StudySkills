@@ -139,3 +139,33 @@ test("skills: file-study constraints", async () => {
   assert.match(text, /source hashes/);
   assert.match(text, /Only the requested files/);
 });
+
+test("skills: v0.4.0 language, accessibility, and privacy contracts", async () => {
+  for (const name of USER_SKILLS) {
+    const text = await read(`skills/study/${name}/SKILL.md`);
+    assert.match(text, /language/i, `${name} must ask for output language`);
+  }
+
+  const plan = await read("skills/study/study-core/references/plan-contract.md");
+  assert.match(plan, /"language"/);
+
+  const core = await read("skills/study/study-core/SKILL.md");
+  assert.match(core, /No telemetry/);
+  assert.match(core, /Large sources|over 100 pages/);
+  assert.match(core, /Cite filenames, not absolute paths/);
+
+  const canvas = await read("skills/study/canvas-study/SKILL.md");
+  assert.match(canvas, /exceed the model context/);
+
+  for (const style of ["study-core", "canvas-study"]) {
+    const text = await read(`skills/study/${style}/references/style.md`);
+    assert.match(text, /## Accessibility/);
+    assert.match(text, /Use real heading levels/);
+    assert.match(text, /Set the document language metadata/);
+  }
+
+  const conventions = await read("skills/study/study-core/references/output-conventions.md");
+  assert.match(conventions, /Cite source filenames, not absolute paths/);
+
+  await assert.rejects(fs.access(path.join(REPO_ROOT, "docs/study/file-study.md")));
+});

@@ -1,6 +1,6 @@
 # Harness capability matrix
 
-Record the result of the v0.3.0 smoke test here.
+Record the result of the v0.4.0 smoke test here.
 
 ## Environment used for this run
 

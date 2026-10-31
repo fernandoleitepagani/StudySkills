@@ -109,7 +109,7 @@ Read `references/options.md`.
 - Ask for the core outputs with multi-select: study plan, summary, flashcards, practice exam.
 - Ask for an add-on: concept map, custom output, or nothing.
 - Ask for optional format preferences. If the user gives none, the agent chooses later.
-- Ask for output language: PT-BR or EN. Default PT-BR when the user writes Portuguese; otherwise EN.
+- Ask for output language: PT-BR or EN. Default PT-BR when the user writes Portuguese; otherwise EN. Keep source quotes in their original language.
 
 ### Round 4 - Settings and scope
 
@@ -157,6 +157,7 @@ Use the counts and estimated size in the plan. Write two files in `workDir`:
     "id": "1",
     "name": "Statistics 101"
   },
+  "language": "pt-BR",
   "requested": [
     {
       "output": "summary",
@@ -244,6 +245,8 @@ For each requested output:
 3. Use the harness native document skill to generate the requested format.
 4. Save it directly in `outputDir`.
 5. Use the exact file names recorded in the plan.
+
+If the course materials exceed the model context, process them by module, page, or source file. Keep intermediate notes in the work directory, synthesize the output from them, cite source pages or files, and delete the intermediate notes with the work directory. Do not create chunk files in the output directory.
 
 Generate every explicitly requested format. If a format cannot be produced:
 

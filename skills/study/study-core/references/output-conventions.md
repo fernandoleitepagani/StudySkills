@@ -9,6 +9,13 @@
 - Never create a substitute format.
 - Never create prompts, zips, source copies, or duplicate formats.
 
+## Citations and privacy
+
+- Cite source filenames, not absolute paths.
+- Include page, slide, or heading when available.
+- Do not include home-directory paths, usernames, or full folder trees in outputs.
+- Do not copy source files into Documents.
+
 ## Partial format report
 
 At the end, state:

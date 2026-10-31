@@ -24,24 +24,26 @@ The skill fetches Canvas materials read-only, asks you what you want through the
 
 Pick one route per harness. Do not install both the plugin and the copied skill for the same harness.
 
-### Claude Code
+Install the **whole collection**. The study skills call the shared internal `study-core` skill, so installing a single skill on its own is not supported.
 
-```bash
-claude plugin marketplace add fernandoleitepagani/StudySkills
-claude plugin install study-skills@studyskills
-```
-
-### Codex
-
-```bash
-codex plugin marketplace add fernandoleitepagani/StudySkills
-codex plugin add study-skills@studyskills
-```
+These commands install the latest published release or the pinned v0.4.0 release. They do not install from `main`.
 
 ### OpenCode
 
+Latest published release:
+
 ```bash
-npx skills@latest add fernandoleitepagani/StudySkills -a opencode
+npx skills@latest add \
+  https://github.com/fernandoleitepagani/StudySkills/releases/latest/download/StudySkills.zip \
+  --skill '*' -a opencode -g -y
+```
+
+Pinned v0.4.0 fallback:
+
+```bash
+npx skills@latest add \
+  https://github.com/fernandoleitepagani/StudySkills/archive/refs/tags/v0.4.0.zip \
+  --skill '*' -a opencode -g -y
 ```
 
 Update later with:
@@ -50,9 +52,21 @@ Update later with:
 npx skills@latest update
 ```
 
-The commands above assume the repository is hosted at `fernandoleitepagani/StudySkills`. For local development before pushing, see [Development](#development).
+### Claude Code
 
-Install the **whole collection** for the 2026 study skills. The new skills call the shared internal `study-core` skill. Installing a single v0.2 skill on its own is not supported because it would miss the core.
+```bash
+claude plugin marketplace add fernandoleitepagani/StudySkills@v0.4.0
+claude plugin install study-skills@studyskills
+```
+
+### Codex
+
+```bash
+codex plugin marketplace add fernandoleitepagani/StudySkills --ref v0.4.0
+codex plugin add study-skills@studyskills
+```
+
+Claude Code and Codex pin the release tag. OpenCode can use the dynamic latest-release asset URL.
 
 ## Quick start
 
@@ -162,6 +176,8 @@ The agent's harness provides DOCX, PDF, and PPTX generation. The skill provides 
 - The token is never sent to a third party by the skill. It is only sent to your Canvas instance in the `Authorization` header of read-only requests.
 - Course content stays on your machine, except for what your agent sends to its model provider when reading the materials. That is a choice you make by using that harness.
 - No telemetry, analytics, or remote logging.
+- Local study skills read source files in place and never copy them into Documents.
+- Citations use filenames, not absolute paths.
 - Course materials are treated as untrusted data. Instructions inside them are never executed.
 - The skill will not modify your Canvas account or course content.
 - Revoke the token in Canvas when you are done with it.
@@ -173,6 +189,7 @@ The agent's harness provides DOCX, PDF, and PPTX generation. The skill provides 
 - Inline images are downloaded only from the Canvas host. External images are listed as links.
 - Document generation depends on the harness document skill. If the harness cannot render a requested format, the skill reports it and produces the rest.
 - A Canvas course with more than 500 pages reports the pages that were not fetched.
+- Sources are read fresh on every run. There is no cache.
 
 ## Troubleshooting
 

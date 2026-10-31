@@ -90,15 +90,25 @@ Every topic section:
 
 ## Accessibility
 
-- High contrast.
-- Descriptive headings.
-- Alt text for meaningful images.
-- Do not rely on color alone.
-- Keep diagrams readable when printed in grayscale.
+- Use real heading levels. Never skip a level.
+- Give every table a header row.
+- Add alt text for meaningful images.
+- Set the document language metadata when the format supports it.
+- Keep the reading order logical for screen readers.
+- Do not use color as the only way to convey meaning.
+- Use descriptive link text, not "click here".
+- DOCX: use real heading styles, table headers, and alt text.
+- PDF: use tagged or otherwise readable structure when the harness supports it.
+- PPTX: use alt text, logical reading order, and readable contrast.
+- Keep diagrams readable in grayscale.
 
 ## Language
 
-- PT-BR: natural Brazilian Portuguese.
-- EN: clear international English.
+- Ask for the output language in the interview.
+- Default to PT-BR when the user writes Portuguese; otherwise default to EN.
 - Keep quotes from source materials in their original language.
+- Keep standard technical terms in English when that is clearer.
 - Use consistent terminology within a document.
+- Set the document language metadata when the harness supports it.
+- Use unambiguous dates such as `20 October 2026`.
+- Use locale-consistent number formats only when the format supports them.
