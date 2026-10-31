@@ -93,6 +93,27 @@ Full page: [canvas-study.md](./canvas-study.md).
 - **Common questions:** this is not a timed exam. Every question has an answer and source.
 - **It's working if:** source coverage is complete, questions mix recall and application, and the schedule is usable.
 
+## math-practice
+
+- **What it does:** generates original math and STEM problems with hints, worked solutions, and common errors.
+- **When to use it:** you want deliberate practice with explanations.
+- **Common questions:** problems are original. The skill does not run a math engine.
+- **It's working if:** problem and solution counts match, steps are complete, and assumptions are stated.
+
+## exam-debrief
+
+- **What it does:** analyzes a completed exam or practice test and builds a remediation plan.
+- **When to use it:** you have results and want to know what to fix next.
+- **Common questions:** no answer key means no score. A retest uses new questions.
+- **It's working if:** errors are classified with evidence and the remediation plan is specific.
+
+## code-kata-coach
+
+- **What it does:** generates programming katas with requirements, tests, hints, reference solutions, and review questions.
+- **When to use it:** you want deliberate coding practice on a language or concept.
+- **Common questions:** no packages are installed. Unexecuted tests are marked unexecuted.
+- **It's working if:** each kata has tests and a solution, and the tests match the requirements.
+
 ## Skill guides
 
 Every skill has its own README:
@@ -108,3 +129,6 @@ Every skill has its own README:
 - [revisit-and-improve](../../skills/study/revisit-and-improve/README.md)
 - [language-coach](../../skills/study/language-coach/README.md)
 - [active-recall-coach](../../skills/study/active-recall-coach/README.md)
+- [math-practice](../../skills/study/math-practice/README.md)
+- [exam-debrief](../../skills/study/exam-debrief/README.md)
+- [code-kata-coach](../../skills/study/code-kata-coach/README.md)

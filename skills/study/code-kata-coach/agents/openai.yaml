@@ -1,0 +1,6 @@
+interface:
+  display_name: "Code Kata Coach"
+  short_description: "Generate programming katas with tests and review"
+  brand_color: "#1F3A5F"
+policy:
+  allow_implicit_invocation: false

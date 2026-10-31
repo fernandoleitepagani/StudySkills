@@ -1,0 +1,6 @@
+interface:
+  display_name: "Math Practice"
+  short_description: "Generate graded math problems with worked solutions"
+  brand_color: "#1F3A5F"
+policy:
+  allow_implicit_invocation: false

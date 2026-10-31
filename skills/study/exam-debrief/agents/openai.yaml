@@ -1,0 +1,6 @@
+interface:
+  display_name: "Exam Debrief"
+  short_description: "Analyze an exam attempt and build a remediation plan"
+  brand_color: "#1F3A5F"
+policy:
+  allow_implicit_invocation: false

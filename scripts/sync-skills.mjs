@@ -19,6 +19,9 @@ const SKILLS = [
   "revisit-and-improve",
   "language-coach",
   "active-recall-coach",
+  "math-practice",
+  "exam-debrief",
+  "code-kata-coach",
 ];
 
 const REFERENCES = [

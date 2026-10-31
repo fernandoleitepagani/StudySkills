@@ -1,6 +1,6 @@
 # Harness capability matrix
 
-Record the result of the v0.6.0 smoke test here.
+Record the result of the v0.7.0 smoke test here.
 
 ## Environment used for this run
 
@@ -28,9 +28,9 @@ The script layer is covered by the automated test suite. Native question renderi
 | study-planner | CLI + GUI | pending | pending | n/a | pending | v0.2.1; PDF/DOCX |
 | note-organizer | CLI + GUI | pending | pending | pending | pending | v0.2.1; read-only source |
 | file-study | CLI + GUI | pending | pending | pending | pending | v0.3.0; local files, read-only |
-| revisit-and-improve | CLI + GUI | pending | pending | pending | pending | v0.6.0; library audit |
-| language-coach | CLI + GUI | pending | pending | pending | pending | v0.6.0; text-only language |
-| active-recall-coach | CLI + GUI | pending | pending | pending | pending | v0.6.0; retrieval practice |
+| revisit-and-improve | CLI + GUI | pending | pending | pending | pending | v0.7.0; library audit |
+| language-coach | CLI + GUI | pending | pending | pending | pending | v0.7.0; text-only language |
+| active-recall-coach | CLI + GUI | pending | pending | pending | pending | v0.7.0; retrieval practice |
 
 ## How to record
 

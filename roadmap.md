@@ -134,6 +134,14 @@ There is no plan to add other harnesses.
 - Per-skill READMEs, root listing, plugin entries, and harness matrix entries.
 - v1.0.0 remains gated on the remaining harness and document checks.
 
+## v0.7.0 - Practice and Assessment
+
+- `math-practice`: original problem sets with hints and worked solutions.
+- `exam-debrief`: score analysis, error taxonomy, and remediation.
+- `code-kata-coach`: programming katas with tests and reference solutions.
+- Per-skill READMEs, root listing, plugin entries, and harness matrix entries.
+- v1.0.0 remains gated on the remaining harness and document checks.
+
 ## v1.0.0 - Stable
 
 - Stable skill contract, migration guide, and security audit.

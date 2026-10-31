@@ -15,6 +15,9 @@ A collection of user-invoked skills for studying, learning, and creating.
 - [revisit-and-improve](./revisit-and-improve/README.md): audit and improve existing study documents.
 - [language-coach](./language-coach/README.md): build a language-learning path with vocabulary and practice.
 - [active-recall-coach](./active-recall-coach/README.md): build retrieval practice and spaced review.
+- [math-practice](./math-practice/README.md): generate graded math problems with worked solutions.
+- [exam-debrief](./exam-debrief/README.md): analyze an exam attempt and build a remediation plan.
+- [code-kata-coach](./code-kata-coach/README.md): generate programming katas with tests and review.
 
 
 Every skill vendors its own `references/core/` and `scripts/core.mjs`. Install the whole collection or a single skill; there is no runtime skill dependency.

@@ -20,6 +20,9 @@ const USER_SKILLS = [
   "revisit-and-improve",
   "language-coach",
   "active-recall-coach",
+  "math-practice",
+  "exam-debrief",
+  "code-kata-coach",
 ];
 
 async function read(relative) {
@@ -300,4 +303,21 @@ test("skills: run 3 contracts", async () => {
   assert.match(recall, /No timer/);
   assert.match(recall, /Every question has an answer and source/);
   assert.match(recall, /catalog --root/);
+});
+
+test("skills: run 4 contracts", async () => {
+  const math = await read("skills/study/math-practice/SKILL.md");
+  assert.match(math, /Original problems/);
+  assert.match(math, /Every problem has a worked solution/);
+  assert.match(math, /No code execution/);
+
+  const debrief = await read("skills/study/exam-debrief/SKILL.md");
+  assert.match(debrief, /Do not fake grading/);
+  assert.match(debrief, /No key means no score/);
+  assert.match(debrief, /Do not reuse original exam questions/);
+
+  const kata = await read("skills/study/code-kata-coach/SKILL.md");
+  assert.match(kata, /No dependency installation/);
+  assert.match(kata, /No execution required/);
+  assert.match(kata, /Each kata has requirements, tests, and a solution/);
 });
