@@ -337,3 +337,14 @@ test("skills: run 5 contracts", async () => {
   assert.match(thesis, /Do not fabricate sources/);
   assert.match(thesis, /evidence-matrix\.csv/);
 });
+
+test("repo: harness matrix lists every skill", async () => {
+  const matrix = await read("docs/study/harness-matrix.md");
+  for (const name of USER_SKILLS) {
+    assert.ok(matrix.includes(`| ${name} |`), `harness matrix missing ${name}`);
+  }
+  assert.match(matrix, /Codex \| CLI \| pending/);
+  assert.match(matrix, /Codex \| GUI \| pending/);
+  assert.match(matrix, /Global capability checks/);
+  assert.match(matrix, /Per-skill coverage/);
+});

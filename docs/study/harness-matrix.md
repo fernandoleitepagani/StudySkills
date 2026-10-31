@@ -1,44 +1,72 @@
 # Harness capability matrix
 
-Record the result of the v0.8.0 smoke test here.
+Record the result of the v1.0.0 release-candidate smoke test here.
 
 ## Environment used for this run
 
-- OpenCode `v2.0.25` is installed.
-- Claude Code CLI and GUI were reported working by the user.
-- Codex CLI is not installed in this environment.
-- OpenCode GUI was not available from the terminal.
+- Claude Code CLI and GUI were reported working by the user. Exact version not recorded.
+- OpenCode `v2.0.25` CLI and GUI were reported working by the user.
+- Codex CLI and GUI are not installed in this environment.
+- A real Canvas end-to-end run was completed.
+- Real PDF, DOCX, PPTX, CSV, and Markdown outputs were inspected.
+- The script layer is covered by the automated test suite.
 
-The script layer is covered by the automated test suite. Native question rendering and document generation are manual checks.
-
-## Matrix
+## Harness surfaces
 
 | Harness | Surface | PDF | DOCX | PPTX | Questions | Notes |
 | --- | --- | --- | --- | --- | --- | --- |
 | Claude Code | CLI | yes | yes | yes | yes | User-reported end-to-end test |
 | Claude Code | GUI | yes | yes | yes | yes | User-reported end-to-end test |
-| OpenCode | CLI | pending | pending | pending | yes | Script layer and native question card verified; document generation still pending |
-| OpenCode | GUI | pending | pending | pending | pending | GUI not available |
+| OpenCode | CLI | yes | yes | yes | yes | User-confirmed end-to-end test |
+| OpenCode | GUI | yes | yes | yes | yes | User-confirmed end-to-end test |
 | Codex | CLI | pending | pending | pending | pending | CLI not installed |
 | Codex | GUI | pending | pending | pending | pending | GUI not available |
-| lecture-notes | CLI + GUI | pending | pending | pending | pending | v0.2.0 |
-| flashcard-forge | CLI + GUI | n/a | n/a | n/a | pending | v0.2.0; CSV/MD only |
-| explain-back | CLI + GUI | pending | pending | pending | pending | v0.2.0 |
-| exam-sim | CLI + GUI | pending | pending | n/a | pending | v0.2.1; PDF/DOCX |
-| study-planner | CLI + GUI | pending | pending | n/a | pending | v0.2.1; PDF/DOCX |
-| note-organizer | CLI + GUI | pending | pending | pending | pending | v0.2.1; read-only source |
-| file-study | CLI + GUI | pending | pending | pending | pending | v0.3.0; local files, read-only |
-| revisit-and-improve | CLI + GUI | pending | pending | pending | pending | v0.8.0; library audit |
-| language-coach | CLI + GUI | pending | pending | pending | pending | v0.8.0; text-only language |
-| active-recall-coach | CLI + GUI | pending | pending | pending | pending | v0.8.0; retrieval practice |
+
+## Global capability checks
+
+These checks cover the shared rendering and question paths. They do not prove that every skill's content contract passed.
+
+| Check | Result | Evidence |
+| --- | --- | --- |
+| Real Canvas fetch and study run | yes | User-confirmed end-to-end run |
+| PDF generation and inspection | yes | User-confirmed |
+| DOCX generation and inspection | yes | User-confirmed |
+| PPTX generation and inspection | yes | User-confirmed |
+| CSV generation and inspection | yes | User-confirmed |
+| Markdown generation and inspection | yes | User-confirmed |
+| Native questions in Claude Code | yes | User-reported |
+| Native questions in OpenCode | yes | User-confirmed |
+
+## Per-skill coverage
+
+`pending` means the skill was not individually exercised. Do not infer `yes` from the global renderer checks.
+
+| Skill | PDF | DOCX | PPTX | Questions | Notes |
+| --- | --- | --- | --- | --- | --- |
+| canvas-study | yes | yes | yes | yes | Real Canvas run and inspected outputs |
+| lecture-notes | pending | pending | pending | pending | Not individually exercised |
+| flashcard-forge | n/a | n/a | n/a | pending | CSV/Markdown only |
+| explain-back | pending | pending | pending | pending | Not individually exercised |
+| exam-sim | pending | pending | n/a | pending | PDF/DOCX only |
+| study-planner | pending | pending | n/a | pending | PDF/DOCX only |
+| note-organizer | pending | pending | pending | pending | Not individually exercised |
+| file-study | pending | pending | pending | pending | Not individually exercised |
+| revisit-and-improve | pending | pending | pending | pending | Not individually exercised |
+| language-coach | pending | pending | pending | pending | Not individually exercised |
+| active-recall-coach | pending | pending | pending | pending | Not individually exercised |
+| math-practice | pending | pending | pending | pending | Not individually exercised |
+| exam-debrief | pending | pending | pending | pending | Not individually exercised |
+| code-kata-coach | pending | pending | pending | pending | Not individually exercised |
+| paper-reader | pending | pending | pending | pending | Not individually exercised |
+| thesis-organizer | pending | pending | pending | pending | Not individually exercised |
 
 ## How to record
 
 For each cell:
 
-- `yes`: generated a valid file.
+- `yes`: generated a valid file or the surface was exercised.
 - `no`: could not generate the format.
-- `n/a`: surface does not expose that capability.
+- `n/a`: surface or skill does not expose that capability.
 - `pending`: not exercised yet.
 
 If a format is `no`, the skill must still produce the other requested formats and report the failure. See `skills/study/<skill>/references/core/output-conventions.md`.
@@ -48,19 +76,23 @@ If a format is `no`, the skill must still produce the other requested formats an
 The following are covered by `node --test` and pass:
 
 - Token detection, unreadable token paths, and guide.
+- Token age warnings and rejected-token expiry guidance.
 - Canvas read-only guards and error-code classification.
 - Pagination, truncation, and rate-limit retry.
 - File and image download with size caps.
+- Canvas material selection and fetch filtering.
 - HTML to text, including pre, tables, images, and nested lists.
 - Materials and manifest generation against a mock Canvas.
 - Plan-driven validation, semantic checks, partial failure, extra files, and token leakage.
+- Quality and research metadata validation.
 - Cross-origin redirect protection.
 - Work and output directory behavior.
 - CLI commands end to end against the mock server.
 
 ## Manual checks still required
 
-1. Run the remaining Codex CLI and GUI checks.
-2. Run the remaining document checks for OpenCode and Codex.
-3. Record the exact Claude Code version and tested formats if available.
-4. Keep any unverified cell marked `pending`.
+1. Run Codex CLI.
+2. Run Codex GUI.
+3. Record the exact Codex version and tested formats.
+4. Run any per-skill rows that must be `yes` before v1.0.0.
+5. Keep any unverified cell marked `pending`.
