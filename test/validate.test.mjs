@@ -353,7 +353,7 @@ test("validate: requires and accepts math evidence", async () => {
       checksPath,
       JSON.stringify({
         files: { "summary.pdf": { sections: ["cover"], counts: { pages: 1 } } },
-        math: { formulas: 2, graphs: 1, images: 0, rendering: "latex", fallback: null },
+        math: { formulas: 2, graphs: 1, images: 0, rendering: "latex", fallback: null, rawLatex: false },
       }),
       "utf8",
     );
@@ -384,6 +384,68 @@ test("validate: requires and accepts math evidence", async () => {
     result = await validateRun({ runDir, planPath, checksPath });
     assert.equal(result.ok, false);
     assert.equal(result.math.ok, false);
+  } finally {
+    await cleanupDir(root);
+  }
+});
+
+test("validate: rejects invalid plan math metadata", async () => {
+  const { root, runDir, planPath, checksPath } = await setup();
+  try {
+    await fs.writeFile(path.join(runDir, "summary.pdf"), "%PDF-1.4\n%%EOF\n");
+    await fs.writeFile(
+      planPath,
+      JSON.stringify({
+        topic: "Statistics",
+        requested: [{ output: "summary", files: ["summary.pdf"], formats: ["pdf"] }],
+        math: { required: false, engine: "bogus", fallback: "magic" },
+      }),
+      "utf8",
+    );
+    await fs.writeFile(
+      checksPath,
+      JSON.stringify({
+        files: { "summary.pdf": { sections: ["cover"], counts: { pages: 1 } } },
+      }),
+      "utf8",
+    );
+    const result = await validateRun({ runDir, planPath, checksPath });
+    assert.equal(result.ok, false);
+    assert.equal(result.math.ok, false);
+    assert.equal(result.math.issues.some((item) => item.includes("plan.math.engine")), true);
+    assert.equal(result.math.issues.some((item) => item.includes("plan.math.fallback")), true);
+  } finally {
+    await cleanupDir(root);
+  }
+});
+
+test("validate: rejects missing or true rawLatex for rendered math", async () => {
+  const { root, runDir, planPath, checksPath } = await setup();
+  try {
+    await fs.writeFile(path.join(runDir, "summary.pdf"), "%PDF-1.4\n%%EOF\n");
+    await fs.writeFile(
+      planPath,
+      JSON.stringify({
+        topic: "Statistics",
+        requested: [{ output: "summary", files: ["summary.pdf"], formats: ["pdf"] }],
+        math: { required: true, engine: "latex", fallback: "image" },
+      }),
+      "utf8",
+    );
+    const base = {
+      files: { "summary.pdf": { sections: ["cover"], counts: { pages: 1 } } },
+      math: { formulas: 1, graphs: 0, images: 0, rendering: "latex", fallback: null },
+    };
+    await fs.writeFile(checksPath, JSON.stringify(base), "utf8");
+    let result = await validateRun({ runDir, planPath, checksPath });
+    assert.equal(result.ok, false);
+    assert.equal(result.math.issues.some((item) => item.includes("rawLatex")), true);
+
+    base.math.rawLatex = true;
+    await fs.writeFile(checksPath, JSON.stringify(base), "utf8");
+    result = await validateRun({ runDir, planPath, checksPath });
+    assert.equal(result.ok, false);
+    assert.equal(result.math.issues.some((item) => item.includes("rawLatex")), true);
   } finally {
     await cleanupDir(root);
   }

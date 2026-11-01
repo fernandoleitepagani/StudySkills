@@ -1,4 +1,5 @@
 import fs from "node:fs/promises";
+import { existsSync } from "node:fs";
 import path from "node:path";
 
 const FORBIDDEN_COMMANDS = [
@@ -27,6 +28,19 @@ function isAbsoluteTarget(target) {
 
 function stripInlineCode(line) {
   return line.replace(/(`+)([^`]*?)\1/g, (match) => " ".repeat(match.length));
+}
+
+function assetExists(baseDir, target) {
+  if (!baseDir || !target || isAbsoluteTarget(target)) return true;
+  if (/^[a-z][a-z0-9+.-]*:/i.test(target)) return true;
+  return existsSync(path.resolve(baseDir, target));
+}
+
+function axisLabel(content, name) {
+  const pattern = new RegExp(`${name}\\s*=\\s*(?:\\{([^}]*)\\}|([^,\\]]+))`, "i");
+  const match = content.match(pattern);
+  if (!match) return false;
+  return Boolean((match[1] ?? match[2] ?? "").trim());
 }
 
 function scanDollarMath(text) {
@@ -158,6 +172,9 @@ export function inspectMath(text, options = {}) {
       if (isAbsoluteTarget(target)) {
         issues.push(issue("ABSOLUTE_IMAGE_PATH", "Image paths must be relative.", item.number));
       }
+      if (!assetExists(options.baseDir, target)) {
+        issues.push(issue("IMAGE_NOT_FOUND", `Image file not found: ${target}.`, item.number));
+      }
       const sameLineCaption = line.slice((match.index ?? 0) + match[0].length);
       const next = nextNonEmptyLine(lines, item.number);
       if (!hasCaption(sameLineCaption) && !(next && hasCaption(next.line))) {
@@ -170,6 +187,15 @@ export function inspectMath(text, options = {}) {
     if (!/\\begin\{(tikzpicture|axis)\}/.test(graph.content)) {
       issues.push(issue("GRAPH_NO_AXIS", "A latex-graph block needs tikzpicture or axis.", graph.startLine));
     }
+    if (/\\begin\{axis\}/.test(graph.content)) {
+      if (!axisLabel(graph.content, "xlabel") || !axisLabel(graph.content, "ylabel")) {
+        issues.push(issue("GRAPH_NO_LABELS", "Axis graphs need non-empty xlabel and ylabel.", graph.startLine));
+      }
+      const plots = (graph.content.match(/\\addplot\b/g) ?? []).length;
+      if (plots > 1 && !/\\addlegendentry|\\legend\s*\{|legend entries|legend to name/i.test(graph.content)) {
+        issues.push(issue("GRAPH_NO_LEGEND", "Graphs with multiple series need a legend.", graph.startLine));
+      }
+    }
     const next = nextNonEmptyLine(lines, graph.endLine);
     if (!next || !hasCaption(next.line)) {
       issues.push(issue("GRAPH_NO_CAPTION", "Every graph needs a Caption line.", graph.startLine));
@@ -181,8 +207,12 @@ export function inspectMath(text, options = {}) {
       issues.push(issue("FORBIDDEN_LATEX_COMMAND", `Forbidden LaTeX command: \\${match[1]}.`));
     }
     for (const match of graph.content.matchAll(/\\(?:input|include|includegraphics)\s*\{([^}]+)\}/g)) {
-      if (isAbsoluteTarget(match[1].trim())) {
+      const target = match[1].trim();
+      if (isAbsoluteTarget(target)) {
         issues.push(issue("ABSOLUTE_LATEX_PATH", "LaTeX asset paths must be relative."));
+      }
+      if (!assetExists(options.baseDir, target)) {
+        issues.push(issue("LATEX_ASSET_NOT_FOUND", `LaTeX asset not found: ${target}.`));
       }
     }
   }
@@ -191,8 +221,12 @@ export function inspectMath(text, options = {}) {
     issues.push(issue("FORBIDDEN_LATEX_COMMAND", `Forbidden LaTeX command: \\${match[1]}.`));
   }
   for (const match of proseText.matchAll(/\\(?:input|include|includegraphics)\s*\{([^}]+)\}/g)) {
-    if (isAbsoluteTarget(match[1].trim())) {
+    const target = match[1].trim();
+    if (isAbsoluteTarget(target)) {
       issues.push(issue("ABSOLUTE_LATEX_PATH", "LaTeX asset paths must be relative."));
+    }
+    if (!assetExists(options.baseDir, target)) {
+      issues.push(issue("LATEX_ASSET_NOT_FOUND", `LaTeX asset not found: ${target}.`));
     }
   }
 

@@ -426,6 +426,23 @@ test("cli: math-check accepts valid math and rejects unclosed delimiters", async
     data = await json(result);
     assert.equal(data.ok, false);
     assert.equal(data.files[0].issues.some((item) => item.code === "UNCLOSED_INLINE_MATH"), true);
+
+    const imageDraft = path.join(dir, "image.md");
+    await fs.writeFile(imageDraft, "![Graph](graph.png)\nCaption: A graph.\n", "utf8");
+    result = await runCore(
+      ["math-check", "--file", imageDraft, "--base-dir", dir, "--json"],
+      { home },
+    );
+    assert.equal(result.code, 1);
+    data = await json(result);
+    assert.equal(data.files[0].issues.some((item) => item.code === "IMAGE_NOT_FOUND"), true);
+
+    await fs.writeFile(path.join(dir, "graph.png"), "png", "utf8");
+    result = await runCore(
+      ["math-check", "--file", imageDraft, "--base-dir", dir, "--json"],
+      { home },
+    );
+    assert.equal(result.code, 0);
   } finally {
     await cleanupDir(dir);
     await cleanupDir(home);

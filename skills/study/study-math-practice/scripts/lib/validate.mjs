@@ -221,20 +221,37 @@ function validateQuality(plan, quality) {
 }
 
 function validateMath(plan, math) {
-  const required = plan.math?.required === true;
+  const planMath = plan.math;
+  const issues = [];
+  if (planMath !== undefined) {
+    if (!planMath || typeof planMath !== "object" || Array.isArray(planMath)) {
+      issues.push("plan.math must be an object.");
+    } else {
+      if (planMath.required !== undefined && typeof planMath.required !== "boolean") {
+        issues.push("plan.math.required must be a boolean.");
+      }
+      if (planMath.engine !== undefined && !["latex", "harness", "none"].includes(planMath.engine)) {
+        issues.push("plan.math.engine must be latex, harness, or none.");
+      }
+      if (planMath.fallback !== undefined && ![null, "image", "plain"].includes(planMath.fallback)) {
+        issues.push("plan.math.fallback must be null, image, or plain.");
+      }
+    }
+  }
+
+  const required = planMath?.required === true;
   if (math === null || math === undefined) {
     return {
       provided: false,
       required,
-      ok: !required,
-      issues: required ? ["Math evidence is required but missing."] : [],
+      ok: !required && issues.length === 0,
+      issues: [...issues, ...(required ? ["Math evidence is required but missing."] : [])],
     };
   }
   if (typeof math !== "object" || Array.isArray(math)) {
-    return { provided: true, required, ok: false, issues: ["Math evidence must be an object."] };
+    return { provided: true, required, ok: false, issues: [...issues, "Math evidence must be an object."] };
   }
 
-  const issues = [];
   const counts = {};
   for (const field of ["formulas", "graphs", "images"]) {
     const value = Number(math[field]);
@@ -255,11 +272,32 @@ function validateMath(plan, math) {
   if (math.rendering === "plain" && fallback === null) {
     issues.push("math.fallback cannot be null when rendering is plain.");
   }
+  if (math.rawLatex !== undefined && typeof math.rawLatex !== "boolean") {
+    issues.push("math.rawLatex must be a boolean.");
+  }
+  if (required && hasRenderedFormat(plan) && math.rawLatex !== false) {
+    issues.push("math.rawLatex must be false when a rendered format contains math.");
+  }
   if (required && counts.formulas + counts.graphs + counts.images === 0) {
     issues.push("Math is required but formulas, graphs, and images are all zero.");
   }
 
   return { provided: true, required, ok: issues.length === 0, issues };
+}
+
+function hasRenderedFormat(plan) {
+  const rendered = new Set(["pdf", "docx", "pptx"]);
+  for (const output of plan.requested ?? []) {
+    for (const format of output.formats ?? []) {
+      if (rendered.has(String(format).toLowerCase())) return true;
+    }
+    for (const file of output.files ?? []) {
+      const name = typeof file === "string" ? file : file?.name;
+      const format = path.extname(String(name ?? "")).slice(1).toLowerCase();
+      if (rendered.has(format)) return true;
+    }
+  }
+  return false;
 }
 
 function validateResearch(plan, research) {

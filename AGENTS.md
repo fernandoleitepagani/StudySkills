@@ -11,7 +11,6 @@ StudySkills is a collection of user-invoked agent skills for studying, learning,
 - `scripts/` holds repository checks, sync, and linking helpers.
 - `test/` holds the zero-dependency `node:test` suites and fixtures.
 - `test-support/` holds test helpers and the mock Canvas server.
-- `roadmap.md` is the product roadmap.
 - `roadmap2.md` tracks `study-files` and the future media-import plan.
 
 ## Skill rules
@@ -50,6 +49,9 @@ StudySkills is a collection of user-invoked agent skills for studying, learning,
 - Keep install commands in `.agents/install-block.md` and copy them verbatim.
 - Every skill has its own `README.md` with the standard headings.
 - The root README lists every skill and links to its README.
+- Update `docs/study/math.md` when math syntax, rendering, fallbacks, or LaTeX security changes.
+- Update `docs/study/performance.md` when generation stages, benchmarks, or targets change.
+- Update the matching `docs/study/release-notes-v*.md` for each release.
 - Do not use em dashes in repository prose. Use commas, colons, parentheses, or periods.
 
 ## Versioning

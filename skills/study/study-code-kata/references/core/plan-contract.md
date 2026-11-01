@@ -126,7 +126,8 @@ Agent attestation after reading each generated file:
     "graphs": 2,
     "images": 1,
     "rendering": "latex",
-    "fallback": null
+    "fallback": null,
+    "rawLatex": false
   },
   "research": {
     "web": "used",
@@ -146,6 +147,7 @@ Math rules:
 - `rendering` is `latex`, `image`, or `plain`.
 - `fallback` is `null`, `image`, or `plain`.
 - If `rendering` is `plain`, `fallback` cannot be `null`.
+- `rawLatex` is a boolean. For a required math run with PDF, DOCX, or PPTX output, it must be `false`.
 - Unknown fields are ignored.
 
 Read `quality.md` for the rubric, `math.md` for LaTeX rules, and `web-research.md` for the absolute web prohibition list.

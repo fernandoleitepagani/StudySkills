@@ -173,7 +173,8 @@ Record the result in `checks.json`:
     "graphs": 2,
     "images": 1,
     "rendering": "latex",
-    "fallback": null
+    "fallback": null,
+    "rawLatex": false
   }
 }
 ```
@@ -186,6 +187,7 @@ Rules:
 - `fallback` is `image`, `plain`, or `null`.
 - A required math block must be reported in `checks.json`.
 - If `rendering` is `plain`, `fallback` cannot be `null`.
+- `rawLatex` is `false` when rendered PDF, DOCX, or PPTX files contain no raw TeX.
 
 ## Examples
 
@@ -225,7 +227,7 @@ Keep formulas from slides and transcripts as LaTeX. Do not flatten them into amb
 Run:
 
 ```bash
-node <skill-dir>/scripts/core.mjs math-check --file <draft.md> --json
+node <skill-dir>/scripts/core.mjs math-check --file <draft.md> --base-dir <workDir> --json
 ```
 
-The scanner checks delimiters, graph blocks, image alt text, captions, forbidden commands, and absolute paths. Validation still requires a visual inspection of the rendered file.
+The scanner checks delimiters, graph blocks, axis labels, multi-series legends, image alt text, captions, asset existence, forbidden commands, and absolute paths. Validation still requires a visual inspection of the rendered file.
