@@ -1,5 +1,9 @@
 # StudySkills
 
+<p align="center">
+  <img src="./assets/studyskills-banner-1280x640.png" alt="StudySkills banner" width="100%">
+</p>
+
 Study skills for Claude Code, OpenCode, and Codex.
 
 Current release: `v1.1.1`.

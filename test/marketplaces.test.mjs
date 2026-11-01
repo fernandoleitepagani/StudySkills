@@ -34,4 +34,13 @@ test("marketplaces: Claude and Codex manifests are present and versioned", async
   assert.equal(await exists(".codex-plugin/plugin.json"), true);
   assert.equal(await exists(".agents/plugins/marketplace.json"), true);
   assert.equal(await exists("skills/study/study-core"), false);
+
+  assert.equal(claudePlugin.icon, "./assets/studyskills-icon.png");
+  assert.equal(codexPlugin.interface.composerIcon, "./assets/studyskills-icon.png");
+  assert.equal(codexPlugin.interface.logo, "./assets/studyskills-icon.png");
+  assert.equal(await exists("assets/studyskills-icon.png"), true);
+  assert.equal(await exists("assets/studyskills-banner-1280x640.png"), true);
+
+  const readme = await fs.readFile(path.join(REPO_ROOT, "README.md"), "utf8");
+  assert.match(readme, /assets\/studyskills-banner-1280x640\.png/);
 });

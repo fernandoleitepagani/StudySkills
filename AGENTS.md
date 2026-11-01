@@ -7,6 +7,7 @@ StudySkills is a collection of user-invoked agent skills for studying, learning,
 - `skills/study/` holds the study skills.
 - `skills/study/study-canvas/` is the Canvas Study skill.
 - `docs/study/` holds human-facing documentation.
+- `assets/` holds repository brand images.
 - `core/` holds canonical shared references and scripts.
 - `scripts/` holds repository checks, sync, and linking helpers.
 - `test/` holds the zero-dependency `node:test` suites and fixtures.

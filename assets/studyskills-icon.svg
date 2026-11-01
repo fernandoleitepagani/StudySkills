@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024"><rect x="0" y="0" width="1024" height="1024" rx="210" fill="#1F3A5F"/>
+<circle cx="810" cy="190" r="18" fill="#E8A317" opacity="0.95"/>
+<g transform="rotate(-12 512 512)">
+  <rect x="282" y="300" width="440" height="500" rx="36" fill="#F5F7FA" opacity="0.20"/>
+</g>
+<g transform="rotate(-5 512 512)">
+  <rect x="292" y="278" width="440" height="500" rx="36" fill="#F5F7FA" opacity="0.33"/>
+</g>
+<g transform="rotate(4 512 512)">
+  <rect x="302" y="256" width="440" height="500" rx="36" fill="#F8F3E7"/>
+  <rect x="302" y="256" width="440" height="500" rx="36" fill="none" stroke="#D8CBB8" stroke-width="2"/>
+  <rect x="640" y="256" width="102" height="70" rx="12" fill="#E8A317"/>
+  <path d="M 365 380 C 430 360, 650 368, 690 390" fill="none" stroke="#1F3A5F" stroke-width="16" stroke-linecap="round"/>
+  <path d="M 365 445 C 470 428, 610 438, 690 452" fill="none" stroke="#1F3A5F" stroke-width="16" stroke-linecap="round" opacity="0.75"/>
+  <path d="M 365 510 C 455 495, 580 505, 640 515" fill="none" stroke="#1F3A5F" stroke-width="16" stroke-linecap="round" opacity="0.55"/>
+  <circle cx="545" cy="640" r="54" fill="#E8A317" opacity="0.92"/>
+  <path d="M 512 640 L 536 665 L 582 610" fill="none" stroke="#1F3A5F" stroke-width="16" stroke-linecap="round" stroke-linejoin="round"/>
+</g></svg>
