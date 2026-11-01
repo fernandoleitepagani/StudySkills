@@ -220,6 +220,23 @@ There is no plan to add other harnesses.
 - Made token path assertions cross-platform.
 - No skill behavior changes.
 
+## v1.1.0 - Docs, Performance, and LaTeX Math
+
+- Removed the stale v1 release checklist.
+- Aligned repository and documentation rules.
+- Added a relative Markdown link test.
+- Loaded references just in time.
+- Skipped local format preflight while keeping Canvas preflight.
+- Drafted once and rendered every requested format from the reviewed draft.
+- Split content review from format review.
+- Made web research an explicit unchecked-by-default opt-in.
+- Added bounded Canvas section and page-detail concurrency.
+- Added LaTeX formulas, PGFPlots/TikZ graphs, image rules, and fallbacks.
+- Added `math-check`, plan and check metadata, and math validation.
+- Added math and performance documentation.
+- Kept file and image downloads sequential for exact caps and manifest order.
+- v1.1.0 is the current stable release.
+
 ## Future - Public Store Listing
 
 - Claude directory metadata, icon, listing URLs, validation, submission, and review.

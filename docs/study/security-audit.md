@@ -30,6 +30,8 @@ This audit covers the 13 StudySkills skills and their shared self-contained core
 | Canvas write operation | Account/course mutation | GET-only guard and read allowlist |
 | Cross-origin redirect leaks Authorization | Token theft | Redirect checks and header dropping |
 | Prompt injection in course content | Agent follows untrusted instructions | Course content treated as data; no instruction execution |
+| LaTeX shell escape or file access | Arbitrary command or file access | Forbidden command scanner; no shell escape; relative paths; work-directory compilation |
+| Remote LaTeX include or compilation | Data leak or supply-chain risk | No remote includes; no remote compilation; no automatic TeX install |
 | Path traversal or symlink escape | Writes or reads outside allowed roots | Filename sanitization, containment checks, catalog realpath |
 | Source mutation | Data loss | Read-only source rules and hash checks |
 | Failed output left behind | Incorrect study material | Validation and cleanup-failed |
@@ -59,7 +61,11 @@ This audit covers the 13 StudySkills skills and their shared self-contained core
 - No telemetry, analytics, or remote logging.
 - No git operations during study runs.
 - No runtime dependencies.
-- 115 automated tests cover the script layer and Canvas mock behavior.
+- LaTeX runs without shell escape and with file I/O commands blocked.
+- Absolute LaTeX and image paths are rejected.
+- LaTeX compilation stays in the work directory and auxiliary files are removed.
+- No automatic TeX installation and no remote compilation.
+- 116 automated tests cover the script layer and Canvas mock behavior.
 - Linux, macOS, and Windows CI runs on Node 20 and 22.
 
 ## Findings
@@ -76,6 +82,8 @@ This audit covers the 13 StudySkills skills and their shared self-contained core
 - Invalid original files are reported when a fallback exists.
 - Catalog roots are checked with realpath.
 - Windows/OneDrive Documents can be selected explicitly.
+- LaTeX delimiter, graph, image, forbidden-command, and absolute-path checks are implemented.
+- Math metadata is validated when `plan.math.required` is true.
 
 ### Accepted residual risks
 
@@ -111,8 +119,13 @@ This audit covers the 13 StudySkills skills and their shared self-contained core
    - Public Claude and Codex store listings are not part of v1.
    - The repository is a self-hosted marketplace.
 
+9. **Math rendering**
+   - Formula and graph rendering depends on the harness document renderer.
+   - LaTeX is optional and can fall back to images or plain notation.
+   - Math metadata is agent-attested; visual inspection is still required.
+
 ## Release recommendation
 
-No unresolved security blocker remains for v1.0.1.
+No unresolved security blocker remains for v1.1.0.
 
 The residual risks above are documented and have user-facing mitigations. They should remain in the release notes and future roadmap.

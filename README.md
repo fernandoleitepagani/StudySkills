@@ -2,7 +2,7 @@
 
 Study skills for Claude Code, OpenCode, and Codex.
 
-Current release: `v1.0.1`.
+Current release: `v1.1.0`.
 
 [![License: MIT](https://img.shields.io/badge/license-MIT-1f3a5f.svg)](./LICENSE)
 [![Node](https://img.shields.io/badge/node-%3E%3D20-1f3a5f.svg)](https://nodejs.org)
@@ -179,6 +179,8 @@ npm run check:marketplaces
 ```
 
 The repo has no dependencies to install.
+
+Generation timings and targets live in [docs/study/performance.md](./docs/study/performance.md).
 
 `core/` holds the canonical workflow. The sync script copies it into every skill:
 

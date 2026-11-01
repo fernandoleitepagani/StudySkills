@@ -112,6 +112,14 @@ npx skills@latest update
 
 If update does not replace the files, reinstall with the command for your shell.
 
+## Math rendering
+
+LaTeX is optional. StudySkills does not install TeX, `ffmpeg`, `yt-dlp`, or transcription tools.
+
+PDF can use LaTeX directly. DOCX and PPTX use native equations or rendered images. Markdown keeps LaTeX source. CSV stays plain. If a renderer is unavailable, the output falls back to an image or plain notation and the final report says which mode it used.
+
+See [math.md](./math.md) for syntax, graph blocks, image rules, and security limits.
+
 ## Local development
 
 The supported end-user path is the marketplace or `npx` installer.
@@ -139,7 +147,9 @@ Check that these files exist:
 
 ```text
 study-canvas/references/core/error-messages.md
+study-canvas/references/core/math.md
 study-canvas/scripts/canvas.mjs
+study-canvas/scripts/lib/math.mjs
 study-canvas/README.md
 ```
 

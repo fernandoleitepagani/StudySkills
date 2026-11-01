@@ -2,7 +2,7 @@
 
 The 13 skills share one workflow: ask, plan, approve, write, validate, report.
 
-Start with the [installation and update guide](./installation.md). Harness coverage and smoke results live in [harness-compatibility.md](./harness-compatibility.md). The [security audit](./security-audit.md) records controls and accepted risks. The [v1.0.1 release notes](./release-notes-v1.0.1.md) explain the current release.
+Start with the [installation and update guide](./installation.md). Harness coverage and smoke results live in [harness-compatibility.md](./harness-compatibility.md). The [security audit](./security-audit.md) records controls and accepted risks. The [v1.1.0 release notes](./release-notes-v1.1.0.md) explain the current release.
 
 ## How the collection works
 
