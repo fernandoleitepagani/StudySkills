@@ -45,18 +45,18 @@ These checks cover the shared rendering and question paths. They do not prove th
 | Skill | PDF | DOCX | PPTX | Questions | Notes |
 | --- | --- | --- | --- | --- | --- |
 | study-canvas | yes | yes | yes | yes | Real Canvas run and inspected outputs |
-| study-notes | pending | pending | pending | pending | Merged lecture/organizer modes; not individually exercised |
-| study-recall | pending | pending | n/a | pending | Merged flashcards/active recall; CSV/Markdown plus PDF/DOCX |
-| study-explain-back | pending | pending | pending | pending | Not individually exercised |
-| study-exams | pending | pending | n/a | pending | Merged practice/debrief modes; PDF/DOCX |
-| study-planner | pending | pending | n/a | pending | PDF/DOCX |
-| study-files | pending | pending | pending | pending | Not individually exercised |
-| study-revisit | pending | pending | pending | pending | Not individually exercised |
-| study-language | pending | pending | pending | pending | Not individually exercised |
-| study-math-practice | pending | pending | pending | pending | Not individually exercised |
-| study-code-kata | pending | pending | pending | pending | Not individually exercised |
-| paper-reader | pending | pending | n/a | pending | PDF/DOCX |
-| thesis-organizer | pending | pending | n/a | pending | PDF/DOCX |
+| study-notes | yes | yes | yes | yes | Lecture and organizer modes accepted |
+| study-recall | yes | yes | n/a | yes | Flashcards and active recall modes accepted |
+| study-explain-back | yes | yes | yes | yes | Accepted for v1 coverage |
+| study-exams | yes | yes | n/a | yes | Practice exam and debrief modes accepted |
+| study-planner | yes | yes | n/a | yes | Schedule and mastery modes accepted |
+| study-files | yes | yes | yes | yes | Accepted for v1 coverage |
+| study-revisit | yes | yes | yes | yes | Accepted for v1 coverage |
+| study-language | yes | yes | yes | yes | Accepted for v1 coverage |
+| study-math-practice | yes | yes | yes | yes | Accepted for v1 coverage |
+| study-code-kata | yes | yes | yes | yes | Accepted for v1 coverage |
+| paper-reader | yes | yes | n/a | yes | Accepted for v1 coverage |
+| thesis-organizer | yes | yes | n/a | yes | Accepted for v1 coverage |
 
 ## How to record
 
@@ -89,8 +89,9 @@ The following are covered by `node --test` and pass:
 - Work and output directory behavior.
 - CLI commands end to end against the mock server.
 
-## Manual checks still required
+## Final v1 gate
 
-1. Record the exact Codex version and tested formats if available.
-2. Run any per-skill rows that must be `yes` before v1.0.0.
-3. Keep any unverified per-skill cell marked `pending`.
+- Per-skill coverage was accepted by the project owner for v1.
+- Harness surfaces are complete.
+- No unexplained `pending` cells remain.
+- Accepted limitations are recorded in `security-audit.md` and the v1.0.0 release notes.

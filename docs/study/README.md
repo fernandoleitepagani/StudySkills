@@ -5,6 +5,9 @@ One collection page. Per-skill guides live in each skill `README.md`.
 Install and update instructions: [installation.md](./installation.md).
 Harness compatibility and smoke tests: [harness-compatibility.md](./harness-compatibility.md).
 
+Security audit: [security-audit.md](./security-audit.md).
+Release notes: [release-notes-v1.0.0.md](./release-notes-v1.0.0.md).
+
 ## Collection conventions
 
 - Output language is PT-BR or EN. Default to PT-BR when the user writes Portuguese; otherwise EN.

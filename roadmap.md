@@ -223,7 +223,8 @@ There is no plan to add other harnesses.
 
 ## v1.0.0 - Stable
 
-- Stable 13-skill contract and security audit.
+- Stable 13-skill contract.
+- Security audit and accepted residual risks.
 - Linux, macOS, and Windows support.
 - Release notes and final harness matrix.
 - Community study skills directory moved post-v1.

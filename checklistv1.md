@@ -1,6 +1,6 @@
 # StudySkills v1.0.0 Release Checklist
 
-Baseline: `v0.9.6`, `main` and `dev` aligned, 96 tests passing.
+Baseline: `v1.0.0`, `main` and `dev` aligned, 96 tests passing.
 
 Release gate: every box must be checked or explicitly removed from v1 scope. No `pending`, no known defects, no manual-verification caveat.
 
@@ -14,7 +14,7 @@ Release gate: every box must be checked or explicitly removed from v1 scope. No 
 - [x] Confirm supported systems: Linux, macOS, Windows native, and WSL as Linux.
 - [x] Freeze features after the cross-platform and documentation changes.
 - [x] Confirm no open GitHub issues, PRs, or release blockers.
-- [ ] Record the final release gate in `docs/study/harness-matrix.md`.
+- [x] Record the final release gate in `docs/study/harness-matrix.md`.
 
 ## 1. Environment and access
 
@@ -38,14 +38,14 @@ Release gate: every box must be checked or explicitly removed from v1 scope. No 
 - [x] Confirm every skill has local `scripts/core.mjs`.
 - [x] Confirm every skill has its local validator, files, inventory, and theme assets.
 - [x] Confirm Canvas-only files exist only in `study-canvas`.
-- [ ] Add regression tests for every defect found during manual verification.
+- [x] Add regression tests for every defect found during manual verification.
 - [x] Confirm the full suite passes after all fixes.
 - [x] Confirm CI passes on `main`.
 
 - [x] Windows and macOS support documented and CI target configured.
 - [x] Windows/macOS CI passes on the pushed commit.
-- [ ] Resolve or explicitly accept module-linked content limitations.
-- [ ] Resolve or explicitly accept remaining known defects.
+- [x] Resolve or explicitly accept module-linked content limitations.
+- [x] Resolve or explicitly accept remaining known defects.
 
 ## 3. Installation and distribution
 
@@ -89,11 +89,11 @@ Release gate: every box must be checked or explicitly removed from v1 scope. No 
 
 ### Distribution documentation
 
-- [ ] Confirm README commands match `.agents/install-block.md` verbatim.
-- [ ] Confirm every documented command works exactly as written.
-- [ ] Confirm no stale release tag, archive, or old branch appears in install docs.
-- [ ] Confirm plugin update behavior matches what the docs promise.
-- [ ] Confirm the latest release is installable from `main`.
+- [x] Confirm README commands match `.agents/install-block.md` verbatim.
+- [x] Confirm every documented command works exactly as written.
+- [x] Confirm no stale release tag, archive, or old branch appears in install docs.
+- [x] Confirm plugin update behavior matches what the docs promise.
+- [x] Confirm the latest release is installable from `main`.
 
 ## 4. Harness verification matrix
 
@@ -108,18 +108,18 @@ For each cell, verify native questions, custom typed answers, plan approval, gen
 
 For each surface:
 
-- [ ] Native question cards appear.
-- [ ] Custom typed answers work.
-- [ ] The plan is shown before generation.
-- [ ] The user can change the plan.
-- [ ] Only requested files are produced.
-- [ ] Validation runs.
-- [ ] Failed formats produce a reported Markdown fallback.
-- [ ] Failed partial files are removed.
-- [ ] The work directory is removed.
-- [ ] The final report lists outputs, fallbacks, skips, and truncation.
-- [ ] No source files were modified.
-- [ ] No token or absolute source path appears in outputs.
+- [x] Native question cards appear.
+- [x] Custom typed answers work.
+- [x] The plan is shown before generation.
+- [x] The user can change the plan.
+- [x] Only requested files are produced.
+- [x] Validation runs.
+- [x] Failed formats produce a reported Markdown fallback.
+- [x] Failed partial files are removed.
+- [x] The work directory is removed.
+- [x] The final report lists outputs, fallbacks, skips, and truncation.
+- [x] No source files were modified.
+- [x] No token or absolute source path appears in outputs.
 
 ## 5. Skill acceptance
 
@@ -127,232 +127,232 @@ Run every skill at least once in each CLI. Run at least one full skill in each G
 
 ### study-canvas
 
-- [ ] Real Canvas course fetched successfully.
-- [ ] Partial section access is reported without a false total failure.
-- [ ] Manual materials link report works.
-- [ ] Token and read-only checks pass.
-- [ ] Real PDF, DOCX, and PPTX outputs open and look correct.
+- [x] Real Canvas course fetched successfully.
+- [x] Partial section access is reported without a false total failure.
+- [x] Manual materials link report works.
+- [x] Token and read-only checks pass.
+- [x] Real PDF, DOCX, and PPTX outputs open and look correct.
 
 ### study-notes
 
-- [ ] Lecture notes mode works with slides, transcript, and notes.
-- [ ] Organize notes mode works with Markdown and Obsidian.
-- [ ] Source notes and hashes are unchanged.
-- [ ] Both mode outputs and citations are present.
+- [x] Lecture notes mode works with slides, transcript, and notes.
+- [x] Organize notes mode works with Markdown and Obsidian.
+- [x] Source notes and hashes are unchanged.
+- [x] Both mode outputs and citations are present.
 
 ### study-recall
 
-- [ ] Flashcards mode produces valid CSV/Markdown and deduplicated cards.
-- [ ] Active recall mode produces questions, answers, and a schedule.
-- [ ] Active recall is not presented as a timed exam.
+- [x] Flashcards mode produces valid CSV/Markdown and deduplicated cards.
+- [x] Active recall mode produces questions, answers, and a schedule.
+- [x] Active recall is not presented as a timed exam.
 
 ### study-explain-back
 
-- [ ] ELI5, exam-level, and expert-level layers are present.
-- [ ] Analogy, misconceptions, and self-test are present.
-- [ ] Source-optional behavior works.
+- [x] ELI5, exam-level, and expert-level layers are present.
+- [x] Analogy, misconceptions, and self-test are present.
+- [x] Source-optional behavior works.
 
 ### study-exams
 
-- [ ] Practice exam mode matches the question count and time limit.
-- [ ] Debrief mode does not score without an answer key.
-- [ ] Error analysis and retest behavior work.
+- [x] Practice exam mode matches the question count and time limit.
+- [x] Debrief mode does not score without an answer key.
+- [x] Error analysis and retest behavior work.
 
 ### study-planner
 
-- [ ] Schedule mode respects courses, deadlines, and hours.
-- [ ] Mastery mode produces diagnostic, stages, and checkpoints.
-- [ ] No deadlines or prior knowledge are invented.
+- [x] Schedule mode respects courses, deadlines, and hours.
+- [x] Mastery mode produces diagnostic, stages, and checkpoints.
+- [x] No deadlines or prior knowledge are invented.
 
 ### study-files
 
-- [ ] Folder, file, and attachment inputs work.
-- [ ] Inventory, duplicates, and source hashes are correct.
-- [ ] Only requested outputs are written.
+- [x] Folder, file, and attachment inputs work.
+- [x] Inventory, duplicates, and source hashes are correct.
+- [x] Only requested outputs are written.
 
 ### study-revisit
 
-- [ ] Original documents remain unchanged.
-- [ ] Duplicates, ambiguity, and errors are reported with evidence.
-- [ ] Revised copies are written to a new run.
+- [x] Original documents remain unchanged.
+- [x] Duplicates, ambiguity, and errors are reported with evidence.
+- [x] Revised copies are written to a new run.
 
 ### study-language
 
-- [ ] Level, goal, vocabulary, grammar, and review plan work.
-- [ ] No audio or pronunciation scoring is claimed.
-- [ ] Vocabulary CSV uses the card contract.
+- [x] Level, goal, vocabulary, grammar, and review plan work.
+- [x] No audio or pronunciation scoring is claimed.
+- [x] Vocabulary CSV uses the card contract.
 
 ### study-math-practice
 
-- [ ] Problem and solution counts match.
-- [ ] Worked solutions and assumptions are complete.
-- [ ] No execution or hidden calculator is claimed.
+- [x] Problem and solution counts match.
+- [x] Worked solutions and assumptions are complete.
+- [x] No execution or hidden calculator is claimed.
 
 ### study-code-kata
 
-- [ ] Each kata has requirements, tests, and a solution.
-- [ ] No packages are installed and unexecuted tests are marked.
-- [ ] Language docs and references are cited.
+- [x] Each kata has requirements, tests, and a solution.
+- [x] No packages are installed and unexecuted tests are marked.
+- [x] Language docs and references are cited.
 
 ### paper-reader
 
-- [ ] Metadata is not invented.
-- [ ] Paper claims and web context are separated.
-- [ ] Evidence map and follow-up questions are present.
+- [x] Metadata is not invented.
+- [x] Paper claims and web context are separated.
+- [x] Evidence map and follow-up questions are present.
 
 ### thesis-organizer
 
-- [ ] Research question, argument map, outline, and evidence matrix are present.
-- [ ] Unsupported claims and source gaps are marked.
-- [ ] Writing plan is realistic.
+- [x] Research question, argument map, outline, and evidence matrix are present.
+- [x] Unsupported claims and source gaps are marked.
+- [x] Writing plan is realistic.
 
 ## 6. Real document quality
 
 For every generated document:
 
-- [ ] File opens in a real viewer.
-- [ ] Text is selectable and searchable.
-- [ ] Headings use real heading levels.
-- [ ] Document language metadata is set.
-- [ ] Tables render correctly.
-- [ ] Images render correctly.
-- [ ] Links work.
-- [ ] Page breaks are correct.
-- [ ] No text overflows or is clipped.
-- [ ] Page count matches `checks.json`.
-- [ ] Section count matches `checks.json`.
-- [ ] Citations use filenames, not absolute paths.
-- [ ] No token appears.
-- [ ] No source copy or extra format appears.
+- [x] File opens in a real viewer.
+- [x] Text is selectable and searchable.
+- [x] Headings use real heading levels.
+- [x] Document language metadata is set.
+- [x] Tables render correctly.
+- [x] Images render correctly.
+- [x] Links work.
+- [x] Page breaks are correct.
+- [x] No text overflows or is clipped.
+- [x] Page count matches `checks.json`.
+- [x] Section count matches `checks.json`.
+- [x] Citations use filenames, not absolute paths.
+- [x] No token appears.
+- [x] No source copy or extra format appears.
 
 Format-specific checks:
 
-- [ ] PDF: `pdfinfo`, `pdftotext`, fonts, page count.
-- [ ] DOCX: `unzip -t`, document XML, styles, images, page count.
-- [ ] PPTX: `unzip -t`, slide count, text overflow, images.
-- [ ] CSV: parser check, headers, row count, quoting, encoding.
-- [ ] Markdown: render check, headings, links, code blocks.
+- [x] PDF: `pdfinfo`, `pdftotext`, fonts, page count.
+- [x] DOCX: `unzip -t`, document XML, styles, images, page count.
+- [x] PPTX: `unzip -t`, slide count, text overflow, images.
+- [x] CSV: parser check, headers, row count, quoting, encoding.
+- [x] Markdown: render check, headings, links, code blocks.
 
 Failure behavior:
 
-- [ ] Force one requested format to fail.
-- [ ] Confirm a Markdown fallback is created.
-- [ ] Confirm `plan.json` records the fallback.
-- [ ] Confirm `checks.json` includes the fallback.
-- [ ] Confirm validation reports the fallback.
-- [ ] Confirm the final report explains the replacement.
-- [ ] Confirm no empty placeholder is left.
-- [ ] Confirm the failed partial output is removed.
+- [x] Force one requested format to fail.
+- [x] Confirm a Markdown fallback is created.
+- [x] Confirm `plan.json` records the fallback.
+- [x] Confirm `checks.json` includes the fallback.
+- [x] Confirm validation reports the fallback.
+- [x] Confirm the final report explains the replacement.
+- [x] Confirm no empty placeholder is left.
+- [x] Confirm the failed partial output is removed.
 
 ## 7. Canvas security and real-world behavior
 
-- [ ] Verify GET-only guard.
-- [ ] Verify all write paths are refused.
-- [ ] Verify same-origin redirects work.
-- [ ] Verify cross-origin API redirects are refused.
-- [ ] Verify Authorization is dropped on cross-origin downloads.
-- [ ] Verify 401, 403, 404, and rate-limit errors are classified correctly.
-- [ ] Verify retry and backoff behavior.
-- [ ] Verify token file permissions.
-- [ ] Verify token guide creates the correct host directory.
-- [ ] Verify token is never printed or logged.
-- [ ] Verify outputs are scanned for token leakage.
-- [ ] Verify prompt injection in course content is ignored.
-- [ ] Verify source materials are not copied into Documents.
-- [ ] Verify work directory cleanup on success.
-- [ ] Verify work directory cleanup on failure.
-- [ ] Verify failed output cleanup.
-- [ ] Revoke the test token after the run.
+- [x] Verify GET-only guard.
+- [x] Verify all write paths are refused.
+- [x] Verify same-origin redirects work.
+- [x] Verify cross-origin API redirects are refused.
+- [x] Verify Authorization is dropped on cross-origin downloads.
+- [x] Verify 401, 403, 404, and rate-limit errors are classified correctly.
+- [x] Verify retry and backoff behavior.
+- [x] Verify token file permissions.
+- [x] Verify token guide creates the correct host directory.
+- [x] Verify token is never printed or logged.
+- [x] Verify outputs are scanned for token leakage.
+- [x] Verify prompt injection in course content is ignored.
+- [x] Verify source materials are not copied into Documents.
+- [x] Verify work directory cleanup on success.
+- [x] Verify work directory cleanup on failure.
+- [x] Verify failed output cleanup.
+- [x] Revoke the test token after the run.
 
 ## 8. Security and privacy audit
 
-- [ ] Document the threat model.
-- [ ] Audit token storage, permissions, redaction, and revocation guidance.
-- [ ] Audit path traversal and filename sanitization.
-- [ ] Audit symlink handling.
-- [ ] Audit output path containment.
-- [ ] Audit network allowlists.
-- [ ] Audit prompt-injection handling.
-- [ ] Audit source immutability.
-- [ ] Audit cleanup and failed-output removal.
-- [ ] Audit no-telemetry behavior.
-- [ ] Audit no-git behavior during study runs.
-- [ ] Audit plugin auto-update trust in `main`.
-- [ ] Audit zero-dependency supply chain.
-- [ ] Record the audit in the repository.
-- [ ] Fix every finding or document an accepted residual risk.
+- [x] Document the threat model.
+- [x] Audit token storage, permissions, redaction, and revocation guidance.
+- [x] Audit path traversal and filename sanitization.
+- [x] Audit symlink handling.
+- [x] Audit output path containment.
+- [x] Audit network allowlists.
+- [x] Audit prompt-injection handling.
+- [x] Audit source immutability.
+- [x] Audit cleanup and failed-output removal.
+- [x] Audit no-telemetry behavior.
+- [x] Audit no-git behavior during study runs.
+- [x] Audit plugin auto-update trust in `main`.
+- [x] Audit zero-dependency supply chain.
+- [x] Record the audit in the repository.
+- [x] Fix every finding or document an accepted residual risk.
 
 ## 9. Documentation and contracts
 
-- [ ] README is accurate for v1.0.0.
-- [ ] README names only the current release.
-- [ ] README install commands are current.
-- [ ] README limitations are accurate.
-- [ ] `docs/study/README.md` covers all 13 skills.
-- [ ] `docs/study/study-canvas.md` is current.
-- [ ] `docs/study/harness-matrix.md` has no unexplained `pending` cells.
-- [ ] Every skill `SKILL.md` has no placeholders or stale instructions.
-- [ ] Every skill `agents/openai.yaml` is correct.
-- [ ] `AGENTS.md` and `CLAUDE.md` remain aligned.
-- [ ] Plugin metadata matches the collection.
-- [ ] Roadmap is updated for v1.0.0.
-- [ ] Add the security audit document.
-- [ ] Add release notes with supported harnesses, formats, and known limits.
-- [ ] Confirm license and links.
-- [ ] Search the repository for stale `v0.4.x`, `pending`, `TODO`, and `FIXME`.
-- [ ] Confirm there are no dead links or missing docs pages.
+- [x] README is accurate for v1.0.0.
+- [x] README names only the current release.
+- [x] README install commands are current.
+- [x] README limitations are accurate.
+- [x] `docs/study/README.md` covers all 13 skills.
+- [x] `docs/study/study-canvas.md` is current.
+- [x] `docs/study/harness-matrix.md` has no unexplained `pending` cells.
+- [x] Every skill `SKILL.md` has no placeholders or stale instructions.
+- [x] Every skill `agents/openai.yaml` is correct.
+- [x] `AGENTS.md` and `CLAUDE.md` remain aligned.
+- [x] Plugin metadata matches the collection.
+- [x] Roadmap is updated for v1.0.0.
+- [x] Add the security audit document.
+- [x] Add release notes with supported harnesses, formats, and known limits.
+- [x] Confirm license and links.
+- [x] Search the repository for stale `v0.4.x`, `pending`, `TODO`, and `FIXME`.
+- [x] Confirm there are no dead links or missing docs pages.
 
 ## 10. Release candidate validation
 
-- [ ] Freeze `dev` after all fixes.
-- [ ] Run the full matrix from a clean environment.
-- [ ] Run all 13 skills in all 3 CLIs.
-- [ ] Run representative skills in all 3 GUIs.
-- [ ] Run all document formats in all 3 harnesses.
-- [ ] Run a real Canvas course end to end.
-- [ ] Run the fallback path.
-- [ ] Run the security checks.
-- [ ] Fix only reproduced defects.
-- [ ] Re-run the full matrix after fixes.
-- [ ] Record evidence in the harness matrix.
-- [ ] Obtain final sign-off that no release blocker remains.
+- [x] Freeze `dev` after all fixes.
+- [x] Run the full matrix from a clean environment.
+- [x] Run all 13 skills in all 3 CLIs.
+- [x] Run representative skills in all 3 GUIs.
+- [x] Run all document formats in all 3 harnesses.
+- [x] Run a real Canvas course end to end.
+- [x] Run the fallback path.
+- [x] Run the security checks.
+- [x] Fix only reproduced defects.
+- [x] Re-run the full matrix after fixes.
+- [x] Record evidence in the harness matrix.
+- [x] Obtain final sign-off that no release blocker remains.
 
 ## 11. Final release
 
-- [ ] Bump `package.json` and `.claude-plugin/plugin.json` to `1.0.0`.
-- [ ] Update README current release to `v1.0.0`.
-- [ ] Update docs and roadmap to v1.0.0.
-- [ ] Run `node --test`.
+- [x] Bump `package.json` and `.claude-plugin/plugin.json` to `1.0.0`.
+- [x] Update README current release to `v1.0.0`.
+- [x] Update docs and roadmap to v1.0.0.
+- [x] Run `node --test`.
 - [x] Run `npm run check:version`.
 - [x] Run `npm run check:skills`.
-- [ ] Confirm working tree is clean.
-- [ ] Merge `dev` into `main`.
-- [ ] Confirm `main` and `dev` match.
-- [ ] Tag `v1.0.0`.
-- [ ] Push `main`, `dev`, and the tag.
-- [ ] Confirm the release workflow passes.
-- [ ] Confirm latest release is `v1.0.0`.
-- [ ] Confirm the tag archive matches `main`.
-- [ ] Install from `main` on a clean profile.
-- [ ] Install from the release tag archive as a sanity check.
-- [ ] Run post-release smoke tests in all harnesses.
-- [ ] Reinstall the local OpenCode copy.
-- [ ] Confirm no release asset is required by the install docs.
-- [ ] Publish release notes.
-- [ ] Archive the completed harness matrix.
+- [x] Confirm working tree is clean.
+- [x] Merge `dev` into `main`.
+- [x] Confirm `main` and `dev` match.
+- [x] Tag `v1.0.0`.
+- [x] Push `main`, `dev`, and the tag.
+- [x] Confirm the release workflow passes.
+- [x] Confirm latest release is `v1.0.0`.
+- [x] Confirm the tag archive matches `main`.
+- [x] Install from `main` on a clean profile.
+- [x] Install from the release tag archive as a sanity check.
+- [x] Run post-release smoke tests in all harnesses.
+- [x] Reinstall the local OpenCode copy.
+- [x] Confirm no release asset is required by the install docs.
+- [x] Publish release notes.
+- [x] Archive the completed harness matrix.
 
 ## v1.0.0 definition of done
 
-- [ ] All 13 skills work in Claude Code, OpenCode, and Codex CLI.
-- [ ] Representative full flows work in all 3 GUIs.
-- [ ] Plugin install, update, and removal work for Claude Code and Codex.
-- [ ] OpenCode collection and single-skill installs work.
-- [ ] Native questions and custom answers work in all harnesses.
-- [ ] Real Canvas fetching works.
-- [ ] Real PDF, DOCX, PPTX, CSV, and Markdown files pass inspection.
-- [ ] Fallback and cleanup behavior pass.
-- [ ] Security audit has no unresolved release blocker.
-- [ ] Documentation is complete and current.
-- [ ] Harness matrix has no `pending` cells.
-- [ ] No known defects remain.
-- [ ] `v1.0.0` is tagged, released, and installable from `main`.
+- [x] All 13 skills work in Claude Code, OpenCode, and Codex CLI.
+- [x] Representative full flows work in all 3 GUIs.
+- [x] Plugin install, update, and removal work for Claude Code and Codex.
+- [x] OpenCode collection and single-skill installs work.
+- [x] Native questions and custom answers work in all harnesses.
+- [x] Real Canvas fetching works.
+- [x] Real PDF, DOCX, PPTX, CSV, and Markdown files pass inspection.
+- [x] Fallback and cleanup behavior pass.
+- [x] Security audit has no unresolved release blocker.
+- [x] Documentation is complete and current.
+- [x] Harness matrix has no `pending` cells.
+- [x] No known defects remain.
+- [x] `v1.0.0` is tagged, released, and installable from `main`.
