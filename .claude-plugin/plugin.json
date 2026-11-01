@@ -35,5 +35,6 @@
     "./skills/study/study-code-kata",
     "./skills/study/paper-reader",
     "./skills/study/thesis-organizer"
-  ]
+  ],
+  "icon": "./assets/studyskills-icon.png"
 }

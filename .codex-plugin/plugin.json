@@ -20,6 +20,9 @@
   "interface": {
     "displayName": "StudySkills",
     "shortDescription": "Study, learn, revise, and practice with agent skills.",
-    "category": "Productivity"
+    "category": "Productivity",
+    "composerIcon": "./assets/studyskills-icon.png",
+    "logo": "./assets/studyskills-icon.png",
+    "brandColor": "#1F3A5F"
   }
 }
