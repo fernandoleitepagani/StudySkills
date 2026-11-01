@@ -2,23 +2,22 @@
 
 ## What it does
 
-Creates a timed practice exam or debriefs a completed exam with error analysis, remediation, and an optional retest.
+Creates a timed practice exam or reviews a finished attempt. Pick **Create a practice exam** or **Debrief a completed exam**.
 
 ## When to use it
 
-- Use **Create a practice exam** before an exam.
-- Use **Debrief a completed exam** after a practice test or real exam.
+Use practice mode before an exam. Use debrief mode after a practice test or a real exam.
 
 ## What you need
 
-A source, topic, or StudySkills pack for exam creation. For debrief, bring the exam, your answers, and an optional answer key.
+For practice mode, bring a source, topic, or StudySkills pack. For debrief mode, bring the exam, your answers, and an answer key when you want a score.
 
 ## How to use it
 
-1. Install StudySkills or this skill individually. See the [root README](../../../README.md).
-2. Invoke `/study-exams` in Claude Code, OpenCode, or Codex.
+1. Install StudySkills or this skill alone. See the [root README](../../../README.md).
+2. Run `/study-exams` in Claude Code, OpenCode, or Codex.
 3. Choose **Create a practice exam** or **Debrief a completed exam**.
-4. Answer the questions. Mode selection counts toward the four-question limit.
+4. Answer the questions. Mode selection takes one of the four question slots.
 5. Approve the plan before generation.
 
 ## What it produces
@@ -29,7 +28,7 @@ Practice exam:
 practice-exam.<format>
 ```
 
-Optional `review-schedule.csv`.
+Add `review-schedule.csv` when you ask for it.
 
 Debrief:
 
@@ -63,11 +62,11 @@ Or:
 
 ## Safety and limits
 
-- No live timer application.
-- No fake grading without an answer key.
-- No original questions reused in a retest.
-- Exam content is never sent to the web.
-- No notes, flashcards, or unrelated study documents.
+- The exam is a document, not a live timer.
+- Debrief mode needs an answer key for a score.
+- A retest uses new questions.
+- Exam content never goes to the web.
+- The skill writes no notes, flashcards, or unrelated study documents.
 
 ## Troubleshooting
 

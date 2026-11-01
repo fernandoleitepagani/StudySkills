@@ -6,26 +6,25 @@ Turns local folders, files, or harness attachments into study documents.
 
 ## When to use it
 
-You have local slides, readings, notes, or PDFs and want study outputs without Canvas.
+You have slides, readings, notes, or PDFs and want study material without Canvas.
 
 ## What you need
 
-A folder, file paths, or attachments that are available to the harness.
+A folder, file paths, or attachments the harness can read.
 
 ## How to use it
 
-1. Install StudySkills or this skill individually. See the [root README](../../../README.md).
-2. Invoke `/study-files` in Claude Code, OpenCode, or Codex.
-3. Answer the native questions. Every question supports a custom typed answer.
+1. Install StudySkills or this skill alone. See the [root README](../../../README.md).
+2. Run `/study-files` in Claude Code, OpenCode, or Codex.
+3. Answer the questions. The native tool accepts a typed answer.
 4. Approve the plan before generation.
-5. Read the final report for outputs, skips, fallbacks, and web sources.
+5. Read the final report for outputs, skips, fallbacks, and sources.
 
-- The skill inventories the source, reports exact and near duplicates, and asks you to confirm the source set.
-- Large sources are processed in sections.
+The skill inventories the source, reports exact and near duplicates, and asks you to confirm the set. Large sources move through sections.
 
 ## What it produces
 
-The requested study documents in PDF, DOCX, PPTX, Markdown, or CSV.
+The study documents you request in PDF, DOCX, PPTX, Markdown, or CSV.
 
 Outputs go to:
 
@@ -43,18 +42,15 @@ Outputs go to:
 
 ## Safety and limits
 
-- Sources are read-only. Nothing is moved, renamed, rewritten, or deleted.
-- Only requested files are written.
-- No source copies, prompt packs, or zip files.
+- Sources stay read-only.
+- Only requested files enter Documents.
+- The skill creates no source copies, prompt packs, or zip files.
+- The skill uses no network.
 - Web research follows the hard do-not-send list in `references/core/web-research.md`.
-- No telemetry and no external study service.
-- Read-only sources.
-- No network access from the skill.
-- No source copies in Documents.
-- Only requested files are written.
+- The skill sends no telemetry and uses no external study service.
 
 ## Troubleshooting
 
-- **Attachment not found:** provide a concrete path.
-- **Source too large:** narrow the folder or process one part at a time.
-- **Duplicates:** review the duplicate report before confirming the source set.
+- **Attachment not found:** give a concrete path.
+- **Source too large:** narrow the folder or process one part.
+- **Duplicates:** read the duplicate report before confirming the set.

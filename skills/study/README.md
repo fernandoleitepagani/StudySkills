@@ -1,21 +1,21 @@
 # Study skills
 
-A collection of user-invoked skills for studying, learning, and creating.
+StudySkills gives coding agents 13 study workflows. Each skill asks before it writes, keeps sources in place, and drops its output into your Documents folder.
 
 ## Skills
 
-- [study-canvas](./study-canvas/README.md): fetch a Canvas course read-only and generate study documents.
-- [study-notes](./study-notes/README.md): create lecture notes or organize Markdown/Obsidian notes read-only.
-- [study-recall](./study-recall/README.md): build flashcards or active-recall practice and review schedules.
-- [study-explain-back](./study-explain-back/README.md): explain concepts in layers with the Feynman technique.
-- [study-exams](./study-exams/README.md): create practice exams or debrief completed exams.
-- [study-planner](./study-planner/README.md): build a multi-course schedule or progressive mastery path.
-- [study-files](./study-files/README.md): turn local files or folders into study documents, read-only.
-- [study-revisit](./study-revisit/README.md): audit and improve existing study documents.
-- [study-language](./study-language/README.md): build a language-learning path with vocabulary and practice.
-- [study-math-practice](./study-math-practice/README.md): generate graded math problems with worked solutions.
-- [study-code-kata](./study-code-kata/README.md): generate programming katas with tests and review.
-- [paper-reader](./paper-reader/README.md): produce a structured brief and critique of a research paper.
-- [thesis-organizer](./thesis-organizer/README.md): organize a thesis question, evidence, outline, and writing plan.
+- [study-canvas](./study-canvas/README.md) reads a Canvas course and writes study documents.
+- [study-notes](./study-notes/README.md) writes lecture notes or organizes a Markdown/Obsidian vault.
+- [study-recall](./study-recall/README.md) builds flashcards or active-recall sessions.
+- [study-explain-back](./study-explain-back/README.md) explains a concept in layers.
+- [study-exams](./study-exams/README.md) creates exams or reviews a finished attempt.
+- [study-planner](./study-planner/README.md) builds a course schedule or a mastery path.
+- [study-files](./study-files/README.md) turns local files and folders into study documents.
+- [study-revisit](./study-revisit/README.md) audits and revises earlier documents.
+- [study-language](./study-language/README.md) builds a language-learning plan.
+- [study-math-practice](./study-math-practice/README.md) writes math problems and worked solutions.
+- [study-code-kata](./study-code-kata/README.md) writes programming katas with tests.
+- [paper-reader](./paper-reader/README.md) turns a research paper into a brief and critique.
+- [thesis-organizer](./thesis-organizer/README.md) shapes a thesis question, evidence, and writing plan.
 
-Every skill vendors its own `references/core/` and `scripts/core.mjs`. Install the whole collection or a single skill; there is no runtime skill dependency.
+Each directory carries its own `references/core/` and `scripts/core.mjs`. Install the full collection or one skill. No runtime package ties the skills together.

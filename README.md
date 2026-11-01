@@ -1,21 +1,21 @@
 # StudySkills
 
-Agent skills for studying, learning, and creating.
+Study skills for Claude Code, OpenCode, and Codex.
 
 Current release: `v1.0.1`.
 
 [![License: MIT](https://img.shields.io/badge/license-MIT-1f3a5f.svg)](./LICENSE)
 [![Node](https://img.shields.io/badge/node-%3E%3D20-1f3a5f.svg)](https://nodejs.org)
 
-StudySkills is a collection of user-invoked skills for coding agents. Each skill asks the questions it needs through the harness native question UI, shows a plan before doing the work, and writes only the files you request.
+You run a StudySkills skill, and the agent asks what it needs before it starts. It shows a plan, waits for approval, then writes only the files you request.
 
-The collection covers Canvas courses, lecture notes, flashcards, practice exams, explanations, study planning, note organization, local files, document revision, language learning, active recall, math practice, exam debriefs, programming katas, paper reading, and thesis organization.
+The collection handles Canvas courses, lecture notes, flashcards, practice exams, explanations, study planning, note organization, local files, revision, language learning, active recall, math practice, exam debriefs, programming katas, paper reading, and thesis organization.
 
 ## Install
 
-Pick one route per harness. Every skill is self-contained; install the collection or a single skill.
+Choose one request per harness. Install the whole collection or one skill.
 
-See the full [installation and update guide](./docs/study/installation.md) for GUI steps, WSL notes, verification, and troubleshooting.
+The [installation and update guide](./docs/study/installation.md) covers GUI steps, WSL, verification, and troubleshooting.
 
 ### Claude Code
 
@@ -24,7 +24,7 @@ claude plugin marketplace add fernandoleitepagani/StudySkills
 claude plugin install study-skills@studyskills
 ```
 
-The marketplace refreshes from `main`. Restart Claude Code after installing.
+Restart Claude Code after installation. The marketplace follows `main`.
 
 ### Codex
 
@@ -32,9 +32,9 @@ The marketplace refreshes from `main`. Restart Claude Code after installing.
 codex plugin marketplace add fernandoleitepagani/StudySkills
 ```
 
-Then run `/plugins` in Codex, choose the StudySkills marketplace, and install `study-skills`. Restart the GUI or start a new session after installing.
+Open `/plugins` in Codex, pick the StudySkills marketplace, and install `study-skills`. Restart the GUI or open a new session.
 
-On Windows, use the same Windows or WSL environment as the Codex GUI.
+On Windows, run the command in the same Windows or WSL environment as the GUI.
 
 ### OpenCode
 
@@ -58,37 +58,35 @@ Update with `npx skills@latest update`.
 
 ### Update
 
-- Claude Code and Codex: use the plugin manager’s update action, or reinstall.
-- OpenCode: `npx skills@latest update`.
-- If a GUI still shows the old version, remove and reinstall, then restart it.
+Claude Code and Codex use their plugin update action. Reinstall if the GUI keeps an old copy. OpenCode uses `npx skills@latest update`. Restart the harness after any update.
 
 ## What is included
 
 | Skill | What it does |
 | --- | --- |
-| [`study-canvas`](./skills/study/study-canvas/README.md) | Fetches a Canvas course read-only and generates study documents. |
-| [`study-notes`](./skills/study/study-notes/README.md) | Generates lecture notes or organizes Markdown/Obsidian notes read-only. |
-| [`study-recall`](./skills/study/study-recall/README.md) | Builds flashcards or active-recall practice and review schedules. |
-| [`study-explain-back`](./skills/study/study-explain-back/README.md) | Explains concepts in layers with the Feynman technique. |
-| [`study-exams`](./skills/study/study-exams/README.md) | Creates practice exams or debriefs completed exams. |
-| [`study-planner`](./skills/study/study-planner/README.md) | Builds a multi-course schedule or a progressive mastery path. |
-| [`study-files`](./skills/study/study-files/README.md) | Turns local folders, files, or attachments into study documents. |
-| [`study-revisit`](./skills/study/study-revisit/README.md) | Audits and improves existing study documents without changing originals. |
-| [`study-language`](./skills/study/study-language/README.md) | Builds a language-learning path with vocabulary, grammar, drills, and review. |
-| [`study-math-practice`](./skills/study/study-math-practice/README.md) | Generates graded math problems with hints and worked solutions. |
-| [`study-code-kata`](./skills/study/study-code-kata/README.md) | Generates programming katas with tests and review questions. |
-| [`paper-reader`](./skills/study/paper-reader/README.md) | Produces a structured brief and critique of a research paper. |
-| [`thesis-organizer`](./skills/study/thesis-organizer/README.md) | Organizes a thesis question, evidence, outline, and writing plan. |
+| [`study-canvas`](./skills/study/study-canvas/README.md) | Reads a Canvas course and writes study documents. |
+| [`study-notes`](./skills/study/study-notes/README.md) | Writes lecture notes or organizes a Markdown/Obsidian vault. |
+| [`study-recall`](./skills/study/study-recall/README.md) | Builds flashcards or active-recall sessions. |
+| [`study-explain-back`](./skills/study/study-explain-back/README.md) | Explains a concept from ELI5 to expert level. |
+| [`study-exams`](./skills/study/study-exams/README.md) | Creates exams or reviews a finished attempt. |
+| [`study-planner`](./skills/study/study-planner/README.md) | Builds a course schedule or a mastery path. |
+| [`study-files`](./skills/study/study-files/README.md) | Turns local files and folders into study documents. |
+| [`study-revisit`](./skills/study/study-revisit/README.md) | Audits and revises earlier StudySkills documents. |
+| [`study-language`](./skills/study/study-language/README.md) | Builds a language-learning plan with practice and review. |
+| [`study-math-practice`](./skills/study/study-math-practice/README.md) | Writes math problems with hints and worked solutions. |
+| [`study-code-kata`](./skills/study/study-code-kata/README.md) | Writes programming katas with tests and review questions. |
+| [`paper-reader`](./skills/study/paper-reader/README.md) | Turns a research paper into a structured brief and critique. |
+| [`thesis-organizer`](./skills/study/thesis-organizer/README.md) | Shapes a thesis question, evidence, outline, and writing plan. |
 
 ## Why these skills exist
 
-Agents can write study material, but they usually start too early and write too much. StudySkills fixes that by making the agent ask first, plan second, and produce only the requested files.
+Most agents start writing before they know what you need. StudySkills makes the agent ask, plan, and then write. You approve the plan before the agent creates a file.
 
-It also keeps the work local. Sources are read-only, outputs are written to Documents, and the collection has no runtime dependencies.
+Sources stay local. The skills read them in place, and the collection has no runtime dependencies.
 
 ## Usage
 
-Run a skill by name in Claude Code, OpenCode, or Codex:
+Run a skill by name:
 
 ```text
 /study-canvas
@@ -106,14 +104,14 @@ Run a skill by name in Claude Code, OpenCode, or Codex:
 /thesis-organizer
 ```
 
-Each skill:
+Each run follows one path:
 
-1. Asks for the source and preferences.
-2. Shows a plan.
-3. Waits for approval.
-4. Generates only the requested formats.
-5. Validates the files.
-6. Reports anything skipped, truncated, or replaced.
+1. The agent asks for the source and preferences.
+2. It shows a plan.
+3. You approve, edit, or cancel.
+4. It writes the requested formats.
+5. It reads the files back and validates them.
+6. It reports skips, truncation, fallbacks, and missing files.
 
 Outputs go to:
 
@@ -129,27 +127,25 @@ Outputs go to:
 | OpenCode | Yes | Yes | `question` |
 | Codex | Yes | Yes | `request_user_input` |
 
-There is no plan to add other harnesses.
-
-The harness owns PDF, DOCX, and PPTX rendering. If it cannot produce a requested format, the skill writes a Markdown fallback and reports the replacement. Quality checks cover grounding, coverage, accessibility, visual clarity, and format integrity.
+The collection targets these three harnesses. The harness renders PDF, DOCX, and PPTX. If it cannot render a requested format, the skill writes a Markdown fallback and reports the change. Quality checks cover grounding, coverage, accessibility, visual clarity, and format integrity.
 
 ## Canvas is read-only
 
-`study-canvas` only performs `GET` requests. It does not submit assignments, post discussions, edit pages, upload files, change account settings, or commit anything to Canvas.
+`study-canvas` sends only GET requests. It cannot submit assignments, post discussions, edit pages, upload files, change account settings, or write to Canvas.
 
-If you ask it to change something in Canvas, it refuses and explains that it is read-only.
+Ask it to change something in Canvas, and it refuses. Ask it to read a course, and it fetches the course material, asks for a plan, and writes study files to your Documents folder.
 
 ## Security and privacy
 
-- Canvas tokens are stored per host under `~/.studyskills/canvas/<host>/`.
-- A Canvas PAT can access the whole account. Use a dedicated token and revoke it after use.
+- Canvas tokens live per host under `~/.studyskills/canvas/<host>/`.
+- Use a dedicated Canvas token, then revoke it when you finish.
 - The skill never asks for the token in chat and never prints it.
-- Source files are read in place and never copied into Documents.
+- Source files stay in place and never enter Documents.
 - Citations use filenames, not absolute paths.
-- Course and local-file content is sent only to the harness model that reads it. That is the user's harness choice.
-- No telemetry, analytics, or remote logging from the skills.
-- Web research is limited to public concepts. The hard do-not-send list forbids source content, filenames, paths, Canvas data, and personal data.
-- The skills do not upload files to external services.
+- The harness model reads course and local-file content. Your harness choice controls that boundary.
+- The skills send no telemetry, analytics, or remote logs.
+- Web research stays on public concepts. The do-not-send list blocks source content, filenames, paths, Canvas data, and personal data.
+- The skills upload nothing to external services.
 
 ## Supported systems
 
@@ -158,20 +154,18 @@ If you ask it to change something in Canvas, it refuses and explains that it is 
 - Windows native
 - WSL, treated as Linux
 
-Use PowerShell commands on native Windows. Use POSIX commands in WSL, Linux, and macOS.
-
-Set `STUDYSKILLS_DOCUMENTS_DIR` if Documents is redirected, for example to OneDrive.
+Use PowerShell on native Windows and POSIX commands in WSL, Linux, and macOS. Set `STUDYSKILLS_DOCUMENTS_DIR` when Documents lives on OneDrive or another drive.
 
 ## Requirements
 
 - Node.js 20 or newer in the harness environment.
-- A harness that can create the document formats you request.
-- For `study-canvas`, a Canvas personal access token with read access.
+- A harness that can render the formats you request.
+- A Canvas personal access token with read access for `study-canvas`.
 - Network access only for `study-canvas`.
 
 ## Development
 
-StudySkills uses a `dev` branch for work and a stable `main` branch for installs.
+StudySkills uses `dev` for work and `main` for stable installs.
 
 ```bash
 git checkout dev
@@ -180,33 +174,31 @@ npm run check:version
 npm run check:skills
 ```
 
-There are no dependencies to install.
+The repo has no dependencies to install.
 
-The shared workflow is canonical under `core/` and copied into each skill. After editing `core/`, run:
+`core/` holds the canonical workflow. The sync script copies it into every skill:
 
 ```bash
 node scripts/sync-skills.mjs
 ```
 
-Commit the generated copies. CI runs the same check.
+Commit the generated copies. CI runs the same sync check.
 
-To link all skills into local harness directories:
+To link every skill into local harness directories:
 
 ```bash
-./scripts/link-skills.sh
+node scripts/link-skills.mjs
 ```
 
 ## Output formats
 
-Formats are adaptive:
+Formats follow the request.
 
 - Explicit formats win.
-- Several explicit formats produce several files.
-- With no explicit format, the skill chooses the most useful one.
+- Several formats produce several files.
+- No requested format means the skill picks the best one.
 
-Typical choices:
-
-| Output | Typical format |
+| Output | Usual format |
 | --- | --- |
 | Summary | PDF |
 | Study plan | DOCX or PDF |
@@ -214,11 +206,11 @@ Typical choices:
 | Concept map | PPTX or PDF |
 | Flashcards | CSV and Markdown |
 
-No prompt pack, no zip, and no extra formats.
+The skills never add a prompt pack, zip file, source copy, or extra format.
 
 ## Roadmap
 
-See [roadmap.md](./roadmap.md) for the current roadmap and [roadmap2.md](./roadmap2.md) for the File Study history.
+The current plan lives in [roadmap.md](./roadmap.md). File Study and the media-import plan live in [roadmap2.md](./roadmap2.md).
 
 ## License
 
