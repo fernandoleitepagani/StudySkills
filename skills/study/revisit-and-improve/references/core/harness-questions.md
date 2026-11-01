@@ -30,7 +30,17 @@ Use the harness native question tool. Do not replace it with plain text unless t
 - Each question has `id`, `header`, `question`, `options`, `isOther`, and `isSecret`.
 - Set `isOther: true`.
 - Do not use `isSecret`; Study Core never collects secrets.
-- Availability can vary by mode. If unavailable, use the single fallback.
+- Availability and field names can vary by Codex version and mode. If `request_user_input` is unavailable or its schema differs, use the available native question tool or the single fallback.
+- Do not assume every Codex GUI session supports the same multi-select fields.
+
+## Compatibility rules
+
+- Use the native question tool that is actually available in the current session.
+- Do not assume a tool schema from an older harness version.
+- If the expected fields are missing, map the question to the available schema.
+- If no native question tool is available, use the single fallback.
+- A GUI, CLI, or WSL session can expose different tools. Adapt to the actual session.
+- Never collect secrets through any question tool.
 
 ## Single fallback
 

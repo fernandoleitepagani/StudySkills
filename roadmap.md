@@ -177,6 +177,15 @@ There is no plan to add other harnesses.
 - Updated the local skill and documented marketplace update paths.
 - v1.0.0 remains gated on final compatibility and verification work.
 
+## v0.9.3 - Compatibility and Install Verification
+
+- Added harness compatibility documentation and smoke checklist.
+- Hardened native-question fallback guidance.
+- Added `scripts/check-install.mjs` and `npm run check:install`.
+- Added installed-skill verification for OpenCode and Claude directories.
+- Updated the local skill and recorded tested harness versions.
+- v1.0.0 remains gated on final per-skill and Codex verification.
+
 ## v1.0.0 - Stable
 
 - Stable skill contract, migration guide, and security audit.

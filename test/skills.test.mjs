@@ -367,3 +367,17 @@ test("skills: manual materials and beginner result contracts", async () => {
   assert.match(canvas, /downloads them through the browser/);
   assert.match(canvas, /error-messages\.md/);
 });
+
+test("repo: harness compatibility and install verification are documented", async () => {
+  const compatibility = await read("docs/study/harness-compatibility.md");
+  assert.match(compatibility, /OpenCode/);
+  assert.match(compatibility, /check-install\.mjs/);
+  assert.match(compatibility, /smoke test/i);
+
+  const questions = await read("core/references/harness-questions.md");
+  assert.match(questions, /Compatibility rules/);
+  assert.match(questions, /actual session/);
+
+  const pkg = JSON.parse(await read("package.json"));
+  assert.equal(pkg.scripts["check:install"], "node scripts/check-install.mjs --root skills/study --json");
+});

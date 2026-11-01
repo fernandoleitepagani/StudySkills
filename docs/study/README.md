@@ -3,6 +3,7 @@
 One collection page. Per-skill guides live in each skill `README.md`.
 
 Install and update instructions: [installation.md](./installation.md).
+Harness compatibility and smoke tests: [harness-compatibility.md](./harness-compatibility.md).
 
 ## Collection conventions
 

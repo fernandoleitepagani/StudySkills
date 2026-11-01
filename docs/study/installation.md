@@ -133,6 +133,18 @@ canvas-study/README.md
 
 Check that all 16 skill directories are present.
 
+Run the installed-skill check:
+
+```bash
+node scripts/check-install.mjs --root ~/.agents/skills --json
+```
+
+For Claude Code, use:
+
+```bash
+node scripts/check-install.mjs --root ~/.claude/skills --json
+```
+
 ## Marketplace listing
 
 The GitHub repository is installable as a self-hosted marketplace. Public discovery requires submitting the repository or plugin to the relevant directory and completing its review process.
