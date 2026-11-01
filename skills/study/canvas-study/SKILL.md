@@ -40,6 +40,7 @@ Read these references before asking anything:
 - `references/core/quality.md`
 - `references/core/source-selection.md`
 - `references/core/web-research.md`
+- `references/core/error-messages.md`
 - `references/outputs.md`
 - `references/security.md`
 
@@ -154,7 +155,7 @@ Show the counts, estimated size, skipped categories, and `choices`.
 
 Before choosing materials, inspect the access fields:
 
-- `allForbidden`: all six core sections returned `403`. Stop. Explain that Canvas accepted the token but refused every core section. Do not ask for a new token automatically. Suggest checking the course role, Files and Pages visibility, another course, or local attachments.
+- `allForbidden`: all six core sections returned `403`. Stop study generation. Explain that Canvas accepted the token but refused every core section. Do not ask for a new token automatically. If `links` is non-empty, offer a `manual-materials.md` report so the user can download the resources through the browser. Suggest checking the course role, Files and Pages visibility, another course, or local attachments.
 - `partial`: some core sections are forbidden. Report which sections are unavailable, then continue with the remaining sections. A section-level `403` is not a reason to stop.
 - `usableSources: 0` but `allForbidden` is false: no readable material was found. Stop and offer local attachments. This is not a token-expiry message.
 - `UNAUTHORIZED`: this is a token problem and keeps the existing expiry guidance.
@@ -177,6 +178,8 @@ The custom typed answer is the specific selection path.
 - **Specific:** accept module, page, assignment, discussion, announcement, or file names or IDs. Resolve them against `choices`. Only offer sections that are available. If a name is not found, show the matches and ask once more.
 - If the selection exceeds a cap, show the overage and ask the user to narrow it. Never truncate silently.
 - If Pages or Files are forbidden, say so in the plan and exclude them from the default "Everything" scope.
+- If the course has external, video, Drive, or module-linked resources, include `manual-materials.md` in the plan. Use `links` from `inspect` or `fetch`.
+- If all core sections are forbidden but `links` is non-empty, the only output may be the manual-materials report.
 
 Write `workDir/selection.json`:
 
@@ -232,6 +235,11 @@ Write two files in `workDir`:
     "required": true
   },
   "requested": [
+    {
+      "output": "manual materials",
+      "formats": ["md"],
+      "files": ["manual-materials.md"]
+    },
     {
       "output": "summary",
       "formats": ["pdf", "docx"],
@@ -329,6 +337,7 @@ Read:
 - `assets/theme.json`
 - `references/core/quality.md`
 - `references/core/web-research.md`
+- `references/core/error-messages.md`
 
 Use web research when it improves definitions, examples, references, or current context. Never send course content, filenames, paths, Canvas URL, or personal data to a web tool. Cite public sources separately from course sources.
 
@@ -339,6 +348,14 @@ For each requested output:
 3. Use the harness native document skill to generate the requested format.
 4. Save it directly in `outputDir`.
 5. Use the exact file names recorded in the plan.
+
+If `manual-materials.md` is requested, build it from `links.json` or the `links` array. It must use these instructions:
+
+- The user downloads them through the browser.
+- The user saves them locally, for example `~/Documents/AEDS-II-materials/`.
+- The user runs `/file-study` with that folder.
+
+For videos, tell the user to provide a transcript or subtitles. Do not claim a video was watched or a Drive file was downloaded. Use the exact template in `references/outputs.md`.
 
 After generating, run the two-pass quality review:
 
@@ -424,6 +441,8 @@ If validation reports missing, invalid, extra, token leakage, missing semantic c
 
 Show a concise report:
 
+- `Result: success`, `Result: partial success`, or `Result: failed`.
+- What happened, what still works, why, and the next step. Follow `references/core/error-messages.md`.
 - Output directory.
 - Produced files.
 - Requested files that were not produced, with reasons.
@@ -432,6 +451,8 @@ Show a concise report:
 - Selected sources that were skipped, with reasons.
 - Forbidden Canvas sections and sections actually used.
 - Whether the run was partial.
+- Path to `manual-materials.md`, when produced.
+- Link count and how many require manual download.
 - External materials and external images.
 - Web research status and source count.
 - Quality review result.
@@ -465,8 +486,8 @@ Stop immediately and report when:
 - No token and the user declines the guide.
 - The token file is unreadable and the user declines the guide.
 - `UNAUTHORIZED`: the token was rejected, likely expired or revoked.
-- `FORBIDDEN` on the course root, or `ALL_SECTIONS_FORBIDDEN` when every core section is forbidden. A single forbidden section is a partial run, not a stop.
-- `NO_USABLE_MATERIALS`: the accessible sections contained no readable material.
+- `FORBIDDEN` on the course root, or `ALL_SECTIONS_FORBIDDEN` when every core section is forbidden and there are no links for a manual-materials report. A single forbidden section is a partial run, not a stop.
+- `NO_USABLE_MATERIALS`: the accessible sections contained no readable material and no manual links.
 - `RATE_LIMITED`: retries are exhausted and the user does not want to wait.
 - The Canvas URL is invalid after one attempt.
 - The user cancels the plan.

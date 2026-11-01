@@ -36,6 +36,7 @@ const REFERENCES = [
   "source-selection.md",
   "quality.md",
   "web-research.md",
+  "error-messages.md",
 ];
 
 const LIBS = ["files.mjs", "validate.mjs", "inventory.mjs", "catalog.mjs"];

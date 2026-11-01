@@ -158,6 +158,16 @@ There is no plan to add other harnesses.
 - Added regression coverage for partial and all-forbidden Canvas access.
 - v1.0.0 remains gated on Codex and final release checks.
 
+## v0.9.1 - Manual Materials and Plain-Language Results
+
+- Durable `manual-materials.md` link report.
+- Optional `links.csv`.
+- Durable links from modules, assignments, announcements, pages, syllabus, and front page.
+- Exact browser-download and `/file-study` instructions.
+- Beginner-friendly error and result messages.
+- Updated `roadmap2.md` with the manual media plan.
+- v1.0.0 remains gated on final compatibility and verification work.
+
 ## v1.0.0 - Stable
 
 - Stable skill contract, migration guide, and security audit.

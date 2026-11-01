@@ -239,7 +239,7 @@ test("repo: Canvas security reference uses host-specific tokens and current clea
 
 test("skills: source selection, quality, web, and catalog contracts are generated", async () => {
   for (const name of USER_SKILLS) {
-    for (const ref of ["source-selection.md", "quality.md", "web-research.md"]) {
+    for (const ref of ["source-selection.md", "quality.md", "web-research.md", "error-messages.md"]) {
       assert.equal(await exists(`skills/study/${name}/references/core/${ref}`), true, `${name} missing ${ref}`);
     }
     assert.equal(await exists(`skills/study/${name}/scripts/lib/catalog.mjs`), true, `${name} missing catalog.mjs`);
@@ -347,4 +347,23 @@ test("repo: harness matrix lists every skill", async () => {
   assert.match(matrix, /Codex \| GUI \| pending/);
   assert.match(matrix, /Global capability checks/);
   assert.match(matrix, /Per-skill coverage/);
+});
+
+test("skills: manual materials and beginner result contracts", async () => {
+  const outputs = await read("skills/study/canvas-study/references/outputs.md");
+  assert.match(outputs, /manual-materials\.md/);
+  assert.match(outputs, /downloads them through the browser/);
+  assert.match(outputs, /\/file-study/);
+  assert.match(outputs, /videos, provide a transcript or subtitles/);
+
+  const errors = await read("core/references/error-messages.md");
+  assert.match(errors, /Result: success/);
+  assert.match(errors, /ALL_SECTIONS_FORBIDDEN/);
+  assert.match(errors, /What happened/);
+  assert.match(errors, /Next step/);
+
+  const canvas = await read("skills/study/canvas-study/SKILL.md");
+  assert.match(canvas, /manual-materials\.md/);
+  assert.match(canvas, /downloads them through the browser/);
+  assert.match(canvas, /error-messages\.md/);
 });

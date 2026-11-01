@@ -81,6 +81,7 @@ The following are covered by `node --test` and pass:
 - Pagination, truncation, and rate-limit retry.
 - File and image download with size caps.
 - Canvas material selection and fetch filtering.
+- Durable manual-materials link extraction and partial Canvas reporting.
 - Partial Canvas 403 handling and all-sections-forbidden behavior.
 - HTML to text, including pre, tables, images, and nested lists.
 - Materials and manifest generation against a mock Canvas.

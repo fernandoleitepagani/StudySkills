@@ -36,6 +36,18 @@
 - Local course sources win for course-specific facts.
 - Never send anything on the `web-research.md` do-not-send list to a web tool.
 
+## Result summary
+
+Start the final report with one of:
+
+```text
+Result: success
+Result: partial success
+Result: failed
+```
+
+Explain what happened, what still works, why, and the next step. Put technical details after the human explanation.
+
 ## Partial format report
 
 At the end, state:

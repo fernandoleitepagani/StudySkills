@@ -36,6 +36,7 @@ Read:
 - `references/core/source-selection.md`
 - `references/core/quality.md`
 - `references/core/web-research.md`
+- `references/core/error-messages.md`
 
 ## Step 1 - Source mode
 
@@ -165,6 +166,8 @@ If validation reports missing, invalid, extra, token leakage, missing semantic c
 - Never leave invalid or empty files in `outputDir`.
 
 ## Step 7 - Report and clean up
+
+Start the report with `Result: success`, `Result: partial success`, or `Result: failed`. Follow `error-messages.md` for any failure.
 
 Report:
 

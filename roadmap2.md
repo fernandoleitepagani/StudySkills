@@ -1,81 +1,114 @@
-# roadmap2.md - File Study
+# Roadmap 2 - File Study and Manual Media
+
+This document tracks the File Study skill and the future media-import work.
 
 ## Goal
 
-Add a second study skill to the StudySkills repository.
+`file-study` turns local folders, files, and harness attachments into study documents.
 
-`file-study` uses local files that the user supplies manually:
+It reads sources in place, runs the shared interview and plan flow, and writes only requested outputs to:
 
-- Attach files to the conversation.
-- Give file names or paths.
-- Give a folder path to inventory.
-
-The skill reads the sources, runs the same interview and plan flow as `canvas-study`, and produces requested study documents in `~/Documents/StudySkills/<topic>/<run>/`.
+```text
+~/Documents/StudySkills/<topic>/<run>/
+```
 
 There is no Canvas connection, no token, and no network access.
 
-## Scope
+## Shipped in v0.3.0 - File Study
 
-- Harnesses: Claude Code, OpenCode, Codex, CLI and GUI.
-- Same didactic style guide, output format rules, and partial-format reporting.
-- Same zero-dependency policy. The harness owns document rendering.
-- Same rule: only requested output files are written to Documents.
-- Source files are read-only. The skill never modifies, moves, renames, or deletes them.
-
-## Shipped in v0.3.0 - Core File Study
-
-- Accept attachments and explicit file paths.
-- Inventory files: name, type, size, and last modified date.
-- Confirm the source set with the user.
+- Accept folder paths, explicit file paths, and harness attachments.
+- Inventory names, types, sizes, hashes, dates, Markdown headings, tags, and links.
+- Detect exact and near-duplicate sources.
+- Confirm the source set before planning.
 - Ask for outputs, formats, settings, and language.
 - Show a plan and require approval.
-- Generate requested outputs with the harness document skill.
-- Report any requested format that could not be produced.
-- Save only requested outputs in Documents.
+- Use the harness document skill for PDF, DOCX, and PPTX.
+- Produce Markdown and CSV directly.
+- Cite source filenames, not absolute paths.
+- Report skipped files, duplicates, truncation, and format failures.
+- Keep sources read-only.
 - No network access, uploads, or external services.
 
-## Shipped in v0.3.0 - Folder Ingestion
+## Shipped in v0.5.0 - Shared File Workflow
 
-- Accept a folder path and recurse.
-- Ignore hidden files, build artifacts, and unsupported binaries.
-- Detect duplicate and near-duplicate sources.
-- Let the user include or exclude files before planning.
-- Cite source filenames and page numbers in outputs.
+- Shared source-selection contract.
+- StudySkills catalog command for existing runs.
+- Shared quality rubric and checks.
+- Shared web-research contract for skills that opt in.
+- Shared visual and accessibility style rules.
+- Per-skill READMEs and root collection index.
 
-## Shipped in v0.3.0 - Large Sources
+## Shipped in v0.9.1 - Manual Materials
 
-- Chunk large PDFs and long documents.
-- Summarize sections progressively and then synthesize.
-- Support multiple files on the same topic.
-- Keep citations tied to source files.
+- Canvas link inventory for modules, assignments, announcements, pages, syllabus, and front page.
+- Durable `manual-materials.md` report.
+- Optional `links.csv`.
+- Exact instructions to download resources through the browser, save them locally, and run `/file-study`.
+- Beginner-friendly result and error messages.
+- Explicit separation between “downloaded” and “manual download required.”
+- No Google Drive download.
+- No video download.
+- No transcription.
 
-## v0.4 - Visual and Multimodal
+## Current limits
 
-- Use the harness image and vision capability for scanned pages and diagrams.
-- Generate concept maps from multiple sources.
-- No OCR library. Rely on the harness.
+- `file-study` does not fetch remote URLs.
+- Private Google Drive links cannot be accessed by the skill.
+- Canvas media and video content cannot be downloaded or watched by the core skill.
+- Videos need a transcript or subtitles before they can be studied.
+- The core skill does not install `ffmpeg`, `yt-dlp`, or a transcription model.
+- The skill does not use Whisper.
 
-## v1.0 - Stable
+## Future media plan
 
-- Stable input and output contract.
-- Documentation, examples, and fixture-based tests.
-- Shared conventions with `canvas-study`.
+Media support is separate from the v1.0.0 core and must stay optional.
+
+### Phase 1 - Manual import
+
+- Keep the durable `manual-materials.md` report.
+- Let the user download via the browser.
+- Accept downloaded files through `file-study`.
+- Accept `.srt`, `.vtt`, `.txt`, and pasted transcripts.
+- Never claim that a video was watched.
+
+### Phase 2 - Public Google Drive
+
+- Parse Google Drive file IDs from public links only.
+- Support public export/download URLs.
+- Require explicit user confirmation before downloading.
+- Do not add private Drive OAuth to the core.
+- Do not store Google credentials.
+- Do not scrape authenticated Drive pages.
+
+### Phase 3 - Captions and transcripts
+
+- Prefer captions or transcripts already provided by Canvas, Panopto, Kaltura, Google Drive, or the video platform.
+- Accept subtitles and plain transcripts.
+- Feed transcripts into `file-study` like any other source.
+- Keep the transcript as a read-only source.
+
+### Phase 4 - Optional external tools
+
+- Detect whether `ffmpeg` or `yt-dlp` is already installed.
+- Never install them automatically.
+- Ask before running them.
+- Report the dependency and permission clearly.
+- Keep the tools outside the skill bundle.
 
 ## Non-goals
 
-- No cloud drives.
-- No LMS integrations.
-- No MCP server.
-- No NotebookLM export.
-- No web UI.
-- No external services.
-- No new harnesses.
+- No Whisper.
+- No bundled transcription model.
+- No private Google Drive OAuth in the core skill.
+- No browser automation.
+- No cloud-drive scraping.
+- No automatic large-media download without consent.
+- No uploads or external study service.
+- No requirement that normal `file-study` runs use the network.
 
-## Shared conventions with canvas-study
+## Relationship to v1.0.0
 
-- Same native question adapter and grilling protocol.
-- Same didactic style guide.
-- Same output format rules and partial-format report.
-- Same Documents destination.
-- Same zero-dependency policy.
-- Same "only requested files" rule.
+- Manual materials and beginner errors are part of the 0.9.x line.
+- Google Drive and video acquisition remain post-v1 unless explicitly pulled forward.
+- `file-study` remains usable without any media integration.
+- A user can always download a file or transcript manually and use `file-study`.

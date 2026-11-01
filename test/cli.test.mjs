@@ -27,6 +27,7 @@ test("cli: token, courses, inspect, fetch, output, validate, cleanup", async () 
   const docs = path.join(home, "Documents");
   const env = { XDG_DOCUMENTS_DIR: docs };
   const mock = await startMockCanvas();
+  mock.fixture.assignments[0].description += '<p><a href="https://drive.google.com/file/d/drive-slides/view">Drive slides</a></p>';
   try {
     let result = await runCli(["token-status", "--base-url", mock.origin, "--json"], { home, env });
     assert.equal(result.code, 0);
@@ -70,6 +71,8 @@ test("cli: token, courses, inspect, fetch, output, validate, cleanup", async () 
     assert.equal(data.counts.files, 4);
     assert.equal(data.counts.allowedFiles, 2);
     assert.equal(data.errors.length, 0);
+    assert.equal(data.links.some((link) => link.url === "https://example.com/reading"), true);
+    assert.equal(data.links.some((link) => link.url.includes("drive.google.com")), true);
 
     const workResult = await runCore(["workdir", "--topic", "Statistics 101", "--json"], { home, env });
     assert.equal(workResult.code, 0);
@@ -113,6 +116,10 @@ test("cli: token, courses, inspect, fetch, output, validate, cleanup", async () 
       assert.equal(manifest.images.length, 1);
       assert.equal(manifest.externalImages.length, 1);
       assert.equal(manifest.externalMaterials.length, 1);
+      assert.equal(data.links.some((link) => link.url.includes("drive.google.com")), true);
+      const linksCsv = await fs.readFile(path.join(work, "sources", "links.csv"), "utf8");
+      assert.match(linksCsv, /^module,item,title,type,url,status,reason,action/m);
+      assert.match(linksCsv, /drive\.google\.com/);
       await fs.access(path.join(work, "sources", "files", "lecture.pdf"));
       await fs.access(path.join(work, "sources", "files", "slides.pptx"));
       await fs.access(path.join(work, "sources", "images", "diagram.png"));

@@ -178,6 +178,122 @@ function moduleItemLine(item) {
   return parts.join("\n");
 }
 
+
+function normalizeLink(raw, baseUrl = null) {
+  if (!raw) return null;
+  let url;
+  try {
+    url = new URL(String(raw), baseUrl || undefined);
+  } catch {
+    return null;
+  }
+  if (url.protocol !== "http:" && url.protocol !== "https:") return null;
+  for (const key of ["verifier", "access_token", "token"]) url.searchParams.delete(key);
+  return url.toString();
+}
+
+function isManualLink(url, baseUrl) {
+  const lower = url.toLowerCase();
+  if (/drive\.google\.com|docs\.google\.com|youtube\.com|youtu\.be|vimeo\.com|panopto|kaltura|\.mp4|\.mov|\.webm/.test(lower)) {
+    return true;
+  }
+  try {
+    return Boolean(baseUrl) && new URL(url).host !== new URL(baseUrl).host;
+  } catch {
+    return true;
+  }
+}
+
+function cleanLabel(value) {
+  return String(value ?? "")
+    .replace(/<[^>]+>/g, " ")
+    .replace(/&amp;/g, "&")
+    .replace(/&quot;/g, '"')
+    .replace(/&#39;/g, "'")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+function collectHtmlLinks(html, source, baseUrl) {
+  const links = [];
+  const seen = new Set();
+  const pattern = /<a\b[^>]*href\s*=\s*["']([^"']+)["'][^>]*>([\s\S]*?)<\/a>/gi;
+  for (const match of String(html ?? "").matchAll(pattern)) {
+    const url = normalizeLink(match[1], baseUrl);
+    if (!url || seen.has(url)) continue;
+    seen.add(url);
+    const title = cleanLabel(match[2]) || url;
+    links.push({
+      module: "",
+      item: source,
+      title,
+      type: "Link",
+      url,
+      status: isManualLink(url, baseUrl) ? "manual-download" : "open-in-canvas",
+      reason: `Linked from ${source}`,
+      action: isManualLink(url, baseUrl) ? "Download in browser" : "Open in Canvas",
+    });
+  }
+  return links;
+}
+
+function collectLinks(data, pages, baseUrl) {
+  const links = [];
+  const seen = new Set();
+  const add = (link) => {
+    if (!link.url || seen.has(link.url)) return;
+    seen.add(link.url);
+    links.push(link);
+  };
+
+  for (const mod of data.modules ?? []) {
+    const moduleName = mod.name ?? `Module ${mod.id}`;
+    for (const item of mod.items ?? []) {
+      const url = normalizeLink(item.external_url ?? item.html_url ?? item.url ?? item.page_url, baseUrl);
+      if (!url) continue;
+      const type = item.type ?? "Item";
+      const manual = isManualLink(url, baseUrl) || ["File", "ExternalUrl", "ExternalTool"].includes(type);
+      add({
+        module: moduleName,
+        item: item.title ?? "(untitled)",
+        title: item.title ?? "(untitled)",
+        type,
+        url,
+        status: manual ? "manual-download" : "open-in-canvas",
+        reason: "Linked from a Canvas module",
+        action: manual ? "Download in browser" : "Open in Canvas",
+      });
+    }
+  }
+
+  const addHtml = (html, source) => {
+    for (const link of collectHtmlLinks(html, source, baseUrl)) add(link);
+  };
+  addHtml(data.course?.syllabus_body, "syllabus");
+  addHtml(data.frontPage?.body, "front page");
+  for (const assignment of data.assignments ?? []) addHtml(assignment.description, `assignment: ${assignment.name ?? assignment.id}`);
+  for (const discussion of data.discussions ?? []) addHtml(discussion.message, `discussion: ${discussion.title ?? discussion.id}`);
+  for (const announcement of data.announcements ?? []) addHtml(announcement.message, `announcement: ${announcement.title ?? announcement.id}`);
+  for (const page of pages ?? []) addHtml(page.body, `page: ${page.title ?? page.url}`);
+
+  return links;
+}
+
+function linksToCsv(links) {
+  const header = "module,item,title,type,url,status,reason,action";
+  const escape = (value) => `"${String(value ?? "").replace(/"/g, '""')}"`;
+  return [header, ...links.map((link) => [
+    link.module,
+    link.item,
+    link.title,
+    link.type,
+    link.url,
+    link.status,
+    link.reason,
+    link.action,
+  ].map(escape).join(","))].join("\n") + "\n";
+}
+
 async function loadCourseLists(client, courseId, { errors, truncations = {}, progressLabel = "Inspecting" }) {
   const course = await client.getJson(`/api/v1/courses/${courseId}`, { "include[]": ["syllabus", "term"] });
   progress(`${progressLabel} ${course.name ?? courseId}...`);
@@ -418,6 +534,7 @@ function applySelection(data, selection) {
 async function inspectCourse(client, courseId) {
   const errors = [];
   const data = await loadCourseLists(client, courseId, { errors });
+  const links = collectLinks(data, [], client.baseUrl);
   const files = data.files;
   const allowed = files.filter((file) => allowedFile(file) && fileSize(file) <= MAX_FILE_BYTES);
   const estimatedBytes = allowed.reduce((sum, file) => sum + fileSize(file), 0);
@@ -438,6 +555,7 @@ async function inspectCourse(client, courseId) {
     estimatedSize: formatBytes(estimatedBytes),
     frontPage: Boolean(data.frontPage),
     choices: buildChoices(data, allowed),
+    links,
     sections: data.access.sections,
     forbiddenSections: data.access.forbiddenSections,
     availableSections: data.access.availableSections,
@@ -539,6 +657,7 @@ async function fetchCourse(client, courseId, workDir, selection = null) {
         body: {
           forbiddenSections: data.access.forbiddenSections,
           sections: data.access.sections,
+          links: collectLinks(data, [], client.baseUrl),
         },
       },
     );
@@ -552,6 +671,7 @@ async function fetchCourse(client, courseId, workDir, selection = null) {
           forbiddenSections: data.access.forbiddenSections,
           availableSections: data.access.availableSections,
           sections: data.access.sections,
+          links: collectLinks(data, [], client.baseUrl),
         },
       },
     );
@@ -575,6 +695,8 @@ async function fetchCourse(client, courseId, workDir, selection = null) {
     );
     if (detail) pages.push(detail);
   }
+
+  const links = collectLinks(data, pages, client.baseUrl);
 
   const manifest = {
     course: {
@@ -604,6 +726,7 @@ async function fetchCourse(client, courseId, workDir, selection = null) {
     images: [],
     externalImages: [],
     externalMaterials: [],
+    links,
     skipped: {
       pages: pagesSkipped,
       files: [],
@@ -781,7 +904,11 @@ async function fetchCourse(client, courseId, workDir, selection = null) {
   ].join("\n");
 
   const materialsPath = path.join(sourcesDir, "materials.md");
+  const linksPath = path.join(sourcesDir, "links.json");
+  const linksCsvPath = path.join(sourcesDir, "links.csv");
   await fs.writeFile(materialsPath, materials.trim() + "\n", "utf8");
+  await writeJson(linksPath, links);
+  await fs.writeFile(linksCsvPath, linksToCsv(links), "utf8");
   await writeJson(path.join(sourcesDir, "manifest.json"), manifest);
 
   return {
@@ -789,6 +916,9 @@ async function fetchCourse(client, courseId, workDir, selection = null) {
     course: pickCourse(course),
     sourcesDir,
     materialsPath,
+    linksPath,
+    linksCsvPath,
+    links,
     filesDir,
     counts: manifest.stats,
     downloadedFiles: downloaded,

@@ -28,6 +28,17 @@ A Canvas URL and a personal access token saved in the host-specific token file. 
 
 The requested outputs in your chosen formats. Typical outputs are PDF, DOCX, PPTX, Markdown, and CSV.
 
+When resources are external, video-only, or restricted, it can also produce `manual-materials.md` with links and manual-download instructions.
+
+## How to use manual materials
+
+1. The user downloads them through the browser.
+2. The user saves them locally, for example:
+   `~/Documents/AEDS-II-materials/`
+3. The user runs `/file-study` with that folder.
+
+For videos, provide a transcript or subtitles. The skill cannot watch or transcribe videos.
+
 Outputs go to:
 
 ```text

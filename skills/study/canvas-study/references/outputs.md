@@ -112,6 +112,57 @@ After reading each generated file back, write `checks.json`:
 
 Every produced file needs an entry. This is an attestation, not an independent content parser.
 
+
+## Manual materials
+
+File name: `manual-materials.md`.
+
+Generate this report when:
+
+- the course has external, video, Google Drive, or module-linked resources
+- Files or Pages are forbidden
+- some materials could not be downloaded
+- all core Canvas sections are forbidden but module links exist
+
+The report must use this user-facing structure:
+
+```markdown
+# Manual Materials
+
+## Result
+
+Canvas access was partial.
+
+## Available in Canvas
+
+- Item name: link
+
+## Download manually
+
+1. The user downloads them through the browser.
+2. The user saves them locally, for example:
+   ~/Documents/AEDS-II-materials/
+3. The user runs:
+   /file-study
+   with that folder.
+
+For videos, provide a transcript or subtitles. The skill cannot watch or transcribe videos.
+
+## Could not be accessed
+
+- Item name: reason
+```
+
+Use `links.json` from the work directory. Do not claim that a linked video was watched, a Drive file was downloaded, or a blocked resource was studied.
+
+`links.csv` is optional. Generate it only when requested. It uses:
+
+```csv
+module,item,title,type,url,status,reason,action
+```
+
+Never include the token, signed verifier parameters, or private local paths.
+
 ## Study plan
 
 File name: `study-plan.<format>`.
