@@ -6,7 +6,7 @@ disable-model-invocation: true
 
 # Thesis Organizer
 
-Read `references/core/workflow.md` before doing anything else. Follow its shared workflow and invariants.
+Read `references/core/workflow.md` before doing anything else. Follow its shared workflow and invariants. Read `references/core/math.md` when the thesis contains equations, model diagrams, or graphs.
 
 ## Invariants
 
@@ -44,7 +44,7 @@ Ask only what is not already known:
 - Stage: idea, literature review, outline, draft, revision, or defense.
 - Existing sources or notes.
 - Target length, deadline, and available writing time.
-- Include a literature landscape from the web?
+- Optional extras: use the shared checkbox for public web research and a literature landscape.
 - Output format.
 - Output language.
 
@@ -72,6 +72,7 @@ Record:
 - counterarguments
 - assumptions
 - what would weaken the claim
+- equations or model diagrams, written in LaTeX when relevant
 
 ### 3. Build the outline
 

@@ -6,12 +6,13 @@ disable-model-invocation: true
 
 # Math Practice
 
-Read `references/core/workflow.md` before doing anything else. Follow its shared workflow and invariants.
+Read `references/core/workflow.md` before doing anything else. Follow its shared workflow and invariants. Read `references/core/math.md` before writing formulas or graphs.
 
 ## Invariants
 
 - **Original problems.** Do not copy a problem bank or a long passage from a source.
 - **Show the work.** Every solution needs reasoning, not only a final answer.
+- **Use LaTeX.** Write formulas as `$...$` or `$$...$$`. Use `latex-graph` blocks for graphs.
 - **Mark assumptions.** If a problem depends on an unstated convention, say so.
 - **No code execution required.** Do not install packages, run a math engine, or claim a result was verified by a tool unless it actually was.
 - **Sources are read-only.**
@@ -41,6 +42,7 @@ Ask only what is not already known:
 - Include progressive hints.
 - Include worked solutions.
 - Include a separate answer key.
+- Optional extras: use the shared checkbox. Leave **Use public web research** unchecked by default.
 - Output format.
 - Output language.
 
@@ -79,6 +81,7 @@ For each problem, record:
 - expected method
 - answer
 - common error
+- formula or graph block, when needed
 
 Vary numbers and contexts. Do not produce near-duplicates.
 
@@ -98,12 +101,12 @@ Every solution:
 
 1. Restates the goal.
 2. Shows the method.
-3. Shows the steps.
+3. Shows the steps with display equations.
 4. States the answer with units where relevant.
 5. Notes a common mistake.
 6. Checks plausibility or substitutes back when possible.
 
-Mark any assumption or convention.
+Mark any assumption or convention. Use LaTeX for every formula.
 
 ### 6. Answer key
 
@@ -119,6 +122,17 @@ The answer key must match the problem and solution counts exactly.
 ### 7. Common errors
 
 List the likely error, why it happens, and how to avoid it.
+
+## Math format
+
+- Every formula uses LaTeX.
+- Every graph uses a `latex-graph` block with `tikzpicture` or `axis`.
+- Every graph and image has a caption.
+- Every image has alt text and a relative path.
+- Keep units and significant figures consistent.
+- Answer keys stay plain CSV.
+- Never leave raw LaTeX in rendered PDF, DOCX, or PPTX.
+- Report `Math rendering: latex`, `image fallback`, or `plain-text fallback`.
 
 ## Outputs
 
@@ -168,3 +182,6 @@ Typical defaults:
 - Do not send source content to the web.
 - Do not create flashcards, notes, or an exam.
 - Set `quality.required` to `true` in `plan.json`.
+- Set `math.required` to `true` when the set contains formulas or graphs.
+- Record `math.formulas`, `math.graphs`, `math.images`, `math.rendering`, and `math.fallback` in `checks.json`.
+- Run `scripts/core.mjs math-check` on the draft before rendering.

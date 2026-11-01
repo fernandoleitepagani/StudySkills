@@ -2,7 +2,7 @@
 
 Study skills for Claude Code, OpenCode, and Codex.
 
-Current release: `v1.0.1`.
+Current release: `v1.1.0`.
 
 [![License: MIT](https://img.shields.io/badge/license-MIT-1f3a5f.svg)](./LICENSE)
 [![Node](https://img.shields.io/badge/node-%3E%3D20-1f3a5f.svg)](https://nodejs.org)
@@ -144,7 +144,7 @@ Ask it to change something in Canvas, and it refuses. Ask it to read a course, a
 - Citations use filenames, not absolute paths.
 - The harness model reads course and local-file content. Your harness choice controls that boundary.
 - The skills send no telemetry, analytics, or remote logs.
-- Web research stays on public concepts. The do-not-send list blocks source content, filenames, paths, Canvas data, and personal data.
+- Web research is opt-in and stays on public concepts. The do-not-send list blocks source content, filenames, paths, Canvas data, and personal data.
 - The skills upload nothing to external services.
 
 ## Supported systems
@@ -162,6 +162,7 @@ Use PowerShell on native Windows and POSIX commands in WSL, Linux, and macOS. Se
 - A harness that can render the formats you request.
 - A Canvas personal access token with read access for `study-canvas`.
 - Network access only for `study-canvas`.
+- No LaTeX installation is required. LaTeX is optional, with image and plain-text fallbacks.
 
 ## Development
 
@@ -172,9 +173,14 @@ git checkout dev
 node --test
 npm run check:version
 npm run check:skills
+npm run check:syntax
+npm run check:install
+npm run check:marketplaces
 ```
 
 The repo has no dependencies to install.
+
+Generation timings and targets live in [docs/study/performance.md](./docs/study/performance.md).
 
 `core/` holds the canonical workflow. The sync script copies it into every skill:
 
@@ -189,6 +195,14 @@ To link every skill into local harness directories:
 ```bash
 node scripts/link-skills.mjs
 ```
+
+## Math and graphs
+
+Math-bearing outputs use LaTeX for formulas and PGFPlots or TikZ for graphs. PDF can render LaTeX directly. DOCX and PPTX use native equations or rendered images. Markdown keeps the LaTeX source, and CSV stays plain.
+
+The skills never install LaTeX. If a renderer is unavailable, the output falls back to an image or plain notation and the final report says which mode it used.
+
+See [Math, graphs, and images](./docs/study/math.md).
 
 ## Output formats
 

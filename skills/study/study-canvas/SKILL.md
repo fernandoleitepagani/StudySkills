@@ -35,14 +35,20 @@ Read these references before asking anything:
 
 - `references/core/harness-questions.md`
 - `references/core/grilling.md`
+- `references/core/plan-contract.md`
 - `references/options.md`
+- `references/core/source-selection.md`
+- `references/security.md`
+
+Read these references after plan approval:
+
 - `references/core/style.md`
 - `references/core/quality.md`
-- `references/core/source-selection.md`
 - `references/core/web-research.md`
-- `references/core/error-messages.md`
+- `references/core/math.md` when the course contains formulas, graphs, or math images
 - `references/outputs.md`
-- `references/security.md`
+
+Read `references/core/error-messages.md` only when reporting a failure.
 
 ## Step 1 - Connection and token
 
@@ -118,7 +124,7 @@ Use the course list from `courses`. If there are more than four active courses, 
 Read `references/options.md`.
 
 - Ask for the core outputs with multi-select: study plan, summary, flashcards, practice exam.
-- Ask for an add-on: concept map, custom output, or nothing.
+- Ask for an add-on: concept map, custom output, or nothing. Include the shared **Optional extras** checkbox here. Leave **Use public web research** unchecked by default.
 - Ask for optional format preferences. If the user gives none, the agent chooses later.
 - Ask for output language: PT-BR or EN. Default PT-BR when the user writes Portuguese; otherwise EN. Keep source quotes in their original language.
 
@@ -337,9 +343,10 @@ Read:
 - `assets/theme.json`
 - `references/core/quality.md`
 - `references/core/web-research.md`
+- `references/core/math.md` when the course contains formulas, graphs, or math images
 - `references/core/error-messages.md`
 
-Use web research when it improves definitions, examples, references, or current context. Never send course content, filenames, paths, Canvas URL, or personal data to a web tool. Cite public sources separately from course sources.
+Use web research only when the user checks **Use public web research**. Never send course content, filenames, paths, Canvas URL, or personal data to a web tool. Cite public sources separately from course sources.
 
 For each requested output:
 

@@ -2,7 +2,7 @@
 
 The 13 skills share one workflow: ask, plan, approve, write, validate, report.
 
-Start with the [installation and update guide](./installation.md). Harness coverage and smoke results live in [harness-compatibility.md](./harness-compatibility.md). The [security audit](./security-audit.md) records controls and accepted risks. The [v1.0.1 release notes](./release-notes-v1.0.1.md) explain the current release.
+Start with the [installation and update guide](./installation.md). Harness coverage and smoke results live in [harness-compatibility.md](./harness-compatibility.md). The [security audit](./security-audit.md) records controls and accepted risks. The [v1.1.0 release notes](./release-notes-v1.1.0.md) explain the current release.
 
 ## How the collection works
 
@@ -12,8 +12,13 @@ Start with the [installation and update guide](./installation.md). Harness cover
 - Sources stay read-only. Nothing enters Documents.
 - Citations name files, not absolute paths.
 - Canvas access belongs to `study-canvas` alone.
-- Web research follows the hard do-not-send list in `references/core/web-research.md`.
+- Web research follows the hard do-not-send list in `../../core/references/web-research.md`.
+- Web research is opt-in. The **Optional extras** question has a **Use public web research** box, unchecked by default.
 - Every skill carries its own README.
+
+## Development
+
+Repository rules live in [AGENTS.md](../../AGENTS.md). The shared workflow is in [workflow.md](../../core/references/workflow.md), with the plan and quality contracts in [plan-contract.md](../../core/references/plan-contract.md) and [quality.md](../../core/references/quality.md). Harness versions and smoke tests live in [harness-compatibility.md](./harness-compatibility.md). Generation timings and targets live in [performance.md](./performance.md). LaTeX formulas, graphs, images, and fallbacks live in [math.md](./math.md).
 
 ## Skill notes
 
@@ -93,7 +98,7 @@ Pronunciation support stays textual: IPA, stress, and notes. The skill does not 
 
 Writes original math and STEM problems with progressive hints, worked solutions, common errors, and an optional answer key. Problem and solution counts stay aligned.
 
-The skill does not run a math engine or hide a calculator.
+The skill does not run a math engine or hide a calculator. Formulas use LaTeX, and graphs use PGFPlots or TikZ blocks.
 
 [Guide](../../skills/study/study-math-practice/README.md)
 

@@ -27,6 +27,9 @@ export async function startMockCanvas({ token = "test-token" } = {}) {
     rateLimitOnce: false,
     rateLimitHits: 0,
     forbiddenSections: new Set(),
+    delayMs: 0,
+    active: 0,
+    maxActive: 0,
     requests: [],
   };
   const forbidden = (res, section) => {
@@ -38,6 +41,13 @@ export async function startMockCanvas({ token = "test-token" } = {}) {
   const server = http.createServer(async (req, res) => {
     const url = new URL(req.url, "http://127.0.0.1");
     state.requests.push({ method: req.method, path: url.pathname, search: url.search });
+
+    if (state.delayMs > 0) {
+      state.active += 1;
+      state.maxActive = Math.max(state.maxActive, state.active);
+      await new Promise((resolve) => setTimeout(resolve, state.delayMs));
+      state.active -= 1;
+    }
 
     if (req.method !== "GET") {
       json(res, 405, { error: "method not allowed" });

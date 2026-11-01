@@ -15,6 +15,8 @@ StudySkills is tested against the harness versions below. A passing script suite
 
 Per-skill coverage is tracked in `docs/study/harness-matrix.md`.
 
+v1.1.0 adds math scanning and metadata validation. Formula and graph rendering still depends on the harness document renderer. Visual math smoke is recorded per harness before relying on the result.
+
 ## Supported systems
 
 - Linux
@@ -49,8 +51,10 @@ Run this smoke test:
 4. Invoke `study-canvas` or `study-files`.
 5. Generate one PDF.
 6. Confirm the output opens.
-7. Record the harness version and result in this file.
-8. Update `harness-matrix.md` if coverage changed.
+7. Run a short math output with one formula and one graph.
+8. Confirm formulas and graphs render cleanly or report the documented fallback.
+9. Record the harness version and result in this file.
+10. Update `harness-matrix.md` if coverage changed.
 
 ## Install verification
 
@@ -86,3 +90,5 @@ The skill must use the native question tool actually exposed by the session. If 
 - Do not promise that future harness releases will remain compatible.
 - Keep the marketplace manifests and skill copies version-aligned.
 - Verify the installed files after every update.
+- Run the math smoke after a document-renderer change.
+- LaTeX is optional. Do not require a TeX installation.

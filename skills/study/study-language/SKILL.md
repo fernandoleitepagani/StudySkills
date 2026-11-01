@@ -38,6 +38,7 @@ Ask only what is not already known:
 - Available hours per week and target date, if any.
 - Focus: vocabulary, grammar, reading, writing, listening, speaking, or balanced.
 - Source language for translations.
+- Optional extras: use the shared checkbox. Leave **Use public web research** unchecked by default.
 - Output language for explanations.
 - Formats: PDF, DOCX, Markdown, CSV.
 - Whether to include a diagnostic.

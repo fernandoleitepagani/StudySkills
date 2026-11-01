@@ -6,7 +6,7 @@ disable-model-invocation: true
 
 # Revisit and Improve
 
-Read `references/core/workflow.md` before doing anything else. Follow its shared workflow and invariants.
+Read `references/core/workflow.md` before doing anything else. Follow its shared workflow and invariants. Read `references/core/math.md` when the selected document contains formulas, graphs, or math images.
 
 ## Invariants
 
@@ -59,6 +59,7 @@ Ask only what is not already known:
 - Mode: audit only, or audit and revise.
 - Improvement focus: correctness, clarity, completeness, structure, visual style, duplicates, citations, or a custom focus.
 - Specific changes requested by the user.
+- Optional extras: use the shared checkbox. Leave **Use public web research** unchecked by default.
 - Output formats for revised documents.
 - Whether to include an audit report.
 - Language.
@@ -103,6 +104,17 @@ Report the evidence. Do not delete anything.
 - Claims that need a citation.
 - Claims that are marked as certain but are only plausible.
 - Source coverage gaps.
+
+### Math and graphs
+
+- Unbalanced `$` or `$$` delimiters.
+- Formulas flattened into ambiguous plain text.
+- Missing units, assumptions, or equation references.
+- `latex-graph` blocks without `tikzpicture` or `axis`.
+- Graphs without labels, units, captions, or legends.
+- Images without alt text or captions.
+- Raw LaTeX in a rendered PDF, DOCX, or PPTX.
+- Absolute image or include paths.
 
 ### Style and format
 

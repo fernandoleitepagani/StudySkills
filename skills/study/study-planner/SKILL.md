@@ -30,6 +30,7 @@ Ask only when the answer is not already clear.
 ### Common
 
 - Mode: schedule or mastery.
+- Optional extras: use the shared checkbox. Leave **Use public web research** unchecked by default.
 - Output format.
 - Language.
 

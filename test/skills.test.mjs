@@ -405,3 +405,91 @@ test("skills: four-question limit stays in place", async () => {
   assert.match(questions, /Maximum 4 questions/);
   assert.equal(/6 to 8 questions|6-8 questions/i.test(questions), false);
 });
+
+test("skills: faster generation and web opt-in contracts", async () => {
+  const workflow = await read("core/references/workflow.md");
+  assert.match(workflow, /Read before the interview/);
+  assert.match(workflow, /workDir\/drafts\//);
+  assert.match(workflow, /Local-source skills skip the separate sample/);
+  assert.match(workflow, /Optional extras/);
+  assert.match(workflow, /Use public web research/);
+
+  const questions = await read("core/references/harness-questions.md");
+  assert.match(questions, /## Optional extras/);
+  assert.match(questions, /No extras/);
+  assert.match(questions, /Use public web research/);
+  assert.match(questions, /multi-select/);
+
+  const web = await read("core/references/web-research.md");
+  assert.match(web, /Web research is opt-in/);
+  assert.match(web, /unchecked by default/i);
+  assert.match(web, /research\.web/);
+
+  const quality = await read("core/references/quality.md");
+  assert.match(quality, /Content review happens once per output/);
+  assert.match(quality, /Format review happens once per produced file/);
+
+  const output = await read("core/references/output-conventions.md");
+  assert.match(output, /workDir\/drafts\//);
+  assert.match(output, /Use web research only when the user checks/);
+
+  for (const name of USER_SKILLS) {
+    const skill = await read(`skills/study/${name}/SKILL.md`);
+    if (name === "study-files") {
+      assert.match(skill, /No web research/);
+      assert.match(skill, /Do not offer the \*\*Use public web research\*\* option/);
+      continue;
+    }
+    assert.match(skill, /Optional extras|Use public web research/, `${name} must expose the web opt-in`);
+  }
+
+  const performance = await read("docs/study/performance.md");
+  assert.match(performance, /workDir\/timings\.json/);
+  assert.match(performance, /Canvas section lists and page details/);
+});
+
+test("skills: LaTeX math contract is generated and wired", async () => {
+  for (const name of USER_SKILLS) {
+    assert.equal(await exists(`skills/study/${name}/references/core/math.md`), true, `${name} missing math.md`);
+    assert.equal(await exists(`skills/study/${name}/scripts/lib/math.mjs`), true, `${name} missing math.mjs`);
+  }
+
+  const math = await read("core/references/math.md");
+  assert.match(math, /latex-graph/);
+  assert.match(math, /Never leave raw LaTeX/);
+  assert.match(math, /\\write18/);
+  assert.match(math, /math\.required/);
+
+  const plan = await read("core/references/plan-contract.md");
+  assert.match(plan, /"math"/);
+  assert.match(plan, /math\.required/);
+
+  const style = await read("core/references/style.md");
+  assert.match(style, /## Math and graphs/);
+
+  const mathSkill = await read("skills/study/study-math-practice/SKILL.md");
+  assert.match(mathSkill, /Use LaTeX/);
+  assert.match(mathSkill, /latex-graph/);
+  assert.match(mathSkill, /math\.required/);
+  assert.match(mathSkill, /math-check/);
+
+  for (const name of [
+    "study-exams",
+    "study-canvas",
+    "study-notes",
+    "study-explain-back",
+    "study-revisit",
+    "paper-reader",
+    "thesis-organizer",
+  ]) {
+    assert.match(
+      await read(`skills/study/${name}/SKILL.md`),
+      /references\/core\/math\.md/,
+      `${name} must reference the math contract`,
+    );
+  }
+
+  const canvasOutputs = await read("skills/study/study-canvas/references/outputs.md");
+  assert.match(canvasOutputs, /LaTeX/);
+  assert.match(canvasOutputs, /Math rendering mode/);
+});

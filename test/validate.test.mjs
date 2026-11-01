@@ -335,3 +335,56 @@ test("validate: rejects an invalid original even when a fallback is valid", asyn
     await cleanupDir(root);
   }
 });
+
+test("validate: requires and accepts math evidence", async () => {
+  const { root, runDir, planPath, checksPath } = await setup();
+  try {
+    await fs.writeFile(path.join(runDir, "summary.pdf"), "%PDF-1.4\n%%EOF\n");
+    await fs.writeFile(
+      planPath,
+      JSON.stringify({
+        topic: "Statistics",
+        requested: [{ output: "summary", files: ["summary.pdf"], formats: ["pdf"] }],
+        math: { required: true },
+      }),
+      "utf8",
+    );
+    await fs.writeFile(
+      checksPath,
+      JSON.stringify({
+        files: { "summary.pdf": { sections: ["cover"], counts: { pages: 1 } } },
+        math: { formulas: 2, graphs: 1, images: 0, rendering: "latex", fallback: null },
+      }),
+      "utf8",
+    );
+    let result = await validateRun({ runDir, planPath, checksPath });
+    assert.equal(result.ok, true);
+    assert.equal(result.math.provided, true);
+    assert.equal(result.math.ok, true);
+
+    await fs.writeFile(
+      checksPath,
+      JSON.stringify({
+        files: { "summary.pdf": { sections: ["cover"], counts: { pages: 1 } } },
+      }),
+      "utf8",
+    );
+    result = await validateRun({ runDir, planPath, checksPath });
+    assert.equal(result.ok, false);
+    assert.equal(result.math.ok, false);
+
+    await fs.writeFile(
+      checksPath,
+      JSON.stringify({
+        files: { "summary.pdf": { sections: ["cover"], counts: { pages: 1 } } },
+        math: { formulas: 0, graphs: 0, images: 0, rendering: "plain", fallback: null },
+      }),
+      "utf8",
+    );
+    result = await validateRun({ runDir, planPath, checksPath });
+    assert.equal(result.ok, false);
+    assert.equal(result.math.ok, false);
+  } finally {
+    await cleanupDir(root);
+  }
+});

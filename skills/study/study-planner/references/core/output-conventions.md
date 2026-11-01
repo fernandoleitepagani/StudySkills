@@ -22,15 +22,30 @@
 ## Quality and presentation
 
 - Follow `quality.md` and `style.md`.
+- Write one canonical draft per logical output in `workDir/drafts/` and render every requested format from it.
+- Review content once per output, then inspect each produced file for format quality.
 - Read outputs back and record quality evidence in `checks.json`.
 - Use a one-page visual overview for summaries when the format allows.
 - Use tables, diagrams, callouts, captions, and alt text when they improve comprehension.
 - Keep accessibility, heading hierarchy, and language metadata.
 - Record web research status in `research` and report it at the end.
 
+## Math
+
+- Keep formulas, graphs, and image references in the canonical draft.
+- Render math from the reviewed draft, not from a separate retelling.
+- Keep Markdown outputs as LaTeX source.
+- Use plain notation in CSV outputs.
+- Render formulas and graphs for PDF, DOCX, and PPTX.
+- Do not leave raw LaTeX in rendered outputs.
+- Report `math.rendering` as `latex`, `image`, or `plain`.
+- Report a plain-text fallback when the renderer is unavailable.
+- Follow `math.md` for syntax, accessibility, and LaTeX safety.
+
 ## Web sources
 
-- Use web research when it improves accuracy, examples, or references.
+- Use web research only when the user checks **Use public web research**.
+- If the box is unchecked, record `research.web` as `not-used`.
 - Cite title, URL, and access date.
 - Mark weak or single-source claims.
 - Local course sources win for course-specific facts.

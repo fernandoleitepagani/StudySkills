@@ -1,6 +1,6 @@
 # Harness capability matrix
 
-Record the result of the v1.0.0 release-candidate smoke test here.
+These results cover v1.1.0. The v1.0.0 harness baseline and v1.0.1 test patch remain the basis for the surface matrix. v1.1.0 adds performance and math contracts.
 
 ## Environment used for this run
 
@@ -37,6 +37,21 @@ These checks cover the shared rendering and question paths. They do not prove th
 | Native questions in Claude Code | yes | User-reported |
 | Native questions in OpenCode | yes | User-confirmed |
 | Native questions in Codex | yes | User-confirmed |
+
+## v1.1.0 math checks
+
+| Check | Result | Evidence |
+| --- | --- | --- |
+| LaTeX delimiter scanner | yes | `test/math.test.mjs` |
+| Math metadata validation | yes | `test/validate.test.mjs` |
+| `math-check` CLI | yes | `test/cli.test.mjs` |
+| Math templates | yes | `math-check` on both templates |
+| Formula rendering in PDF, DOCX, and PPTX | not rerun | Harness renderer; visual smoke required |
+| Graph rendering in PDF, DOCX, and PPTX | not rerun | Harness renderer; visual smoke required |
+| LaTeX fallback decision path | yes | Automated scanner test |
+| LaTeX fallback visual output | not rerun | Requires a harness without LaTeX |
+
+The automated checks prove scanning, metadata, and fallback selection. They do not prove that a harness renders a formula or graph cleanly. Run the math smoke in `harness-compatibility.md` before relying on visual output.
 
 ## Per-skill coverage
 
@@ -77,6 +92,7 @@ The following are covered by `node --test` and pass:
 - Token age warnings and rejected-token expiry guidance.
 - Canvas read-only guards and error-code classification.
 - Pagination, truncation, and rate-limit retry.
+- Bounded Canvas section and page-detail concurrency.
 - File and image download with size caps.
 - Canvas material selection and fetch filtering.
 - Durable manual-materials link extraction and partial Canvas reporting.
@@ -84,14 +100,17 @@ The following are covered by `node --test` and pass:
 - HTML to text, including pre, tables, images, and nested lists.
 - Materials and manifest generation against a mock Canvas.
 - Plan-driven validation, semantic checks, partial failure, extra files, and token leakage.
-- Quality and research metadata validation.
+- Quality, research, and math metadata validation.
+- LaTeX delimiter, graph, image, forbidden-command, and absolute-path scanning.
 - Cross-origin redirect protection.
 - Work and output directory behavior.
 - CLI commands end to end against the mock server.
+- 116 automated tests.
 
-## Final v1 gate
+## Final v1.1 gate
 
-- Per-skill coverage was accepted by the project owner for v1.
-- Harness surfaces are complete.
+- Per-skill coverage was accepted by the project owner for v1 and inherited by v1.1.0.
+- Harness surfaces remain complete for the v1.1.0 baseline.
+- Math visual smoke remains a per-harness verification step.
 - No unexplained `pending` cells remain.
-- Accepted limitations are recorded in `security-audit.md` and the v1.0.0 release notes.
+- Accepted limitations are recorded in `security-audit.md` and the v1.1.0 release notes.

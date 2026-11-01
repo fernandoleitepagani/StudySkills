@@ -75,6 +75,7 @@ async function readChecks(checksPath) {
     files,
     quality: parsed.quality ?? null,
     research: parsed.research ?? null,
+    math: parsed.math ?? null,
   };
 }
 
@@ -219,6 +220,48 @@ function validateQuality(plan, quality) {
   return { provided: true, required, ok: issues.length === 0, issues };
 }
 
+function validateMath(plan, math) {
+  const required = plan.math?.required === true;
+  if (math === null || math === undefined) {
+    return {
+      provided: false,
+      required,
+      ok: !required,
+      issues: required ? ["Math evidence is required but missing."] : [],
+    };
+  }
+  if (typeof math !== "object" || Array.isArray(math)) {
+    return { provided: true, required, ok: false, issues: ["Math evidence must be an object."] };
+  }
+
+  const issues = [];
+  const counts = {};
+  for (const field of ["formulas", "graphs", "images"]) {
+    const value = Number(math[field]);
+    if (!Number.isInteger(value) || value < 0) {
+      issues.push(`math.${field} must be a non-negative integer.`);
+    } else {
+      counts[field] = value;
+    }
+  }
+
+  if (!["latex", "image", "plain"].includes(math.rendering)) {
+    issues.push("math.rendering must be latex, image, or plain.");
+  }
+  const fallback = math.fallback ?? null;
+  if (![null, "image", "plain"].includes(fallback)) {
+    issues.push("math.fallback must be null, image, or plain.");
+  }
+  if (math.rendering === "plain" && fallback === null) {
+    issues.push("math.fallback cannot be null when rendering is plain.");
+  }
+  if (required && counts.formulas + counts.graphs + counts.images === 0) {
+    issues.push("Math is required but formulas, graphs, and images are all zero.");
+  }
+
+  return { provided: true, required, ok: issues.length === 0, issues };
+}
+
 function validateResearch(plan, research) {
   const expected = plan.research?.web;
   if (research === null || research === undefined) {
@@ -324,6 +367,7 @@ export async function validateRun({ runDir, planPath, checksPath = null, token =
   const semantic = validateSemantic(checks.files, produced);
   const quality = validateQuality(plan, checks.quality);
   const research = validateResearch(plan, checks.research);
+  const math = validateMath(plan, checks.math);
 
   return {
     ok: missing.length === 0
@@ -332,7 +376,8 @@ export async function validateRun({ runDir, planPath, checksPath = null, token =
       && tokenLeak.length === 0
       && semantic.ok
       && quality.ok
-      && research.ok,
+      && research.ok
+      && math.ok,
     runDir,
     plan: {
       topic: plan.topic ?? null,
@@ -340,6 +385,7 @@ export async function validateRun({ runDir, planPath, checksPath = null, token =
       fallbacks: declaredFallbacks,
       qualityRequired: plan.quality?.required === true,
       researchWeb: plan.research?.web ?? null,
+      mathRequired: plan.math?.required === true,
     },
     requested,
     produced,
@@ -351,5 +397,6 @@ export async function validateRun({ runDir, planPath, checksPath = null, token =
     semantic,
     quality,
     research,
+    math,
   };
 }

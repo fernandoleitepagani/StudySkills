@@ -6,7 +6,7 @@ disable-model-invocation: true
 
 # Paper Reader
 
-Read `references/core/workflow.md` before doing anything else. Follow its shared workflow and invariants.
+Read `references/core/workflow.md` before doing anything else. Follow its shared workflow and invariants. Read `references/core/math.md` when the paper contains equations or graphs.
 
 ## Invariants
 
@@ -35,8 +35,7 @@ Ask only what is not already known:
 - Paper or papers.
 - Research question or reading goal.
 - Depth: quick brief, standard, or deep critique.
-- Include related context from the web?
-- Include an evidence map?
+- Optional extras: use the shared checkbox for public web research and an evidence map.
 - Include a list of follow-up questions?
 - Output format.
 - Output language.
@@ -70,7 +69,7 @@ Record:
 - stated limitations
 - authors' conclusion
 
-Use page or section citations.
+Use page or section citations. Write equations with LaTeX and preserve graph labels from the paper.
 
 ### 3. Separate evidence levels
 

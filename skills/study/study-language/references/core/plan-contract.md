@@ -61,8 +61,13 @@ Machine-readable source of truth:
   "quality": {
     "required": true
   },
+  "math": {
+    "required": true,
+    "engine": "latex",
+    "fallback": "image"
+  },
   "research": {
-    "web": "used",
+    "web": "not-used",
     "sources": []
   },
   "settings": {},
@@ -80,7 +85,10 @@ Rules:
 - Add a `fallbacks` entry when a failed requested format is replaced by a Markdown file.
 - Use plain file names, no folders.
 - `quality.required: true` makes the quality block mandatory during validation.
-- Record web use in `research.web` as `used`, `not-used`, or `unavailable`.
+- Set `math.required: true` for quantitative outputs with formulas, graphs, or math images. Use `false` for textual and CSV-only outputs.
+- `math.engine` is `latex`, `harness`, or `none`.
+- `math.fallback` is `image`, `plain`, or `null`.
+- Default `research.web` to `not-used`. Set `used` only when the user checks **Use public web research**. Use `unavailable` only after a checked request fails.
 - `validate` treats `plan.json` as the requested set.
 
 ## `checks.json`
@@ -113,6 +121,13 @@ Agent attestation after reading each generated file:
     },
     "review": "pass"
   },
+  "math": {
+    "formulas": 8,
+    "graphs": 2,
+    "images": 1,
+    "rendering": "latex",
+    "fallback": null
+  },
   "research": {
     "web": "used",
     "sourceCount": 4,
@@ -121,6 +136,16 @@ Agent attestation after reading each generated file:
 }
 ```
 
-Every produced file needs an entry. The validator checks coverage, declared counts, quality evidence, and research metadata. It does not prove prose accuracy or visual quality.
+Every produced file needs an entry. The validator checks coverage, declared counts, quality evidence, research metadata, and math evidence. It does not prove prose accuracy or visual quality.
 
-Read `quality.md` for the rubric and `web-research.md` for the absolute web prohibition list.
+Math rules:
+
+- If `plan.math.required` is true, `checks.math` is required.
+- `formulas`, `graphs`, and `images` are non-negative integers.
+- If math is required, their sum must be greater than zero.
+- `rendering` is `latex`, `image`, or `plain`.
+- `fallback` is `null`, `image`, or `plain`.
+- If `rendering` is `plain`, `fallback` cannot be `null`.
+- Unknown fields are ignored.
+
+Read `quality.md` for the rubric, `math.md` for LaTeX rules, and `web-research.md` for the absolute web prohibition list.

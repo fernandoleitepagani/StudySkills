@@ -25,13 +25,17 @@ A score below the minimum requires revision before validation. Do not lower the 
 
 ## Two-pass review
 
-1. Generate a draft.
+1. Write one canonical draft per logical output in `workDir/drafts/`.
 2. Read the draft back.
 3. Check the source coverage ledger.
-4. Score the rubric.
+4. Score grounding, coverage, learning design, accuracy, and clarity once.
 5. Revise weak sections.
-6. Re-read the revised file.
-7. Record the final scores and evidence.
+6. Re-read the revised draft.
+7. Render every requested format from the reviewed draft.
+8. Inspect each produced file for visual clarity, accessibility, and format integrity.
+9. Record the final scores and evidence.
+
+Content review happens once per output. Format review happens once per produced file. The run-level rubric uses the lowest visual clarity, accessibility, and format integrity score from the produced files.
 
 The second pass is not a summary of the first pass. It is a revision step.
 
@@ -113,6 +117,20 @@ Quality includes presentation:
 - no decorative art or color as the only signal
 
 Visual elements must help comprehension. Do not add decoration to look busy.
+
+## Math review
+
+When a document contains math:
+
+- Check formula notation, signs, units, and significant figures.
+- Check that equation numbers and references agree.
+- Check graph labels, units, scale, and legend.
+- Check that every graph and image has a caption and alt text.
+- Check that rendered PDF, DOCX, and PPTX files contain no raw TeX.
+- Check that Markdown keeps the LaTeX source.
+- Check that CSV uses plain notation.
+- Record formula, graph, and image counts in `checks.json`.
+- Report the math rendering mode and any fallback.
 
 ## Web sources
 

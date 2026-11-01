@@ -205,6 +205,28 @@ test("cli: token, courses, inspect, fetch, output, validate, cleanup", async () 
   }
 });
 
+test("cli: inspect fetches independent sections with bounded concurrency", async () => {
+  const home = await makeTempDir("studyskills-cli-home-");
+  const env = { XDG_DOCUMENTS_DIR: path.join(home, "Documents") };
+  const mock = await startMockCanvas();
+  mock.state.delayMs = 20;
+  try {
+    await writeHostToken(home, mock.origin, "test-token");
+    const result = await runCli(
+      ["inspect", "--base-url", mock.origin, "--course-id", "1", "--json"],
+      { home, env },
+    );
+    assert.equal(result.code, 0);
+    const data = await json(result);
+    assert.equal(data.counts.modules, 1);
+    assert.ok(mock.state.maxActive > 1, "expected concurrent section requests");
+    assert.ok(mock.state.maxActive <= 4, "expected bounded section concurrency");
+  } finally {
+    await mock.close();
+    await cleanupDir(home);
+  }
+});
+
 test("cli: rejected token includes the expiry hint", async () => {
   const home = await makeTempDir("studyskills-cli-home-");
   const mock = await startMockCanvas({ token: "right-token" });
@@ -381,6 +403,31 @@ test("cli: all core sections forbidden stops the fetch", async () => {
     }
   } finally {
     await mock.close();
+    await cleanupDir(home);
+  }
+});
+
+test("cli: math-check accepts valid math and rejects unclosed delimiters", async () => {
+  const dir = await makeTempDir("studyskills-math-cli-");
+  const home = await makeTempDir("studyskills-math-home-");
+  try {
+    const valid = path.join(dir, "valid.md");
+    await fs.writeFile(valid, "The value is $x + 1$.\n", "utf8");
+    let result = await runCore(["math-check", "--file", valid, "--json"], { home });
+    assert.equal(result.code, 0);
+    let data = await json(result);
+    assert.equal(data.ok, true);
+    assert.equal(data.files[0].counts.formulas, 1);
+
+    const invalid = path.join(dir, "invalid.md");
+    await fs.writeFile(invalid, "The value is $x + 1.\n", "utf8");
+    result = await runCore(["math-check", "--file", invalid, "--json"], { home });
+    assert.equal(result.code, 1);
+    data = await json(result);
+    assert.equal(data.ok, false);
+    assert.equal(data.files[0].issues.some((item) => item.code === "UNCLOSED_INLINE_MATH"), true);
+  } finally {
+    await cleanupDir(dir);
     await cleanupDir(home);
   }
 });

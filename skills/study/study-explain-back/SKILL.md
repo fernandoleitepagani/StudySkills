@@ -6,7 +6,11 @@ disable-model-invocation: true
 
 # Explain Back
 
-Read `references/core/workflow.md` before doing anything else. Follow its shared workflow and invariants.
+Read `references/core/workflow.md` before doing anything else. Follow its shared workflow and invariants. Read `references/core/math.md` when the concept contains formulas or graphs.
+
+## Math format
+
+Use LaTeX for formulas. Use `latex-graph` blocks for graphs and caption every graph or image.
 
 ## Input
 
@@ -27,6 +31,7 @@ Ask only when the answer is not already clear:
 - Length: short, standard, deep.
 - Include an analogy?
 - Include a self-test?
+- Optional extras: use the shared checkbox. Leave **Use public web research** unchecked by default.
 - Output format.
 - Language.
 

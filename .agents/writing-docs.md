@@ -1,8 +1,8 @@
 # Writing docs
 
-Each skill in `skills/study/` has a page at `docs/study/<skill-name>.md`.
+Every skill in `skills/study/` has a required `README.md`. The collection index lives at `docs/study/README.md`.
 
-The page has four sections, in this order:
+A dedicated page at `docs/study/<skill-name>.md` is optional. Add one when the skill README grows too large to scan. Use four sections, in this order:
 
 1. **What it does**: the outcome, in plain language.
 2. **When to reach for it**: the situations where this skill is the right tool, and where it is not.
@@ -15,7 +15,9 @@ Include one short example prompt and one example output layout. Do not paste ent
 
 ## README
 
-The top-level README lists promoted skills with a one-line description and a link to the skill page. The bucket README (`skills/study/README.md`) lists every skill in the bucket, including planned skills.
+The top-level README lists shipped skills with a one-line description and a link to the skill README. The collection index gives each skill a short section. The bucket README (`skills/study/README.md`) lists every shipped skill in the bucket.
+
+Do not duplicate the same material across the root README, collection index, and skill README. Each page should answer a different question.
 
 ## Install commands
 

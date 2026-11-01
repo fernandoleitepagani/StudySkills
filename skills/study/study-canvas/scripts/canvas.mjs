@@ -124,6 +124,22 @@ async function attemptSection(label, fn) {
   }
 }
 
+async function mapLimit(items, limit, worker) {
+  const results = new Array(items.length);
+  let next = 0;
+  const workers = Math.max(1, Math.min(limit, items.length));
+  async function drain() {
+    while (true) {
+      const index = next;
+      next += 1;
+      if (index >= items.length) return;
+      results[index] = await worker(items[index], index);
+    }
+  }
+  await Promise.all(Array.from({ length: workers }, drain));
+  return results;
+}
+
 const CORE_SECTIONS = ["modules", "pages", "assignments", "discussions", "announcements", "files"];
 
 function summarizeAccess(sections, counts, optional = {}) {
@@ -306,13 +322,26 @@ async function loadCourseLists(client, courseId, { errors, truncations = {}, pro
     },
   };
 
-  async function getList(label, pathname, params, maxPages = 100) {
+  const listSpecs = [
+    { label: "modules", pathname: `/api/v1/courses/${courseId}/modules`, params: { "include[]": "items", per_page: 100 } },
+    { label: "pages", pathname: `/api/v1/courses/${courseId}/pages`, params: { per_page: 100 } },
+    { label: "assignments", pathname: `/api/v1/courses/${courseId}/assignments`, params: { per_page: 100 } },
+    { label: "discussions", pathname: `/api/v1/courses/${courseId}/discussion_topics`, params: { per_page: 100 } },
+    { label: "announcements", pathname: `/api/v1/courses/${courseId}/discussion_topics`, params: { only_announcements: true, per_page: 100 } },
+    { label: "files", pathname: `/api/v1/courses/${courseId}/files`, params: { per_page: 100, sort: "position", order: "asc" } },
+  ];
+  const listResults = await mapLimit(listSpecs, 4, async (spec) => {
     const result = await attemptSection(
-      label,
-      () => client.getAllWithMeta(pathname, params, { maxPages }),
+      spec.label,
+      () => client.getAllWithMeta(spec.pathname, spec.params, { maxPages: 100 }),
     );
+    return { spec, result };
+  });
+
+  const listItems = {};
+  for (const { spec, result } of listResults) {
     if (!result.ok) {
-      sections[label] = {
+      sections[spec.label] = {
         ok: false,
         status: result.error.status,
         code: result.error.code,
@@ -320,30 +349,31 @@ async function loadCourseLists(client, courseId, { errors, truncations = {}, pro
         count: 0,
       };
       errors.push(result.error);
+      listItems[spec.label] = [];
       if (result.error.code === "UNAUTHORIZED") {
         throw new CanvasError(result.error.message, {
           status: 401,
           code: "UNAUTHORIZED",
         });
       }
-      return [];
+      continue;
     }
-    truncations[label] = result.value.truncated;
-    sections[label] = {
+    truncations[spec.label] = result.value.truncated;
+    sections[spec.label] = {
       ok: true,
       status: 200,
       count: result.value.items.length,
       truncated: Boolean(result.value.truncated),
     };
-    return result.value.items;
+    listItems[spec.label] = result.value.items;
   }
 
-  const modules = await getList("modules", `/api/v1/courses/${courseId}/modules`, { "include[]": "items", per_page: 100 });
-  const pagesList = await getList("pages", `/api/v1/courses/${courseId}/pages`, { per_page: 100 });
-  const assignments = await getList("assignments", `/api/v1/courses/${courseId}/assignments`, { per_page: 100 });
-  const discussions = await getList("discussions", `/api/v1/courses/${courseId}/discussion_topics`, { per_page: 100 });
-  const announcements = await getList("announcements", `/api/v1/courses/${courseId}/discussion_topics`, { only_announcements: true, per_page: 100 });
-  const files = await getList("files", `/api/v1/courses/${courseId}/files`, { per_page: 100, sort: "position", order: "asc" });
+  const modules = listItems.modules;
+  const pagesList = listItems.pages;
+  const assignments = listItems.assignments;
+  const discussions = listItems.discussions;
+  const announcements = listItems.announcements;
+  const files = listItems.files;
   const frontPageResult = await attemptSection(
     "front_page",
     () => client.getJson(`/api/v1/courses/${courseId}/front_page`),
@@ -691,14 +721,15 @@ async function fetchCourse(client, courseId, workDir, selection = null) {
   const pages = [];
   const pageLimit = Math.min(data.pagesList.length, MAX_PAGES);
   const pagesSkipped = Math.max(0, data.pagesList.length - pageLimit);
-  for (let i = 0; i < pageLimit; i += 1) {
-    const page = data.pagesList[i];
-    progress(`Fetching page ${i + 1}/${pageLimit}: ${page.title ?? page.url}`);
-    const detail = await attempt(
+  const pageDetails = await mapLimit(data.pagesList.slice(0, pageLimit), 4, async (page, index) => {
+    progress(`Fetching page ${index + 1}/${pageLimit}: ${page.title ?? page.url}`);
+    return attempt(
       `page:${page.url}`,
       () => client.getJson(`/api/v1/courses/${courseId}/pages/${encodeURIComponent(page.url)}`),
       errors,
     );
+  });
+  for (const detail of pageDetails) {
     if (detail) pages.push(detail);
   }
 
