@@ -186,6 +186,12 @@ There is no plan to add other harnesses.
 - Updated the local skill and recorded tested harness versions.
 - v1.0.0 remains gated on final per-skill and Codex verification.
 
+## v0.9.4 - Install Check Patch
+
+- `check-install` now validates the 16 StudySkills skills and ignores unrelated skills in shared directories.
+- Keeps installed-skill verification usable with OpenCode and Claude directories that contain other skills.
+- No other behavior changes.
+
 ## v1.0.0 - Stable
 
 - Stable skill contract, migration guide, and security audit.

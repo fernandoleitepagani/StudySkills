@@ -19,6 +19,24 @@ const REFS = [
   "error-messages.md",
 ];
 const LIBS = ["files.mjs", "validate.mjs", "inventory.mjs", "catalog.mjs"];
+const EXPECTED_SKILLS = [
+  "canvas-study",
+  "lecture-notes",
+  "flashcard-forge",
+  "explain-back",
+  "exam-sim",
+  "study-planner",
+  "note-organizer",
+  "file-study",
+  "revisit-and-improve",
+  "language-coach",
+  "active-recall-coach",
+  "math-practice",
+  "exam-debrief",
+  "code-kata-coach",
+  "paper-reader",
+  "thesis-organizer",
+];
 const args = process.argv.slice(2);
 const json = args.includes("--json");
 const rootIndex = args.indexOf("--root");
@@ -57,9 +75,9 @@ const required = (name) => {
 const result = { ok: true, root, total: 0, skills: [] };
 try {
   const entries = await fs.readdir(root, { withFileTypes: true });
-  const skills = entries.filter((entry) => entry.isDirectory()).map((entry) => entry.name).sort();
-  result.total = skills.length;
-  for (const name of skills) {
+  const present = new Set(entries.filter((entry) => entry.isDirectory()).map((entry) => entry.name));
+  result.total = EXPECTED_SKILLS.length;
+  for (const name of EXPECTED_SKILLS) {
     const missing = [];
     for (const file of required(name)) {
       if (!(await exists(path.join(root, name, file)))) missing.push(file);
@@ -67,11 +85,10 @@ try {
     if (missing.length) result.ok = false;
     result.skills.push({ name, ok: missing.length === 0, missing });
   }
-  if (skills.includes("study-core")) {
+  if (present.has("study-core")) {
     result.ok = false;
     result.skills.push({ name: "study-core", ok: false, missing: ["study-core must not exist"] });
   }
-  if (!result.total) result.ok = false;
 } catch (error) {
   result.ok = false;
   result.error = error.message;
