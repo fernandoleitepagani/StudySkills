@@ -11,7 +11,7 @@ import {
   resolveDocumentsDir,
   sanitizeFilename,
   uniquePath,
-} from "../skills/study/canvas-study/scripts/lib/files.mjs";
+} from "../skills/study/study-canvas/scripts/lib/files.mjs";
 import { makeTempDir, cleanupDir } from "../test-support/temp.mjs";
 
 test("files: sanitizes traversal and reserved names", () => {

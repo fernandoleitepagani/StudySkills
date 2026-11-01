@@ -27,7 +27,7 @@ Every failure explains:
 
 **Why:** The token file is missing, empty, or in the wrong host folder.
 
-**Next step:** Choose **Guide me** to create or replace the token, then run `/canvas-study` again.
+**Next step:** Choose **Guide me** to create or replace the token, then run `/study-canvas` again.
 
 ### `UNREADABLE_TOKEN_FILE`
 

@@ -11,7 +11,7 @@ async function loadTokenModule(home) {
   process.env.HOME = home;
   try {
     return await import(
-      `../skills/study/canvas-study/scripts/lib/token.mjs?home=${encodeURIComponent(home)}`
+      `../skills/study/study-canvas/scripts/lib/token.mjs?home=${encodeURIComponent(home)}`
     );
   } finally {
     process.env.HOME = previous;
@@ -153,7 +153,7 @@ test("token: reports an unreadable host token path", async () => {
 });
 
 test("token: redacts bearer tokens and query secrets", () => {
-  return import("../skills/study/canvas-study/scripts/lib/token.mjs").then((mod) => {
+  return import("../skills/study/study-canvas/scripts/lib/token.mjs").then((mod) => {
     const secret = "abc.def.ghi";
     const text = `Authorization: Bearer ${secret} access_token=${secret}&verifier=${secret}`;
     const redacted = mod.redactSecrets(text, secret);

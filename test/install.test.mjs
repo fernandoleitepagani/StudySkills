@@ -23,19 +23,19 @@ test("install: repository skill tree passes the install check", async () => {
   assert.equal(result.code, 0);
   const data = JSON.parse(result.stdout);
   assert.equal(data.ok, true);
-  assert.equal(data.total, 16);
+  assert.equal(data.total, 13);
   assert.equal(data.skills.some((skill) => skill.name === "study-core"), false);
 });
 
 test("install: reports missing files in an incomplete install", async () => {
   const home = await makeTempDir("studyskills-install-");
   try {
-    await fs.mkdir(path.join(home, "skills", "canvas-study"), { recursive: true });
+    await fs.mkdir(path.join(home, "skills", "study-canvas"), { recursive: true });
     const result = await run(["--root", path.join(home, "skills"), "--json"]);
     assert.notEqual(result.code, 0);
     const data = JSON.parse(result.stdout);
     assert.equal(data.ok, false);
-    assert.equal(data.skills.some((skill) => skill.name === "canvas-study" && !skill.ok), true);
+    assert.equal(data.skills.some((skill) => skill.name === "study-canvas" && !skill.ok), true);
   } finally {
     await cleanupDir(home);
   }

@@ -16,113 +16,103 @@ Harness compatibility and smoke tests: [harness-compatibility.md](./harness-comp
 - Web research follows the hard do-not-send list in `references/core/web-research.md`.
 - Every skill has its own README with a usage guide.
 
-## canvas-study
+## study-canvas
 
 - **What it does:** fetches one Canvas course read-only and generates study documents.
-- **When to use it:** you have a Canvas course and want a summary, plan, flashcards, practice exam, concept map, or custom study output.
-- **Common questions:** token setup, formats, read-only access, output location.
-- **It's working if:** native questions appear, a plan is shown before fetching, only requested files are written to Documents, and failures are reported.
+- **When to use it:** you have a Canvas course and want a summary, plan, flashcards, practice exam, concept map, or custom output.
+- **Common questions:** token setup, formats, partial access, manual materials.
+- **It's working if:** native questions appear, a plan is shown, only requested files are written, and forbidden sections are reported.
+- **Guide:** [study-canvas README](../../skills/study/study-canvas/README.md).
 
-Full page: [canvas-study.md](./canvas-study.md).
+Full page: [study-canvas.md](./study-canvas.md).
 
-## lecture-notes
+## study-notes
 
-- **What it does:** turns lecture slides, transcripts, or notes into structured, didactic study notes.
-- **When to use it:** you have a lecture source and want notes, a glossary, or self-check questions.
-- **Common questions:** audio is not transcribed; ask for a transcript. Sources are optional only if you provide text.
-- **It's working if:** notes cite the source and contain the required sections.
+- **What it does:** creates lecture notes or organizes Markdown/Obsidian notes read-only.
+- **When to use it:** you have lecture material or a notes vault.
+- **Common questions:** choose the mode first. Audio is not transcribed. Source notes are never modified.
+- **It's working if:** the selected mode produces its expected files and citations or source hashes are intact.
+- **Guide:** [study-notes README](../../skills/study/study-notes/README.md).
 
-## flashcard-forge
+## study-recall
 
-- **What it does:** writes Anki-ready CSV and/or Markdown flashcards.
-- **When to use it:** you want atomic cards from a pack, local files, or a topic.
-- **Common questions:** no `.apkg`; Anki imports the CSV. Only requested formats are written.
-- **It's working if:** the CSV has `front,back,tags`, has no duplicates, and the card count matches the plan.
+- **What it does:** builds flashcards or active-recall practice.
+- **When to use it:** you want cards or retrieval practice from a source.
+- **Common questions:** choose Flashcards or Active recall. Active recall is not a timed exam.
+- **It's working if:** cards are deduplicated, or every recall question has an answer and source.
+- **Guide:** [study-recall README](../../skills/study/study-recall/README.md).
 
-## explain-back
+## study-explain-back
 
-- **What it does:** explains a concept in layers with the Feynman technique.
-- **When to use it:** you want an intuitive explanation, an exam-level explanation, and a self-test.
+- **What it does:** explains concepts in layers with the Feynman technique.
+- **When to use it:** you want an intuitive explanation, exam-level explanation, and self-test.
 - **Common questions:** a source is optional. If none is used, the skill says so.
 - **It's working if:** ELI5, exam-level, expert-level, analogy, misconceptions, and self-test are present.
+- **Guide:** [study-explain-back README](../../skills/study/study-explain-back/README.md).
 
-## exam-sim
+## study-exams
 
-- **What it does:** generates a timed practice exam with answer key and topic map.
-- **When to use it:** you want exam practice from a pack, local files, or a topic.
-- **Common questions:** the time limit is printed, not a live timer. No answer key means no answer key file.
-- **It's working if:** question count, time limit, answer key, and topic map agree.
+- **What it does:** creates practice exams or debriefs completed exams.
+- **When to use it:** before an exam or after a practice attempt.
+- **Common questions:** choose the mode first. Debrief without a key means no score.
+- **It's working if:** exam counts agree, or the debrief has evidence-based error analysis and remediation.
+- **Guide:** [study-exams README](../../skills/study/study-exams/README.md).
 
 ## study-planner
 
 - **What it does:** builds a multi-course schedule or a progressive mastery path.
-- **When to use it:** use schedule mode for deadlines and weekly hours; use mastery mode for a subject path from basics to full knowledge.
+- **When to use it:** use schedule mode for deadlines and weekly hours; mastery mode for a subject path from basics to full knowledge.
 - **Common questions:** deadlines are validated and never invented. Mastery mode starts with a diagnostic and prerequisite map.
 - **It's working if:** every course and deadline appears in the schedule, or the mastery path has stages, checkpoints, and evidence.
 - **Guide:** [study-planner README](../../skills/study/study-planner/README.md).
 
-## note-organizer
-
-- **What it does:** inventories and organizes Markdown or Obsidian notes read-only.
-- **When to use it:** you want an index, tags, a note map, or a study guide.
-- **Common questions:** source notes are never modified. Only requested outputs are written to Documents.
-- **It's working if:** the source hashes are unchanged and the index covers the vault.
-
-## file-study
+## study-files
 
 - **What it does:** turns local folders, files, or harness attachments into study documents.
 - **When to use it:** you have local slides, readings, notes, or PDFs and want study outputs without Canvas.
-- **Common questions:** sources are read-only; exact and near duplicates are reported; attachments must be available as paths; no network.
-- **It's working if:** inventory is confirmed before planning, source hashes are unchanged, citations name the files, and only requested outputs are written.
+- **Common questions:** sources are read-only; exact and near duplicates are reported; no network.
+- **It's working if:** inventory is confirmed, source hashes are unchanged, citations name files, and only requested outputs are written.
+- **Guide:** [study-files README](../../skills/study/study-files/README.md).
 
-## revisit-and-improve
+## study-revisit
 
 - **What it does:** audits existing StudySkills documents, finds duplicates, ambiguity, errors, and weak sections, and writes improved copies.
 - **When to use it:** a previous run needs a correction or quality pass.
 - **Common questions:** originals are never modified. Revised files go to a new run.
-- **It's working if:** the audit identifies issues, changes are evidence-based, and the original hashes remain unchanged.
+- **It's working if:** issues are evidenced and original hashes remain unchanged.
+- **Guide:** [study-revisit README](../../skills/study/study-revisit/README.md).
 
-## language-coach
+## study-language
 
 - **What it does:** builds a language-learning path with vocabulary, grammar, sentence mining, drills, and review.
 - **When to use it:** you want a structured path toward a language goal.
 - **Common questions:** no audio or pronunciation scoring. Vocabulary uses the Anki CSV contract.
-- **It's working if:** the path matches your level and goal, vocabulary is deduplicated, and the review schedule is realistic.
+- **It's working if:** the path matches level and goal, vocabulary is deduplicated, and the review schedule is realistic.
+- **Guide:** [study-language README](../../skills/study/study-language/README.md).
 
-## active-recall-coach
-
-- **What it does:** builds retrieval practice from StudySkills documents or added sources.
-- **When to use it:** you want to remember material through repeated recall, not rereading.
-- **Common questions:** this is not a timed exam. Every question has an answer and source.
-- **It's working if:** source coverage is complete, questions mix recall and application, and the schedule is usable.
-
-## math-practice
+## study-math-practice
 
 - **What it does:** generates original math and STEM problems with hints, worked solutions, and common errors.
 - **When to use it:** you want deliberate practice with explanations.
 - **Common questions:** problems are original. The skill does not run a math engine.
 - **It's working if:** problem and solution counts match, steps are complete, and assumptions are stated.
+- **Guide:** [study-math-practice README](../../skills/study/study-math-practice/README.md).
 
-## exam-debrief
-
-- **What it does:** analyzes a completed exam or practice test and builds a remediation plan.
-- **When to use it:** you have results and want to know what to fix next.
-- **Common questions:** no answer key means no score. A retest uses new questions.
-- **It's working if:** errors are classified with evidence and the remediation plan is specific.
-
-## code-kata-coach
+## study-code-kata
 
 - **What it does:** generates programming katas with requirements, tests, hints, reference solutions, and review questions.
-- **When to use it:** you want deliberate coding practice on a language or concept.
+- **When to use it:** you want deliberate coding practice.
 - **Common questions:** no packages are installed. Unexecuted tests are marked unexecuted.
-- **It's working if:** each kata has tests and a solution, and the tests match the requirements.
+- **It's working if:** each kata has tests and a solution, and tests match requirements.
+- **Guide:** [study-code-kata README](../../skills/study/study-code-kata/README.md).
 
 ## paper-reader
 
-- **What it does:** reads a research paper and produces a structured brief with method, results, limitations, critique, evidence, and follow-up questions.
+- **What it does:** reads a research paper and produces a structured brief with method, results, limitations, critique, evidence, and questions.
 - **When to use it:** you need to understand or critique a paper efficiently.
 - **Common questions:** metadata is marked unknown when absent. No paywall bypass and no invented citations.
 - **It's working if:** paper claims are separate from web context, evidence is classified, and page references are present.
+- **Guide:** [paper-reader README](../../skills/study/paper-reader/README.md).
 
 ## thesis-organizer
 
@@ -130,24 +120,20 @@ Full page: [canvas-study.md](./canvas-study.md).
 - **When to use it:** you are planning or revising a thesis or substantial research project.
 - **Common questions:** the default is planning, not final thesis prose. Evidence and interpretation are separate.
 - **It's working if:** unsupported claims are marked, the outline matches the question, and the writing plan is realistic.
+- **Guide:** [thesis-organizer README](../../skills/study/thesis-organizer/README.md).
 
 ## Skill guides
 
-Every skill has its own README:
-
-- [canvas-study](../../skills/study/canvas-study/README.md)
-- [lecture-notes](../../skills/study/lecture-notes/README.md)
-- [flashcard-forge](../../skills/study/flashcard-forge/README.md)
-- [explain-back](../../skills/study/explain-back/README.md)
-- [exam-sim](../../skills/study/exam-sim/README.md)
+- [study-canvas](../../skills/study/study-canvas/README.md)
+- [study-notes](../../skills/study/study-notes/README.md)
+- [study-recall](../../skills/study/study-recall/README.md)
+- [study-explain-back](../../skills/study/study-explain-back/README.md)
+- [study-exams](../../skills/study/study-exams/README.md)
 - [study-planner](../../skills/study/study-planner/README.md)
-- [note-organizer](../../skills/study/note-organizer/README.md)
-- [file-study](../../skills/study/file-study/README.md)
-- [revisit-and-improve](../../skills/study/revisit-and-improve/README.md)
-- [language-coach](../../skills/study/language-coach/README.md)
-- [active-recall-coach](../../skills/study/active-recall-coach/README.md)
-- [math-practice](../../skills/study/math-practice/README.md)
-- [exam-debrief](../../skills/study/exam-debrief/README.md)
-- [code-kata-coach](../../skills/study/code-kata-coach/README.md)
+- [study-files](../../skills/study/study-files/README.md)
+- [study-revisit](../../skills/study/study-revisit/README.md)
+- [study-language](../../skills/study/study-language/README.md)
+- [study-math-practice](../../skills/study/study-math-practice/README.md)
+- [study-code-kata](../../skills/study/study-code-kata/README.md)
 - [paper-reader](../../skills/study/paper-reader/README.md)
 - [thesis-organizer](../../skills/study/thesis-organizer/README.md)

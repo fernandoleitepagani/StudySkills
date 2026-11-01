@@ -47,7 +47,7 @@ The active skill uses one of these modes:
 - `topic`: a concept or subject with no source files.
 - `manual`: user-entered courses, dates, and hours.
 - `library`: documents already under `~/Documents/StudySkills`.
-- `canvas`: the Canvas-specific workflow in `canvas-study`.
+- `canvas`: the Canvas-specific workflow in `study-canvas`.
 
 If the active skill needs sources and none are provided, ask with the native question tool. If a pack path is given, run:
 

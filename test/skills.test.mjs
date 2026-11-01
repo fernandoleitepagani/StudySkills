@@ -9,20 +9,17 @@ import { REPO_ROOT } from "../test-support/temp.mjs";
 const execFileAsync = promisify(execFile);
 const SKILLS_ROOT = path.join(REPO_ROOT, "skills/study");
 const USER_SKILLS = [
-  "canvas-study",
-  "lecture-notes",
-  "flashcard-forge",
-  "explain-back",
-  "exam-sim",
+  "study-canvas",
+  "study-notes",
+  "study-recall",
+  "study-explain-back",
+  "study-exams",
   "study-planner",
-  "note-organizer",
-  "file-study",
-  "revisit-and-improve",
-  "language-coach",
-  "active-recall-coach",
-  "math-practice",
-  "exam-debrief",
-  "code-kata-coach",
+  "study-files",
+  "study-revisit",
+  "study-language",
+  "study-math-practice",
+  "study-code-kata",
   "paper-reader",
   "thesis-organizer",
 ];
@@ -89,9 +86,9 @@ test("skills: every skill is self-contained", async () => {
     assert.equal(await exists(`skills/study/${name}/scripts/lib/validate.mjs`), true, name);
     assert.equal(await exists(`skills/study/${name}/scripts/lib/inventory.mjs`), true, name);
     assert.equal(await exists(`skills/study/${name}/assets/theme.json`), true, name);
-    assert.equal(await exists(`skills/study/${name}/scripts/lib/html-to-text.mjs`), name === "canvas-study");
+    assert.equal(await exists(`skills/study/${name}/scripts/lib/html-to-text.mjs`), name === "study-canvas");
   }
-  assert.equal(await exists("skills/study/flashcard-forge/scripts/cards.mjs"), true);
+  assert.equal(await exists("skills/study/study-recall/scripts/cards.mjs"), true);
 });
 
 test("skills: generated core is in sync", async () => {
@@ -104,7 +101,7 @@ test("skills: generated core is in sync", async () => {
 });
 
 test("skills: non-Canvas skills do not import Canvas or token code", async () => {
-  for (const name of USER_SKILLS.filter((item) => item !== "canvas-study")) {
+  for (const name of USER_SKILLS.filter((item) => item !== "study-canvas")) {
     const dir = path.join(SKILLS_ROOT, name);
     const files = [];
     async function walk(current) {
@@ -130,7 +127,7 @@ test("skills: no runtime dependencies", async () => {
 });
 
 test("skills: v0.2.1 skill constraints", async () => {
-  const notes = await read("skills/study/note-organizer/SKILL.md");
+  const notes = await read("skills/study/study-notes/SKILL.md");
   assert.match(notes, /Read-only source/);
   assert.match(notes, /Never move, rename, rewrite, or delete/);
   assert.match(notes, /core\.mjs inventory/);
@@ -141,13 +138,13 @@ test("skills: v0.2.1 skill constraints", async () => {
   assert.match(planner, /Mastery/);
   assert.match(planner, /learning-path/);
 
-  const exam = await read("skills/study/exam-sim/SKILL.md");
+  const exam = await read("skills/study/study-exams/SKILL.md");
   assert.match(exam, /No live timer application/);
   assert.match(exam, /Match the requested question count exactly/);
 });
 
-test("skills: file-study constraints", async () => {
-  const text = await read("skills/study/file-study/SKILL.md");
+test("skills: study-files constraints", async () => {
+  const text = await read("skills/study/study-files/SKILL.md");
   assert.match(text, /references\/core\/workflow\.md/);
   assert.match(text, /No Canvas/);
   assert.match(text, /No network/);
@@ -176,10 +173,10 @@ test("skills: language, accessibility, and privacy contracts", async () => {
   assert.match(workflow, /over 100 pages/);
   assert.match(workflow, /Cite filenames, not absolute paths/);
 
-  const canvas = await read("skills/study/canvas-study/SKILL.md");
+  const canvas = await read("skills/study/study-canvas/SKILL.md");
   assert.match(canvas, /exceed the model context/);
 
-  for (const style of ["core/references/style.md", "skills/study/canvas-study/references/core/style.md"]) {
+  for (const style of ["core/references/style.md", "skills/study/study-canvas/references/core/style.md"]) {
     const text = await read(style);
     assert.match(text, /## Accessibility/);
     assert.match(text, /Use real heading levels/);
@@ -189,11 +186,11 @@ test("skills: language, accessibility, and privacy contracts", async () => {
   const conventions = await read("core/references/output-conventions.md");
   assert.match(conventions, /Cite source filenames, not absolute paths/);
 
-  await assert.rejects(fs.access(path.join(REPO_ROOT, "docs/study/file-study.md")));
+  await assert.rejects(fs.access(path.join(REPO_ROOT, "docs/study/study-files.md")));
 });
 
 test("skills: token, fallback, and cleanup contracts", async () => {
-  const canvas = await read("skills/study/canvas-study/SKILL.md");
+  const canvas = await read("skills/study/study-canvas/SKILL.md");
   assert.match(canvas, /token-status --base-url/);
   assert.match(canvas, /full-account-access warning/);
   assert.match(canvas, /cleanup-failed/);
@@ -230,7 +227,7 @@ test("repo: README names only the current release", async () => {
 });
 
 test("repo: Canvas security reference uses host-specific tokens and current cleanup", async () => {
-  const text = await read("skills/study/canvas-study/references/security.md");
+  const text = await read("skills/study/study-canvas/references/security.md");
   assert.match(text, /canvas\/<host>\/token\.txt/);
   assert.match(text, /migration fallback/);
   assert.match(text, /Remove the work directory on success or failure/);
@@ -288,37 +285,37 @@ test("repo: every skill has a README and every index links to it", async () => {
 });
 
 test("skills: run 3 contracts", async () => {
-  const revisit = await read("skills/study/revisit-and-improve/SKILL.md");
+  const revisit = await read("skills/study/study-revisit/SKILL.md");
   assert.match(revisit, /Never edit, move, rename, or delete/);
   assert.match(revisit, /audit and revise/i);
   assert.match(revisit, /unverified/i);
   assert.match(revisit, /Never modify the original run/);
 
-  const language = await read("skills/study/language-coach/SKILL.md");
+  const language = await read("skills/study/study-language/SKILL.md");
   assert.match(language, /No audio generation/);
   assert.match(language, /pronunciation scoring/);
   assert.match(language, /front,back,tags/);
   assert.match(language, /CEFR/);
 
-  const recall = await read("skills/study/active-recall-coach/SKILL.md");
+  const recall = await read("skills/study/study-recall/SKILL.md");
   assert.match(recall, /Retrieval practice, not an exam/);
   assert.match(recall, /No timer/);
   assert.match(recall, /Every question has an answer and source/);
-  assert.match(recall, /catalog --root/);
+  assert.match(recall, /catalog --json/);
 });
 
 test("skills: run 4 contracts", async () => {
-  const math = await read("skills/study/math-practice/SKILL.md");
+  const math = await read("skills/study/study-math-practice/SKILL.md");
   assert.match(math, /Original problems/);
   assert.match(math, /Every problem has a worked solution/);
   assert.match(math, /No code execution/);
 
-  const debrief = await read("skills/study/exam-debrief/SKILL.md");
+  const debrief = await read("skills/study/study-exams/SKILL.md");
   assert.match(debrief, /Do not fake grading/);
   assert.match(debrief, /No key means no score/);
   assert.match(debrief, /Do not reuse original exam questions/);
 
-  const kata = await read("skills/study/code-kata-coach/SKILL.md");
+  const kata = await read("skills/study/study-code-kata/SKILL.md");
   assert.match(kata, /No dependency installation/);
   assert.match(kata, /No execution required/);
   assert.match(kata, /Each kata has requirements, tests, and a solution/);
@@ -350,10 +347,10 @@ test("repo: harness matrix lists every skill", async () => {
 });
 
 test("skills: manual materials and beginner result contracts", async () => {
-  const outputs = await read("skills/study/canvas-study/references/outputs.md");
+  const outputs = await read("skills/study/study-canvas/references/outputs.md");
   assert.match(outputs, /manual-materials\.md/);
   assert.match(outputs, /downloads them through the browser/);
-  assert.match(outputs, /\/file-study/);
+  assert.match(outputs, /\/study-files/);
   assert.match(outputs, /videos, provide a transcript or subtitles/);
 
   const errors = await read("core/references/error-messages.md");
@@ -362,7 +359,7 @@ test("skills: manual materials and beginner result contracts", async () => {
   assert.match(errors, /What happened/);
   assert.match(errors, /Next step/);
 
-  const canvas = await read("skills/study/canvas-study/SKILL.md");
+  const canvas = await read("skills/study/study-canvas/SKILL.md");
   assert.match(canvas, /manual-materials\.md/);
   assert.match(canvas, /downloads them through the browser/);
   assert.match(canvas, /error-messages\.md/);
@@ -380,4 +377,30 @@ test("repo: harness compatibility and install verification are documented", asyn
 
   const pkg = JSON.parse(await read("package.json"));
   assert.equal(pkg.scripts["check:install"], "node scripts/check-install.mjs --root skills/study --json");
+});
+
+test("skills: merged modes preserve source functionality", async () => {
+  const notes = await read("skills/study/study-notes/SKILL.md");
+  assert.match(notes, /Lecture notes/);
+  assert.match(notes, /Organize notes/);
+  assert.match(notes, /notes-index\.md/);
+  assert.match(notes, /lecture-notes\.<format>/);
+
+  const recall = await read("skills/study/study-recall/SKILL.md");
+  assert.match(recall, /Flashcards/);
+  assert.match(recall, /Active recall/);
+  assert.match(recall, /cards\.mjs/);
+  assert.match(recall, /recall-questions/);
+
+  const exams = await read("skills/study/study-exams/SKILL.md");
+  assert.match(exams, /Create a practice exam/);
+  assert.match(exams, /Debrief a completed exam/);
+  assert.match(exams, /practice-exam\.<format>/);
+  assert.match(exams, /exam-debrief\.<format>/);
+});
+
+test("skills: four-question limit stays in place", async () => {
+  const questions = await read("core/references/harness-questions.md");
+  assert.match(questions, /Maximum 4 questions/);
+  assert.equal(/6 to 8 questions|6-8 questions/i.test(questions), false);
 });

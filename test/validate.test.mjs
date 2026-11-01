@@ -6,7 +6,7 @@ import { makeTempDir, cleanupDir, writeTokenFile } from "../test-support/temp.mj
 
 const HOME = await makeTempDir("studyskills-validate-home-");
 process.env.HOME = HOME;
-const { validateRun } = await import("../skills/study/canvas-study/scripts/lib/validate.mjs");
+const { validateRun } = await import("../skills/study/study-canvas/scripts/lib/validate.mjs");
 
 test.after(async () => {
   await cleanupDir(HOME);

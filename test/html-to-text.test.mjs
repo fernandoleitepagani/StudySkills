@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { htmlToText } from "../skills/study/canvas-study/scripts/lib/html-to-text.mjs";
+import { htmlToText } from "../skills/study/study-canvas/scripts/lib/html-to-text.mjs";
 
 test("html: keeps headings, paragraphs, lists, and links", () => {
   const text = htmlToText(

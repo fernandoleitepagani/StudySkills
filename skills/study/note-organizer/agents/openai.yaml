@@ -1,6 +1,0 @@
-interface:
-  display_name: "Note Organizer"
-  short_description: "Organize Markdown and Obsidian notes read-only"
-  brand_color: "#1F3A5F"
-policy:
-  allow_implicit_invocation: false

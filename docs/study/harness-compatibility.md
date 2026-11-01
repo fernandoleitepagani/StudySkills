@@ -35,9 +35,9 @@ The Node scripts are largely isolated from harness releases. The integration ins
 Run this smoke test:
 
 1. Confirm the expected skill version is installed.
-2. Confirm all 16 skills are visible.
+2. Confirm all 13 skills are visible.
 3. Open one native question.
-4. Invoke `canvas-study` or `file-study`.
+4. Invoke `study-canvas` or `study-files`.
 5. Generate one PDF.
 6. Confirm the output opens.
 7. Record the harness version and result in this file.

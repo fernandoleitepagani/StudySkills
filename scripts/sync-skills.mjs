@@ -8,20 +8,17 @@ const CORE = path.join(REPO, "core");
 const SKILLS_ROOT = path.join(REPO, "skills/study");
 
 const SKILLS = [
-  "canvas-study",
-  "lecture-notes",
-  "flashcard-forge",
-  "explain-back",
-  "exam-sim",
+  "study-canvas",
+  "study-notes",
+  "study-recall",
+  "study-explain-back",
+  "study-exams",
   "study-planner",
-  "note-organizer",
-  "file-study",
-  "revisit-and-improve",
-  "language-coach",
-  "active-recall-coach",
-  "math-practice",
-  "exam-debrief",
-  "code-kata-coach",
+  "study-files",
+  "study-revisit",
+  "study-language",
+  "study-math-practice",
+  "study-code-kata",
   "paper-reader",
   "thesis-organizer",
 ];
@@ -71,7 +68,7 @@ function plan() {
     for (const lib of LIBS) {
       copies.push([path.join(CORE, "scripts/lib", lib), path.join(root, "scripts/lib", lib)]);
     }
-    if (skill === "canvas-study") {
+    if (skill === "study-canvas") {
       copies.push([
         path.join(CORE, "scripts/lib/html-to-text.mjs"),
         path.join(root, "scripts/lib/html-to-text.mjs"),

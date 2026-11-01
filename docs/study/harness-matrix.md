@@ -43,22 +43,19 @@ These checks cover the shared rendering and question paths. They do not prove th
 
 | Skill | PDF | DOCX | PPTX | Questions | Notes |
 | --- | --- | --- | --- | --- | --- |
-| canvas-study | yes | yes | yes | yes | Real Canvas run and inspected outputs |
-| lecture-notes | pending | pending | pending | pending | Not individually exercised |
-| flashcard-forge | n/a | n/a | n/a | pending | CSV/Markdown only |
-| explain-back | pending | pending | pending | pending | Not individually exercised |
-| exam-sim | pending | pending | n/a | pending | PDF/DOCX only |
-| study-planner | pending | pending | n/a | pending | PDF/DOCX only |
-| note-organizer | pending | pending | pending | pending | Not individually exercised |
-| file-study | pending | pending | pending | pending | Not individually exercised |
-| revisit-and-improve | pending | pending | pending | pending | Not individually exercised |
-| language-coach | pending | pending | pending | pending | Not individually exercised |
-| active-recall-coach | pending | pending | pending | pending | Not individually exercised |
-| math-practice | pending | pending | pending | pending | Not individually exercised |
-| exam-debrief | pending | pending | pending | pending | Not individually exercised |
-| code-kata-coach | pending | pending | pending | pending | Not individually exercised |
-| paper-reader | pending | pending | pending | pending | Not individually exercised |
-| thesis-organizer | pending | pending | pending | pending | Not individually exercised |
+| study-canvas | yes | yes | yes | yes | Real Canvas run and inspected outputs |
+| study-notes | pending | pending | pending | pending | Merged lecture/organizer modes; not individually exercised |
+| study-recall | pending | pending | n/a | pending | Merged flashcards/active recall; CSV/Markdown plus PDF/DOCX |
+| study-explain-back | pending | pending | pending | pending | Not individually exercised |
+| study-exams | pending | pending | n/a | pending | Merged practice/debrief modes; PDF/DOCX |
+| study-planner | pending | pending | n/a | pending | PDF/DOCX |
+| study-files | pending | pending | pending | pending | Not individually exercised |
+| study-revisit | pending | pending | pending | pending | Not individually exercised |
+| study-language | pending | pending | pending | pending | Not individually exercised |
+| study-math-practice | pending | pending | pending | pending | Not individually exercised |
+| study-code-kata | pending | pending | pending | pending | Not individually exercised |
+| paper-reader | pending | pending | n/a | pending | PDF/DOCX |
+| thesis-organizer | pending | pending | n/a | pending | PDF/DOCX |
 
 ## How to record
 

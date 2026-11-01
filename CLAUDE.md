@@ -5,12 +5,12 @@ StudySkills is a collection of user-invoked agent skills for studying, learning,
 ## Layout
 
 - `skills/study/` holds the study skills.
-- `skills/study/canvas-study/` is the Canvas Study skill.
+- `skills/study/study-canvas/` is the Canvas Study skill.
 - `docs/study/` holds human-facing documentation.
 - `test/` holds the zero-dependency `node:test` suites and fixtures.
 - `test-support/` holds test helpers and the mock Canvas server.
 - `roadmap.md` is the product roadmap.
-- `roadmap2.md` is the plan for the future `file-study` skill.
+- `roadmap2.md` tracks `study-files` and the future media-import plan.
 
 ## Skill rules
 
@@ -41,7 +41,7 @@ StudySkills is a collection of user-invoked agent skills for studying, learning,
 
 - Update `README.md`, `docs/study/README.md`, and `skills/study/README.md` when a skill changes.
 - The collection docs page has one section per skill with four parts: What it does, When to reach for it, Common questions, It's working if.
-- `canvas-study` keeps its dedicated page at `docs/study/canvas-study.md`.
+- `study-canvas` keeps its dedicated page at `docs/study/study-canvas.md`.
 - Keep install commands in `.agents/install-block.md` and copy them verbatim.
 - Every skill has its own `README.md` with the standard headings.
 - The root README lists every skill and links to its README.

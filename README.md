@@ -2,7 +2,7 @@
 
 Agent skills for studying, learning, and creating.
 
-Current release: `v0.9.4`.
+Current release: `v0.9.5`.
 
 [![License: MIT](https://img.shields.io/badge/license-MIT-1f3a5f.svg)](./LICENSE)
 [![Node](https://img.shields.io/badge/node-%3E%3D20-1f3a5f.svg)](https://nodejs.org)
@@ -66,20 +66,17 @@ Update with `npx skills@latest update`.
 
 | Skill | What it does |
 | --- | --- |
-| [`canvas-study`](./skills/study/canvas-study/README.md) | Fetches a Canvas course read-only and generates study documents. |
-| [`lecture-notes`](./skills/study/lecture-notes/README.md) | Turns lecture slides, transcripts, or notes into structured notes. |
-| [`flashcard-forge`](./skills/study/flashcard-forge/README.md) | Creates Anki-ready CSV and Markdown flashcards. |
-| [`explain-back`](./skills/study/explain-back/README.md) | Explains concepts in layers with the Feynman technique. |
-| [`exam-sim`](./skills/study/exam-sim/README.md) | Generates timed practice exams and optional review schedules. |
+| [`study-canvas`](./skills/study/study-canvas/README.md) | Fetches a Canvas course read-only and generates study documents. |
+| [`study-notes`](./skills/study/study-notes/README.md) | Generates lecture notes or organizes Markdown/Obsidian notes read-only. |
+| [`study-recall`](./skills/study/study-recall/README.md) | Builds flashcards or active-recall practice and review schedules. |
+| [`study-explain-back`](./skills/study/study-explain-back/README.md) | Explains concepts in layers with the Feynman technique. |
+| [`study-exams`](./skills/study/study-exams/README.md) | Creates practice exams or debriefs completed exams. |
 | [`study-planner`](./skills/study/study-planner/README.md) | Builds a multi-course schedule or a progressive mastery path. |
-| [`note-organizer`](./skills/study/note-organizer/README.md) | Organizes Markdown and Obsidian notes read-only. |
-| [`file-study`](./skills/study/file-study/README.md) | Turns local folders, files, or attachments into study documents. |
-| [`revisit-and-improve`](./skills/study/revisit-and-improve/README.md) | Audits and improves existing study documents without changing the originals. |
-| [`language-coach`](./skills/study/language-coach/README.md) | Builds a language-learning path with vocabulary, grammar, drills, and review. |
-| [`active-recall-coach`](./skills/study/active-recall-coach/README.md) | Builds retrieval practice and spaced review from StudySkills documents. |
-| [`math-practice`](./skills/study/math-practice/README.md) | Generates graded math problems with hints and worked solutions. |
-| [`exam-debrief`](./skills/study/exam-debrief/README.md) | Analyzes an exam attempt and builds a remediation plan. |
-| [`code-kata-coach`](./skills/study/code-kata-coach/README.md) | Generates programming katas with tests and review questions. |
+| [`study-files`](./skills/study/study-files/README.md) | Turns local folders, files, or attachments into study documents. |
+| [`study-revisit`](./skills/study/study-revisit/README.md) | Audits and improves existing study documents without changing originals. |
+| [`study-language`](./skills/study/study-language/README.md) | Builds a language-learning path with vocabulary, grammar, drills, and review. |
+| [`study-math-practice`](./skills/study/study-math-practice/README.md) | Generates graded math problems with hints and worked solutions. |
+| [`study-code-kata`](./skills/study/study-code-kata/README.md) | Generates programming katas with tests and review questions. |
 | [`paper-reader`](./skills/study/paper-reader/README.md) | Produces a structured brief and critique of a research paper. |
 | [`thesis-organizer`](./skills/study/thesis-organizer/README.md) | Organizes a thesis question, evidence, outline, and writing plan. |
 
@@ -94,20 +91,17 @@ It also keeps the work local. Sources are read-only, outputs are written to Docu
 Run a skill by name in Claude Code, OpenCode, or Codex:
 
 ```text
-/canvas-study
-/lecture-notes
-/flashcard-forge
-/explain-back
-/exam-sim
+/study-canvas
+/study-notes
+/study-recall
+/study-explain-back
+/study-exams
 /study-planner
-/note-organizer
-/file-study
-/revisit-and-improve
-/language-coach
-/active-recall-coach
-/math-practice
-/exam-debrief
-/code-kata-coach
+/study-files
+/study-revisit
+/study-language
+/study-math-practice
+/study-code-kata
 /paper-reader
 /thesis-organizer
 ```
@@ -141,7 +135,7 @@ The harness owns PDF, DOCX, and PPTX rendering. If it cannot produce a requested
 
 ## Canvas is read-only
 
-`canvas-study` only performs `GET` requests. It does not submit assignments, post discussions, edit pages, upload files, change account settings, or commit anything to Canvas.
+`study-canvas` only performs `GET` requests. It does not submit assignments, post discussions, edit pages, upload files, change account settings, or commit anything to Canvas.
 
 If you ask it to change something in Canvas, it refuses and explains that it is read-only.
 
@@ -161,8 +155,8 @@ If you ask it to change something in Canvas, it refuses and explains that it is 
 
 - Node.js 20 or newer in the harness environment.
 - A harness that can create the document formats you request.
-- For `canvas-study`, a Canvas personal access token with read access.
-- Network access only for `canvas-study`.
+- For `study-canvas`, a Canvas personal access token with read access.
+- Network access only for `study-canvas`.
 
 ## Development
 

@@ -192,6 +192,26 @@ There is no plan to add other harnesses.
 - Keeps installed-skill verification usable with OpenCode and Claude directories that contain other skills.
 - No other behavior changes.
 
+## v0.9.5 - Unified Study Names and Merged Modes
+
+- Renamed the collection to the `study-*` prefix.
+- Kept `paper-reader` and `thesis-organizer` unchanged.
+- Merged `lecture-notes` and `note-organizer` into `study-notes`.
+- Merged `flashcard-forge` and `active-recall-coach` into `study-recall`.
+- Merged `exam-sim` and `exam-debrief` into `study-exams`.
+- Preserved all source functionality through mode selectors.
+- Kept the four-question interview limit.
+- Added migration and install verification.
+- Registered public store listing as future work.
+
+## Future - Public Store Listing
+
+- Claude directory metadata, icon, listing URLs, validation, submission, and review.
+- Codex public ZIP, interface metadata, icons, validation, submission, and review.
+- CI validation and plugin ZIP artifact generation.
+- Manual submission remains required; do not claim automatic publication.
+- New versions update the listing; users do not re-add the plugin.
+
 ## v1.0.0 - Stable
 
 - Stable skill contract, migration guide, and security audit.

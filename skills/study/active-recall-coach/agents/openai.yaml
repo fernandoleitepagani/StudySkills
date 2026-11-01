@@ -1,6 +1,0 @@
-interface:
-  display_name: "Active Recall Coach"
-  short_description: "Build retrieval practice and review sessions"
-  brand_color: "#1F3A5F"
-policy:
-  allow_implicit_invocation: false

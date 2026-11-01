@@ -7,7 +7,7 @@ import { spawn } from "node:child_process";
 export const REPO_ROOT = fileURLToPath(new URL("../", import.meta.url));
 export const CANVAS_SCRIPT = path.join(
   REPO_ROOT,
-  "skills/study/canvas-study/scripts/canvas.mjs",
+  "skills/study/study-canvas/scripts/canvas.mjs",
 );
 export const CORE_SCRIPT = path.join(
   REPO_ROOT,
@@ -15,7 +15,7 @@ export const CORE_SCRIPT = path.join(
 );
 export const CARDS_SCRIPT = path.join(
   REPO_ROOT,
-  "skills/study/flashcard-forge/scripts/cards.mjs",
+  "skills/study/study-recall/scripts/cards.mjs",
 );
 
 export async function makeTempDir(prefix = "studyskills-test-") {

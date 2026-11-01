@@ -11,7 +11,7 @@ import {
   normalizeBaseUrl,
   parseNextLink,
   statusCode,
-} from "../skills/study/canvas-study/scripts/lib/canvas-client.mjs";
+} from "../skills/study/study-canvas/scripts/lib/canvas-client.mjs";
 import { startMockCanvas } from "../test-support/mock-canvas.mjs";
 import { makeTempDir, cleanupDir } from "../test-support/temp.mjs";
 

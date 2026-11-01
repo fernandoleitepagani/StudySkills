@@ -1,12 +1,12 @@
 # StudySkills v1.0.0 Release Checklist
 
-Baseline: `v0.4.5`, `main` and `dev` aligned, 69 tests passing.
+Baseline: `v0.9.5`, `main` and `dev` aligned, 92 tests passing.
 
 Release gate: every box must be checked or explicitly removed from v1 scope. No `pending`, no known defects, no manual-verification caveat.
 
 ## 0. Scope and release gate
 
-- [ ] Confirm v1 includes exactly 8 skills: `canvas-study`, `lecture-notes`, `flashcard-forge`, `explain-back`, `exam-sim`, `study-planner`, `note-organizer`, `file-study`.
+- [ ] Confirm v1 includes exactly 13 skills: `study-canvas`, `study-notes`, `study-recall`, `study-explain-back`, `study-exams`, `study-planner`, `study-files`, `study-revisit`, `study-language`, `study-math-practice`, `study-code-kata`, `paper-reader`, `thesis-organizer`.
 - [ ] Confirm support for exactly Claude Code, OpenCode, and Codex, CLI and GUI.
 - [ ] Confirm supported languages: EN and PT-BR.
 - [ ] Confirm supported output formats: PDF, DOCX, PPTX, CSV, Markdown.
@@ -37,7 +37,7 @@ Release gate: every box must be checked or explicitly removed from v1 scope. No 
 - [ ] Confirm every skill has local `references/core/`.
 - [ ] Confirm every skill has local `scripts/core.mjs`.
 - [ ] Confirm every skill has its local validator, files, inventory, and theme assets.
-- [ ] Confirm Canvas-only files exist only in `canvas-study`.
+- [ ] Confirm Canvas-only files exist only in `study-canvas`.
 - [ ] Add regression tests for every defect found during manual verification.
 - [ ] Confirm the full suite passes after all fixes.
 - [ ] Confirm CI passes on `main`.
@@ -49,7 +49,7 @@ Release gate: every box must be checked or explicitly removed from v1 scope. No 
 
 - [ ] Install the plugin marketplace from `main` on a clean profile.
 - [ ] Install the plugin.
-- [ ] Confirm all 8 skills are listed.
+- [ ] Confirm all 13 skills are listed.
 - [ ] Confirm no duplicate skills.
 - [ ] Confirm no `study-core`.
 - [ ] Run one skill from the CLI.
@@ -62,7 +62,7 @@ Release gate: every box must be checked or explicitly removed from v1 scope. No 
 
 - [ ] Install the plugin marketplace from `main` on a clean profile.
 - [ ] Install the plugin.
-- [ ] Confirm all 8 skills are listed.
+- [ ] Confirm all 13 skills are listed.
 - [ ] Confirm no duplicate skills.
 - [ ] Confirm no `study-core`.
 - [ ] Run one skill from the CLI.
@@ -74,7 +74,7 @@ Release gate: every box must be checked or explicitly removed from v1 scope. No 
 ### OpenCode
 
 - [x] Install the whole collection from `main` on a clean profile.
-- [x] Confirm all 8 skills are listed.
+- [x] Confirm all 13 skills are listed.
 - [x] Install a single skill independently.
 - [x] Confirm a single-skill install has all local core files.
 - [x] Confirm no duplicate skills when both plugin and copied installs are present.
@@ -121,91 +121,86 @@ For each surface:
 
 Run every skill at least once in each CLI. Run at least one full skill in each GUI.
 
-### canvas-study
+### study-canvas
 
 - [ ] Real Canvas course fetched successfully.
-- [ ] Modules, pages, assignments, discussions, announcements, syllabus, and files work.
-- [ ] Inline images and external links behave as documented.
-- [ ] Quizzes and media are skipped or reported correctly.
-- [ ] Pagination is correct.
-- [ ] Truncation is reported.
-- [ ] Large files and size caps are reported.
-- [ ] Read-only requests are refused.
-- [ ] Host-specific token is found.
-- [ ] Legacy token fallback works.
-- [ ] Missing, unreadable, and invalid token paths are handled.
-- [ ] Token guide opens the correct host-specific path.
-- [ ] Token does not leak into outputs or logs.
+- [ ] Partial section access is reported without a false total failure.
+- [ ] Manual materials link report works.
+- [ ] Token and read-only checks pass.
 - [ ] Real PDF, DOCX, and PPTX outputs open and look correct.
 
-### lecture-notes
+### study-notes
 
-- [ ] Slide deck input works.
-- [ ] Transcript input works.
-- [ ] Notes input works.
-- [ ] Notes cite sources.
-- [ ] Required sections are present.
-- [ ] Requested formats are produced.
-- [ ] Fallback behavior works.
+- [ ] Lecture notes mode works with slides, transcript, and notes.
+- [ ] Organize notes mode works with Markdown and Obsidian.
+- [ ] Source notes and hashes are unchanged.
+- [ ] Both mode outputs and citations are present.
 
-### flashcard-forge
+### study-recall
 
-- [ ] CSV has exactly `front,back,tags`.
-- [ ] Markdown output works.
-- [ ] Card count matches the plan.
-- [ ] No duplicate cards.
-- [ ] CSV parses correctly with real quoting and multiline fields.
-- [ ] Only requested formats are written.
+- [ ] Flashcards mode produces valid CSV/Markdown and deduplicated cards.
+- [ ] Active recall mode produces questions, answers, and a schedule.
+- [ ] Active recall is not presented as a timed exam.
 
-### explain-back
+### study-explain-back
 
 - [ ] ELI5, exam-level, and expert-level layers are present.
 - [ ] Analogy, misconceptions, and self-test are present.
 - [ ] Source-optional behavior works.
-- [ ] Citations appear when sources are used.
-- [ ] Language selection works.
 
-### exam-sim
+### study-exams
 
-- [ ] Question count matches exactly.
-- [ ] Time limit is printed, not live.
-- [ ] Answer key is present when requested.
-- [ ] Topic map is present.
-- [ ] Optional review schedule works.
-- [ ] PDF and DOCX outputs open correctly.
+- [ ] Practice exam mode matches the question count and time limit.
+- [ ] Debrief mode does not score without an answer key.
+- [ ] Error analysis and retest behavior work.
 
 ### study-planner
 
-- [ ] Multiple courses work.
-- [ ] Deadlines are not invented.
-- [ ] Past deadlines require confirmation.
-- [ ] Weekly hours and fixed commitments are respected.
-- [ ] Every course and deadline appears in the plan.
-- [ ] No Canvas access is used.
+- [ ] Schedule mode respects courses, deadlines, and hours.
+- [ ] Mastery mode produces diagnostic, stages, and checkpoints.
+- [ ] No deadlines or prior knowledge are invented.
 
-### note-organizer
+### study-files
 
-- [ ] Markdown folder input works.
-- [ ] Obsidian vault input works.
-- [ ] Source hashes are unchanged.
-- [ ] Index covers the vault.
-- [ ] Links and tags are preserved.
-- [ ] Source notes are never moved, renamed, rewritten, or deleted.
+- [ ] Folder, file, and attachment inputs work.
+- [ ] Inventory, duplicates, and source hashes are correct.
 - [ ] Only requested outputs are written.
 
-### file-study
+### study-revisit
 
-- [ ] Folder input works.
-- [ ] Individual file input works.
-- [ ] Attachment input works.
-- [ ] Inventory is confirmed before planning.
-- [ ] Exact duplicates are reported.
-- [ ] Near duplicates are reported.
-- [ ] Large-source chunking works.
-- [ ] Every output cites source filenames.
-- [ ] Source hashes are unchanged.
-- [ ] No network access is used.
-- [ ] Only requested outputs are written.
+- [ ] Original documents remain unchanged.
+- [ ] Duplicates, ambiguity, and errors are reported with evidence.
+- [ ] Revised copies are written to a new run.
+
+### study-language
+
+- [ ] Level, goal, vocabulary, grammar, and review plan work.
+- [ ] No audio or pronunciation scoring is claimed.
+- [ ] Vocabulary CSV uses the card contract.
+
+### study-math-practice
+
+- [ ] Problem and solution counts match.
+- [ ] Worked solutions and assumptions are complete.
+- [ ] No execution or hidden calculator is claimed.
+
+### study-code-kata
+
+- [ ] Each kata has requirements, tests, and a solution.
+- [ ] No packages are installed and unexecuted tests are marked.
+- [ ] Language docs and references are cited.
+
+### paper-reader
+
+- [ ] Metadata is not invented.
+- [ ] Paper claims and web context are separated.
+- [ ] Evidence map and follow-up questions are present.
+
+### thesis-organizer
+
+- [ ] Research question, argument map, outline, and evidence matrix are present.
+- [ ] Unsupported claims and source gaps are marked.
+- [ ] Writing plan is realistic.
 
 ## 6. Real document quality
 
@@ -289,15 +284,15 @@ Failure behavior:
 - [ ] README names only the current release.
 - [ ] README install commands are current.
 - [ ] README limitations are accurate.
-- [ ] `docs/study/README.md` covers all 8 skills.
-- [ ] `docs/study/canvas-study.md` is current.
+- [ ] `docs/study/README.md` covers all 13 skills.
+- [ ] `docs/study/study-canvas.md` is current.
 - [ ] `docs/study/harness-matrix.md` has no unexplained `pending` cells.
 - [ ] Every skill `SKILL.md` has no placeholders or stale instructions.
 - [ ] Every skill `agents/openai.yaml` is correct.
 - [ ] `AGENTS.md` and `CLAUDE.md` remain aligned.
 - [ ] Plugin metadata matches the collection.
 - [ ] Roadmap is updated for v1.0.0.
-- [ ] Add a migration guide from v0.4.5 to v1.0.0.
+- [ ] Add a migration guide from v0.9.5 to v1.0.0.
 - [ ] Add the security audit document.
 - [ ] Add release notes with supported harnesses, formats, and known limits.
 - [ ] Confirm license and links.
@@ -308,7 +303,7 @@ Failure behavior:
 
 - [ ] Freeze `dev` after all fixes.
 - [ ] Run the full matrix from a clean environment.
-- [ ] Run all 8 skills in all 3 CLIs.
+- [ ] Run all 13 skills in all 3 CLIs.
 - [ ] Run representative skills in all 3 GUIs.
 - [ ] Run all document formats in all 3 harnesses.
 - [ ] Run a real Canvas course end to end.
@@ -345,7 +340,7 @@ Failure behavior:
 
 ## v1.0.0 definition of done
 
-- [ ] All 8 skills work in Claude Code, OpenCode, and Codex CLI.
+- [ ] All 13 skills work in Claude Code, OpenCode, and Codex CLI.
 - [ ] Representative full flows work in all 3 GUIs.
 - [ ] Plugin install, update, and removal work for Claude Code and Codex.
 - [ ] OpenCode collection and single-skill installs work.

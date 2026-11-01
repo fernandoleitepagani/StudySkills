@@ -20,20 +20,17 @@ const REFS = [
 ];
 const LIBS = ["files.mjs", "validate.mjs", "inventory.mjs", "catalog.mjs"];
 const EXPECTED_SKILLS = [
-  "canvas-study",
-  "lecture-notes",
-  "flashcard-forge",
-  "explain-back",
-  "exam-sim",
+  "study-canvas",
+  "study-notes",
+  "study-recall",
+  "study-explain-back",
+  "study-exams",
   "study-planner",
-  "note-organizer",
-  "file-study",
-  "revisit-and-improve",
-  "language-coach",
-  "active-recall-coach",
-  "math-practice",
-  "exam-debrief",
-  "code-kata-coach",
+  "study-files",
+  "study-revisit",
+  "study-language",
+  "study-math-practice",
+  "study-code-kata",
   "paper-reader",
   "thesis-organizer",
 ];
@@ -68,7 +65,7 @@ const required = (name) => {
     ...REFS.map((ref) => path.join("references/core", ref)),
     ...LIBS.map((lib) => path.join("scripts/lib", lib)),
   ];
-  if (name === "canvas-study") files.push("scripts/lib/html-to-text.mjs");
+  if (name === "study-canvas") files.push("scripts/lib/html-to-text.mjs");
   return files;
 };
 

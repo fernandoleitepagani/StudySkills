@@ -4,7 +4,7 @@ This document tracks the File Study skill and the future media-import work.
 
 ## Goal
 
-`file-study` turns local folders, files, and harness attachments into study documents.
+`study-files` turns local folders, files, and harness attachments into study documents.
 
 It reads sources in place, runs the shared interview and plan flow, and writes only requested outputs to:
 
@@ -43,7 +43,7 @@ There is no Canvas connection, no token, and no network access.
 - Canvas link inventory for modules, assignments, announcements, pages, syllabus, and front page.
 - Durable `manual-materials.md` report.
 - Optional `links.csv`.
-- Exact instructions to download resources through the browser, save them locally, and run `/file-study`.
+- Exact instructions to download resources through the browser, save them locally, and run `/study-files`.
 - Beginner-friendly result and error messages.
 - Explicit separation between “downloaded” and “manual download required.”
 - No Google Drive download.
@@ -52,7 +52,7 @@ There is no Canvas connection, no token, and no network access.
 
 ## Current limits
 
-- `file-study` does not fetch remote URLs.
+- `study-files` does not fetch remote URLs.
 - Private Google Drive links cannot be accessed by the skill.
 - Canvas media and video content cannot be downloaded or watched by the core skill.
 - Videos need a transcript or subtitles before they can be studied.
@@ -67,7 +67,7 @@ Media support is separate from the v1.0.0 core and must stay optional.
 
 - Keep the durable `manual-materials.md` report.
 - Let the user download via the browser.
-- Accept downloaded files through `file-study`.
+- Accept downloaded files through `study-files`.
 - Accept `.srt`, `.vtt`, `.txt`, and pasted transcripts.
 - Never claim that a video was watched.
 
@@ -84,7 +84,7 @@ Media support is separate from the v1.0.0 core and must stay optional.
 
 - Prefer captions or transcripts already provided by Canvas, Panopto, Kaltura, Google Drive, or the video platform.
 - Accept subtitles and plain transcripts.
-- Feed transcripts into `file-study` like any other source.
+- Feed transcripts into `study-files` like any other source.
 - Keep the transcript as a read-only source.
 
 ### Phase 4 - Optional external tools
@@ -104,11 +104,11 @@ Media support is separate from the v1.0.0 core and must stay optional.
 - No cloud-drive scraping.
 - No automatic large-media download without consent.
 - No uploads or external study service.
-- No requirement that normal `file-study` runs use the network.
+- No requirement that normal `study-files` runs use the network.
 
 ## Relationship to v1.0.0
 
 - Manual materials and beginner errors are part of the 0.9.x line.
 - Google Drive and video acquisition remain post-v1 unless explicitly pulled forward.
-- `file-study` remains usable without any media integration.
-- A user can always download a file or transcript manually and use `file-study`.
+- `study-files` remains usable without any media integration.
+- A user can always download a file or transcript manually and use `study-files`.

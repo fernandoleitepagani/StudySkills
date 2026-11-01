@@ -19,13 +19,13 @@ claude plugin install study-skills@studyskills
 2. Add `fernandoleitepagani/StudySkills`.
 3. Install `study-skills`.
 4. Restart Claude Code.
-5. Confirm the 16 skills appear.
+5. Confirm the 13 skills appear.
 
 The CLI and GUI use the same user settings on the same machine.
 
 ### Update
 
-Use the plugin update action, or remove and reinstall the plugin. If the old version remains, verify the installed `canvas-study/SKILL.md` contains the current features.
+Use the plugin update action, or remove and reinstall the plugin. If the old version remains, verify the installed `study-canvas/SKILL.md` contains the current features.
 
 ## Codex
 
@@ -116,7 +116,7 @@ Use `--force` only after reviewing which existing skill directories will be repl
 
 ## Verify an installation
 
-Check that `canvas-study/SKILL.md` contains:
+Check that `study-canvas/SKILL.md` contains:
 
 ```text
 manual-materials.md
@@ -126,12 +126,12 @@ allForbidden
 Check that these files exist:
 
 ```text
-canvas-study/references/core/error-messages.md
-canvas-study/scripts/canvas.mjs
-canvas-study/README.md
+study-canvas/references/core/error-messages.md
+study-canvas/scripts/canvas.mjs
+study-canvas/README.md
 ```
 
-Check that all 16 skill directories are present.
+Check that all 13 skill directories are present.
 
 Run the installed-skill check:
 
