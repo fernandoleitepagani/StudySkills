@@ -2,11 +2,11 @@
 
 ## What it does
 
-Builds a progressive language-learning path with vocabulary, grammar, sentence mining, drills, reading and writing practice, and spaced review.
+Builds a language-learning path with vocabulary, grammar, sentence mining, drills, reading and writing practice, and spaced review.
 
 ## When to use it
 
-You want to learn a language from a chosen level toward a concrete goal, with a plan rather than a random list of words.
+You want to learn a language from a chosen level toward a concrete goal, with a plan instead of a random word list.
 
 ## What you need
 
@@ -14,15 +14,13 @@ A target language, current level, goal, and available time. Local texts or notes
 
 ## How to use it
 
-1. Install StudySkills or this skill individually. See the [root README](../../../README.md).
-2. Invoke `/study-language` in Claude Code, OpenCode, or Codex.
-3. Answer the native questions. Every question supports a custom typed answer.
+1. Install StudySkills or this skill alone. See the [root README](../../../README.md).
+2. Run `/study-language` in Claude Code, OpenCode, or Codex.
+3. Answer the questions. The native tool accepts a typed answer.
 4. Approve the plan before generation.
-5. Read the final report for changes, sources, skips, and fallbacks.
+5. Read the final report for outputs, sources, skips, and fallbacks.
 
-- A diagnostic estimates your starting level. It is not an official CEFR certification.
-- Vocabulary is produced as Anki-ready CSV and/or Markdown.
-- Pronunciation support is text-only: IPA, stress, and written notes. No audio and no pronunciation scoring.
+A diagnostic estimates your starting level. It is not official CEFR certification. Vocabulary uses the card contract: `front,back,tags`.
 
 ## What it produces
 
@@ -46,18 +44,17 @@ Outputs go to:
 
 ## Safety and limits
 
-- Sources are read-only. Nothing is moved, renamed, rewritten, or deleted.
-- Only requested files are written.
-- No source copies, prompt packs, or zip files.
-- Web research follows the hard do-not-send list in `references/core/web-research.md`.
-- No telemetry and no external study service.
-- No audio generation or pronunciation scoring.
-- No claim of official CEFR certification.
+- Sources stay read-only.
+- Only requested files enter Documents.
+- The skill creates no source copies, prompt packs, or zip files.
+- Pronunciation support is text only: IPA, stress, and notes.
+- The skill does not score speech or claim CEFR certification.
 - Short quotations only.
-- Unverified language claims are marked.
+- The skill marks unverified language claims.
+- Web research follows the hard do-not-send list in `references/core/web-research.md`.
 
 ## Troubleshooting
 
-- **Level is unclear:** use the diagnostic.
+- **Level unclear:** use the diagnostic.
 - **Too much vocabulary:** lower the weekly load and extend the timeline.
-- **No sources:** the plan uses topic mode and cites public references.
+- **No sources:** topic mode uses public references.

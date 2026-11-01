@@ -2,24 +2,25 @@
 
 ## What it does
 
-Turns lecture material into structured study notes, or inventories and organizes Markdown and Obsidian notes read-only.
+Writes lecture notes or organizes a Markdown/Obsidian vault. Pick a mode first: **Lecture notes** or **Organize notes**.
 
 ## When to use it
 
-- Use **Lecture notes** for slides, transcripts, notes, or a StudySkills pack.
-- Use **Organize notes** for a Markdown or Obsidian vault.
+Use lecture mode for slides, transcripts, notes, or a StudySkills pack. Use organizer mode when you want an index, tags, duplicate report, note map, or study guide from a vault.
 
 ## What you need
 
-A lecture source, or a Markdown/Obsidian folder. Audio and video are not transcribed.
+A lecture source or a Markdown/Obsidian folder. The skill does not transcribe audio or video.
 
 ## How to use it
 
-1. Install StudySkills or this skill individually. See the [root README](../../../README.md).
-2. Invoke `/study-notes` in Claude Code, OpenCode, or Codex.
+1. Install StudySkills or this skill alone. See the [root README](../../../README.md).
+2. Run `/study-notes` in Claude Code, OpenCode, or Codex.
 3. Choose **Lecture notes** or **Organize notes**.
-4. Answer the questions. Mode selection counts toward the four-question limit.
+4. Answer the questions. Mode selection takes one of the four question slots.
 5. Approve the plan before generation.
+
+Lecture mode asks for depth and format. Organizer mode asks for the output mix and format.
 
 ## What it produces
 
@@ -29,7 +30,7 @@ Lecture mode:
 lecture-notes.<format>
 ```
 
-Optional `glossary.csv` when requested.
+Add `glossary.csv` only when you ask for it.
 
 Organizer mode:
 
@@ -63,15 +64,15 @@ Or:
 
 ## Safety and limits
 
-- Sources are read-only.
-- Organizer mode never modifies the source vault.
+- Sources stay read-only.
+- Organizer mode never changes the source vault.
 - No Canvas access.
-- No audio/video transcription.
-- Only requested files are written.
-- No source copies, prompt packs, or zip files.
+- No audio or video transcription.
+- Only requested files enter Documents.
+- The skill creates no source copies, prompt packs, or zip files.
 
 ## Troubleshooting
 
 - **Audio or video:** provide a transcript first.
-- **Missing vault notes:** check the folder and Markdown extension.
-- **Wrong mode:** rerun and select the other mode.
+- **Missing vault notes:** check the folder and the Markdown extension.
+- **Wrong mode:** rerun and choose the other mode.

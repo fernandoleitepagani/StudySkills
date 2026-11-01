@@ -10,20 +10,17 @@ You are planning or revising a thesis, dissertation, or substantial research pro
 
 ## What you need
 
-A research question or topic, plus any notes, sources, or drafts. Local files and StudySkills documents are supported.
+A research question or topic, plus notes, sources, or drafts. Local files and StudySkills documents work.
 
 ## How to use it
 
-1. Install StudySkills or this skill individually. See the [root README](../../../README.md).
-2. Invoke `/thesis-organizer` in Claude Code, OpenCode, or Codex.
-3. Answer the native questions. Every question supports a custom typed answer.
+1. Install StudySkills or this skill alone. See the [root README](../../../README.md).
+2. Run `/thesis-organizer` in Claude Code, OpenCode, or Codex.
+3. Answer the questions. The native tool accepts a typed answer.
 4. Approve the plan before generation.
-5. Read the final report for outputs, skips, sources, and fallbacks.
+5. Read the final report for outputs, sources, skips, and fallbacks.
 
-- Choose stage, scope, deadline, and writing time.
-- The default is planning, not writing final thesis prose.
-- Evidence and interpretation are separated.
-- Literature context is optional and cited separately.
+Choose the stage, scope, deadline, and writing time. The default is planning, not final thesis prose. Evidence and interpretation stay separate. Literature context is optional and cited apart from the thesis sources.
 
 ## What it produces
 
@@ -47,15 +44,14 @@ Outputs go to:
 
 ## Safety and limits
 
-- Sources are read-only. Nothing is moved, renamed, rewritten, or deleted.
-- Only requested files are written.
-- No source copies, prompt packs, or zip files.
+- Sources stay read-only.
+- Only requested files enter Documents.
+- The skill creates no source copies, prompt packs, or zip files.
+- The skill fabricates no sources or results.
+- It makes no claim to a complete literature review.
+- Final thesis prose requires an explicit request.
+- Drafts and notes never go to the web.
 - Web research follows the hard do-not-send list in `references/core/web-research.md`.
-- No telemetry and no external study service.
-- No fabricated sources or results.
-- No complete literature review claim.
-- No final thesis prose unless explicitly requested.
-- Drafts and notes are never sent to the web.
 
 ## Troubleshooting
 

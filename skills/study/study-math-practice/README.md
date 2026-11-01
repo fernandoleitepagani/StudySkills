@@ -2,31 +2,29 @@
 
 ## What it does
 
-Generates original math and STEM problem sets with progressive hints, worked solutions, common errors, and an optional answer key.
+Writes original math and STEM problem sets with progressive hints, worked solutions, common errors, and an optional answer key.
 
 ## When to use it
 
-You want deliberate practice on a topic and need problems plus explanations, not just an answer key.
+You want practice on a topic and need problems with explanations and worked steps.
 
 ## What you need
 
-A topic or source material, a level, and the number of problems. A textbook or notes help calibrate difficulty.
+A topic or source material, a level, and a problem count. A textbook or notes help set difficulty.
 
 ## How to use it
 
-1. Install StudySkills or this skill individually. See the [root README](../../../README.md).
-2. Invoke `/study-math-practice` in Claude Code, OpenCode, or Codex.
-3. Answer the native questions. Every question supports a custom typed answer.
+1. Install StudySkills or this skill alone. See the [root README](../../../README.md).
+2. Run `/study-math-practice` in Claude Code, OpenCode, or Codex.
+3. Answer the questions. The native tool accepts a typed answer.
 4. Approve the plan before generation.
 5. Read the final report for outputs, skips, and fallbacks.
 
-- Choose difficulty mix, problem types, hints, solutions, and answer key.
-- Every problem has a worked solution.
-- The skill does not run a math engine or install tools.
+Choose the difficulty mix, problem types, hints, solutions, and answer key. Every problem gets a worked solution.
 
 ## What it produces
 
-A problem set, worked solutions, optional hints, optional answer-key CSV, and optional common-errors notes.
+A problem set, worked solutions, optional hints, an optional answer-key CSV, and optional common-error notes.
 
 Outputs go to:
 
@@ -46,18 +44,17 @@ Outputs go to:
 
 ## Safety and limits
 
-- Sources are read-only. Nothing is moved, renamed, rewritten, or deleted.
-- Only requested files are written.
-- No source copies, prompt packs, or zip files.
+- Sources stay read-only.
+- Only requested files enter Documents.
+- The skill creates no source copies, prompt packs, or zip files.
+- Problems stay original.
+- Assumptions appear in the output.
+- The skill checks numbers by reasoning, not a hidden calculator.
+- It marks unverified results.
 - Web research follows the hard do-not-send list in `references/core/web-research.md`.
-- No telemetry and no external study service.
-- Problems are original, not copied.
-- Assumptions are stated.
-- Numerical answers are checked by reasoning, not a hidden calculator.
-- Unverified results are marked.
 
 ## Troubleshooting
 
 - **Too easy:** raise the difficulty or ask for transfer problems.
-- **Too many problems:** lower the count or split by topic.
-- **Solution does not match:** specify the method or convention.
+- **Too many problems:** lower the count or split the topic.
+- **Solution does not match:** name the method or convention.
