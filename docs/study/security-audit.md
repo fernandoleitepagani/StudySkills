@@ -113,6 +113,6 @@ This audit covers the 13 StudySkills skills and their shared self-contained core
 
 ## Release recommendation
 
-No unresolved security blocker remains for v1.0.0.
+No unresolved security blocker remains for v1.0.1.
 
 The residual risks above are documented and have user-facing mitigations. They should remain in the release notes and future roadmap.

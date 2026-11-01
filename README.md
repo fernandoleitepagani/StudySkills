@@ -172,6 +172,9 @@ git checkout dev
 node --test
 npm run check:version
 npm run check:skills
+npm run check:syntax
+npm run check:install
+npm run check:marketplaces
 ```
 
 The repo has no dependencies to install.

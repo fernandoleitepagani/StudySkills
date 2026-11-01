@@ -7,6 +7,8 @@ StudySkills is a collection of user-invoked agent skills for studying, learning,
 - `skills/study/` holds the study skills.
 - `skills/study/study-canvas/` is the Canvas Study skill.
 - `docs/study/` holds human-facing documentation.
+- `core/` holds canonical shared references and scripts.
+- `scripts/` holds repository checks, sync, and linking helpers.
 - `test/` holds the zero-dependency `node:test` suites and fixtures.
 - `test-support/` holds test helpers and the mock Canvas server.
 - `roadmap.md` is the product roadmap.
@@ -27,6 +29,7 @@ StudySkills is a collection of user-invoked agent skills for studying, learning,
 - No build step.
 - No telemetry, analytics, or remote logging.
 - Node.js 20 or newer.
+- `core/` is canonical. Files under `skills/study/*/references/core/`, `skills/study/*/scripts/core.mjs`, and generated libs are copies. Edit `core/` and run `node scripts/sync-skills.mjs`.
 
 ## Safety rules
 
@@ -39,8 +42,10 @@ StudySkills is a collection of user-invoked agent skills for studying, learning,
 
 ## Documentation rules
 
-- Update `README.md`, `docs/study/README.md`, and `skills/study/README.md` when a skill changes.
-- The collection docs page has one section per skill with four parts: What it does, When to reach for it, Common questions, It's working if.
+- Update `README.md`, `skills/study/README.md`, `docs/study/README.md`, and the affected skill `README.md` when a skill changes.
+- `docs/study/README.md` is the collection index for all 13 skills. It gives each skill a short section.
+- `skills/study/<skill>/README.md` is the required per-skill guide.
+- A dedicated `docs/study/<skill>.md` page is optional. If you add one, use four parts: What it does, When to reach for it, Common questions, It's working if.
 - `study-canvas` keeps its dedicated page at `docs/study/study-canvas.md`.
 - Keep install commands in `.agents/install-block.md` and copy them verbatim.
 - Every skill has its own `README.md` with the standard headings.
@@ -49,5 +54,5 @@ StudySkills is a collection of user-invoked agent skills for studying, learning,
 
 ## Versioning
 
-- `package.json` and `.claude-plugin/plugin.json` share the same version.
-- Release notes live in the GitHub release, not in a changelog file, until the repository needs one.
+- `package.json`, `.claude-plugin/plugin.json`, and `.codex-plugin/plugin.json` share the same version.
+- The GitHub release is canonical. `docs/study/release-notes-v*.md` mirrors it in the repository.

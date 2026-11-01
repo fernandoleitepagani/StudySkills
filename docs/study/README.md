@@ -12,8 +12,12 @@ Start with the [installation and update guide](./installation.md). Harness cover
 - Sources stay read-only. Nothing enters Documents.
 - Citations name files, not absolute paths.
 - Canvas access belongs to `study-canvas` alone.
-- Web research follows the hard do-not-send list in `references/core/web-research.md`.
+- Web research follows the hard do-not-send list in `../../core/references/web-research.md`.
 - Every skill carries its own README.
+
+## Development
+
+Repository rules live in [AGENTS.md](../../AGENTS.md). The shared workflow is in [workflow.md](../../core/references/workflow.md), with the plan and quality contracts in [plan-contract.md](../../core/references/plan-contract.md) and [quality.md](../../core/references/quality.md). Harness versions and smoke tests live in [harness-compatibility.md](./harness-compatibility.md).
 
 ## Skill notes
 

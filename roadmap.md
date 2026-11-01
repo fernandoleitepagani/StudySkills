@@ -146,7 +146,7 @@ There is no plan to add other harnesses.
 
 - `paper-reader`: structured paper briefs, critique, evidence maps, and follow-up questions.
 - `thesis-organizer`: research question, argument map, outline, evidence matrix, gaps, and writing plan.
-- Final 16-skill collection integration.
+- Final 13-skill collection after the v0.9.5 merges.
 - v1.0.0 remains gated on the remaining harness and document checks.
 
 ## v0.9.0 - Partial Canvas Access

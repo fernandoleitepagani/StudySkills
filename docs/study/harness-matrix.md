@@ -1,6 +1,6 @@
 # Harness capability matrix
 
-Record the result of the v1.0.0 release-candidate smoke test here.
+These results cover v1.0.1, with v1.0.0 as the behavior baseline. The v1.0.1 patch changed tests only.
 
 ## Environment used for this run
 
