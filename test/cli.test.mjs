@@ -205,6 +205,28 @@ test("cli: token, courses, inspect, fetch, output, validate, cleanup", async () 
   }
 });
 
+test("cli: inspect fetches independent sections with bounded concurrency", async () => {
+  const home = await makeTempDir("studyskills-cli-home-");
+  const env = { XDG_DOCUMENTS_DIR: path.join(home, "Documents") };
+  const mock = await startMockCanvas();
+  mock.state.delayMs = 20;
+  try {
+    await writeHostToken(home, mock.origin, "test-token");
+    const result = await runCli(
+      ["inspect", "--base-url", mock.origin, "--course-id", "1", "--json"],
+      { home, env },
+    );
+    assert.equal(result.code, 0);
+    const data = await json(result);
+    assert.equal(data.counts.modules, 1);
+    assert.ok(mock.state.maxActive > 1, "expected concurrent section requests");
+    assert.ok(mock.state.maxActive <= 4, "expected bounded section concurrency");
+  } finally {
+    await mock.close();
+    await cleanupDir(home);
+  }
+});
+
 test("cli: rejected token includes the expiry hint", async () => {
   const home = await makeTempDir("studyskills-cli-home-");
   const mock = await startMockCanvas({ token: "right-token" });

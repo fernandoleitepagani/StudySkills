@@ -41,6 +41,7 @@ Ask only what is not already known:
 - Include hints.
 - Include reference solutions.
 - Include review questions.
+- Optional extras: use the shared checkbox. Leave **Use public web research** unchecked by default.
 - Output format.
 - Output language for explanations.
 

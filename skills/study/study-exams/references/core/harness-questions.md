@@ -68,6 +68,28 @@ The custom typed answer is the path for specific names. Do not add a separate "T
 
 If the user chooses specific materials and does not type names, ask a follow-up text question. Do not guess.
 
+## Optional extras
+
+Ask one native multi-select question after outputs and before plan approval:
+
+Question: **Optional extras**
+
+Options:
+
+1. **No extras** (recommended)
+2. **Use public web research**
+3. Skill-specific extras, when the skill already has them, such as related context, an evidence map, or an immersion checklist.
+
+The web research option is a checkbox. Leave it unchecked by default. The user must check **Use public web research** before any web search or fetch.
+
+Rules:
+
+- **No extras** and any other option are mutually exclusive. If both are selected, ask once to resolve.
+- Do not add a separate web research question. This question replaces older web or related-context prompts.
+- If the harness does not support multi-select, use a single-select question with **No web research** (recommended) and **Use public web sources**.
+- This question counts toward the four-question limit. Merge it into an existing settings question when needed.
+- Never collect secrets.
+
 ## Rules
 
 - Maximum 4 questions per call and 4 options per question.

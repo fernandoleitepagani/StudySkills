@@ -12,6 +12,7 @@ Read `references/core/workflow.md` before doing anything else. Follow its shared
 
 - **No Canvas.** No token, no Canvas API, no LMS access.
 - **No network.** Do not fetch links found in the sources.
+- **No web research.** Do not offer the **Use public web research** option.
 - **Read-only sources.** Never move, rename, rewrite, delete, or copy a source file.
 - **Only requested outputs** go to `~/Documents/StudySkills/<topic>/<run>/`.
 - **No source bundle, prompt pack, zip, or manifest in Documents.**

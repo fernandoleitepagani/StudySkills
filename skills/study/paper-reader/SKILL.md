@@ -35,8 +35,7 @@ Ask only what is not already known:
 - Paper or papers.
 - Research question or reading goal.
 - Depth: quick brief, standard, or deep critique.
-- Include related context from the web?
-- Include an evidence map?
+- Optional extras: use the shared checkbox for public web research and an evidence map.
 - Include a list of follow-up questions?
 - Output format.
 - Output language.

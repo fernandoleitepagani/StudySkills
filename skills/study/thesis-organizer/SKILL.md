@@ -44,7 +44,7 @@ Ask only what is not already known:
 - Stage: idea, literature review, outline, draft, revision, or defense.
 - Existing sources or notes.
 - Target length, deadline, and available writing time.
-- Include a literature landscape from the web?
+- Optional extras: use the shared checkbox for public web research and a literature landscape.
 - Output format.
 - Output language.
 

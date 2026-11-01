@@ -144,7 +144,7 @@ Ask it to change something in Canvas, and it refuses. Ask it to read a course, a
 - Citations use filenames, not absolute paths.
 - The harness model reads course and local-file content. Your harness choice controls that boundary.
 - The skills send no telemetry, analytics, or remote logs.
-- Web research stays on public concepts. The do-not-send list blocks source content, filenames, paths, Canvas data, and personal data.
+- Web research is opt-in and stays on public concepts. The do-not-send list blocks source content, filenames, paths, Canvas data, and personal data.
 - The skills upload nothing to external services.
 
 ## Supported systems

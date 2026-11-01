@@ -45,8 +45,10 @@ Ask at most four questions. Ask only when the answer is not already clear.
 
 1. Mode.
 2. Source or topic.
-3. Flashcards: card count and Q/A or cloze. Active recall: question types and count.
+3. Flashcards: card count, Q/A or cloze, and optional web research. Active recall: question types, count, and optional web research.
 4. Output format.
+
+Ask the shared **Optional extras** question as part of question 3. Leave **Use public web research** unchecked by default. **No extras** is exclusive.
 
 Infer the output language from the user's message unless specified. Additional settings go in the plan and remain editable.
 

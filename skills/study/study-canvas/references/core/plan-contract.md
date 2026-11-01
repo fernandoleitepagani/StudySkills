@@ -80,7 +80,7 @@ Rules:
 - Add a `fallbacks` entry when a failed requested format is replaced by a Markdown file.
 - Use plain file names, no folders.
 - `quality.required: true` makes the quality block mandatory during validation.
-- Record web use in `research.web` as `used`, `not-used`, or `unavailable`.
+- Default `research.web` to `not-used`. Set `used` only when the user checks **Use public web research**. Use `unavailable` only after a checked request fails.
 - `validate` treats `plan.json` as the requested set.
 
 ## `checks.json`

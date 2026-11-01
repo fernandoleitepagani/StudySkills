@@ -41,6 +41,7 @@ Ask only what is not already known:
 - Include progressive hints.
 - Include worked solutions.
 - Include a separate answer key.
+- Optional extras: use the shared checkbox. Leave **Use public web research** unchecked by default.
 - Output format.
 - Output language.
 

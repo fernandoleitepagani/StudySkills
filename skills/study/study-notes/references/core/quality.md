@@ -25,13 +25,17 @@ A score below the minimum requires revision before validation. Do not lower the 
 
 ## Two-pass review
 
-1. Generate a draft.
+1. Write one canonical draft per logical output in `workDir/drafts/`.
 2. Read the draft back.
 3. Check the source coverage ledger.
-4. Score the rubric.
+4. Score grounding, coverage, learning design, accuracy, and clarity once.
 5. Revise weak sections.
-6. Re-read the revised file.
-7. Record the final scores and evidence.
+6. Re-read the revised draft.
+7. Render every requested format from the reviewed draft.
+8. Inspect each produced file for visual clarity, accessibility, and format integrity.
+9. Record the final scores and evidence.
+
+Content review happens once per output. Format review happens once per produced file. The run-level rubric uses the lowest visual clarity, accessibility, and format integrity score from the produced files.
 
 The second pass is not a summary of the first pass. It is a revision step.
 

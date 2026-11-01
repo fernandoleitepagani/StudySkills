@@ -47,8 +47,10 @@ Ask at most four questions. Ask only when the answer is not already clear.
 
 1. Mode.
 2. Source, if missing.
-3. Lecture notes: depth, glossary, or self-check focus. Organize notes: index, tags, note map, study guide, or a combination.
+3. Lecture notes: depth, glossary, self-check, and optional web research. Organize notes: index, tags, note map, study guide, or a combination.
 4. Output format.
+
+Ask the shared **Optional extras** question as part of question 3. Leave **Use public web research** unchecked by default. **No extras** is exclusive.
 
 Infer the output language from the user's message unless they specify one. Additional settings go in the plan and remain editable.
 

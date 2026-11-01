@@ -26,17 +26,23 @@ The skill directory is the folder containing the active `SKILL.md`. Use its abso
 node <skill-dir>/scripts/core.mjs doctor --json
 ```
 
-Read:
+Read before the interview:
 
+- `references/core/workflow.md`
 - `references/core/harness-questions.md`
 - `references/core/grilling.md`
-- `references/core/style.md`
 - `references/core/plan-contract.md`
+
+Read `references/core/source-selection.md` when the skill has multiple source groups, before Step 1.
+
+Read after plan approval:
+
+- `references/core/style.md`
 - `references/core/output-conventions.md`
-- `references/core/source-selection.md`
 - `references/core/quality.md`
 - `references/core/web-research.md`
-- `references/core/error-messages.md`
+
+Read `references/core/error-messages.md` only when reporting a failure.
 
 ## Step 1 - Source mode
 
@@ -89,6 +95,8 @@ Use the skill's questions. Apply the shared rules:
 - Every question allows a custom typed answer.
 - Ask the whole frontier per round, then wait.
 - Do not ask for facts the inventory or environment can provide.
+- Ask the shared **Optional extras** question once. Leave **Use public web research** unchecked unless the user selects it. Treat **No extras** as exclusive.
+- Keep the total at four questions. Merge optional extras into an existing settings question when the skill already uses all four.
 
 ## Step 3 - Plan and approve
 
@@ -100,7 +108,9 @@ node <skill-dir>/scripts/core.mjs workdir --topic "<topic>" --json
 
 Write `plan.json` and `study-plan.md` in the work directory. Use the contract in `references/plan-contract.md`.
 
-`plan.json` contains every requested output and file. Never remove a failed format from the plan. Set `quality.required` to `true` for every run that produces a document or CSV. Record web research in `research.web` as `used`, `not-used`, or `unavailable`.
+`plan.json` contains every requested output and file. Never remove a failed format from the plan. Set `quality.required` to `true` for every run that produces a document or CSV. Default `research.web` to `not-used`. Set it to `used` only when the user checks **Use public web research**. Use `unavailable` only after a checked request fails.
+
+When the user or a developer asks for timing, write `workDir/timings.json` with stage timestamps. Delete it with the work directory.
 
 Show the plan. Ask **Approve / Edit / Cancel**.
 
@@ -112,9 +122,11 @@ Do not generate anything before approval.
 
 ## Step 4 - Format preflight
 
-For every requested PDF, DOCX, or PPTX, generate a one-page sample in `workDir/preflight/`, verify it is non-empty and has the right signature, then delete it.
+Canvas skills keep the preflight in the Canvas flow. Before the remote fetch, generate a one-page sample for each requested PDF, DOCX, or PPTX in `workDir/preflight/`, verify it is non-empty and has the right signature, then delete it.
 
-If a format fails, tell the user before generating the real outputs. Revise the plan and report the failure, or stop if the user wants only that format.
+Local-source skills skip the separate sample. Render the real outputs. If a format fails, produce the other formats and the declared Markdown fallback.
+
+If a format fails during preflight, tell the user before fetching. Revise the plan and report the failure, or stop if the user wants only that format.
 
 ## Step 5 - Generate
 
@@ -124,17 +136,19 @@ Create the output directory only after the source is ready:
 node <skill-dir>/scripts/core.mjs output-dir --topic "<topic>" --json
 ```
 
-Read the skill's output section and `references/core/style.md`. Generate only the requested files. Use the harness document skill for PDF, DOCX, and PPTX. Use plain text for Markdown and CSV.
+Read the skill's output section and `references/core/style.md`. Create `workDir/drafts/` and write one canonical draft per logical output. Apply the style, citations, and source coverage to that draft. Do not render from memory.
 
-Before writing, follow `references/core/web-research.md`. Assume the harness has web tools and use them when they improve the output. The do-not-send list is absolute: never send source content, filenames, paths, Canvas data, or personal data to a web tool.
+Use web research only when the user checked **Use public web research**. Follow `references/core/web-research.md`. The do-not-send list is absolute: never send source content, filenames, paths, Canvas data, or personal data to a web tool.
 
-After generating, apply the two-pass quality review in `references/core/quality.md`:
+Review the draft in `references/core/quality.md`:
 
 1. Read the draft back.
 2. Check source coverage.
-3. Score the rubric.
+3. Score grounding, coverage, learning design, accuracy, and clarity.
 4. Revise weak sections.
-5. Re-read the revised file.
+5. Re-read the revised draft.
+
+Render every requested format from the reviewed draft. Use the harness document skill for PDF, DOCX, and PPTX. Use plain text for Markdown and CSV. After rendering, inspect each file for visual clarity, accessibility, format integrity, links, counts, and overflow. Drafts stay in the work directory and never enter Documents.
 
 If the source set exceeds the model context, or a source is over 100 pages or 50 MB, process it in sections. Keep section notes only in the work directory, synthesize the final output from them, cite page or section boundaries, and delete the temporary notes with the work directory. Do not create chunk files in Documents. If the harness cannot process the size, ask the user to narrow the source set.
 
@@ -149,6 +163,8 @@ If a format cannot be produced:
 ## Step 6 - Validate
 
 Read each generated file back with the harness document skill. Write `checks.json` in `workDir`. Every produced file needs an entry with at least one section and, where relevant, counts.
+
+Record content scores once per logical output. Use the lowest visual clarity, accessibility, and format integrity score from the produced files in the run-level rubric.
 
 Add the quality block from `quality.md` and the research block from `web-research.md`. Every selected source must be used or explicitly skipped.
 

@@ -40,7 +40,7 @@ Ask only for decisions.
 
 1. Source mode and source set.
 2. Outputs and formats.
-3. Skill-specific settings.
+3. Skill-specific settings, including the shared **Optional extras** question. The **Use public web research** box stays unchecked by default.
 4. Plan approval.
 
 The frontier is empty when every output, format, setting, and source is settled and the user approved the plan.

@@ -405,3 +405,45 @@ test("skills: four-question limit stays in place", async () => {
   assert.match(questions, /Maximum 4 questions/);
   assert.equal(/6 to 8 questions|6-8 questions/i.test(questions), false);
 });
+
+test("skills: faster generation and web opt-in contracts", async () => {
+  const workflow = await read("core/references/workflow.md");
+  assert.match(workflow, /Read before the interview/);
+  assert.match(workflow, /workDir\/drafts\//);
+  assert.match(workflow, /Local-source skills skip the separate sample/);
+  assert.match(workflow, /Optional extras/);
+  assert.match(workflow, /Use public web research/);
+
+  const questions = await read("core/references/harness-questions.md");
+  assert.match(questions, /## Optional extras/);
+  assert.match(questions, /No extras/);
+  assert.match(questions, /Use public web research/);
+  assert.match(questions, /multi-select/);
+
+  const web = await read("core/references/web-research.md");
+  assert.match(web, /Web research is opt-in/);
+  assert.match(web, /unchecked by default/i);
+  assert.match(web, /research\.web/);
+
+  const quality = await read("core/references/quality.md");
+  assert.match(quality, /Content review happens once per output/);
+  assert.match(quality, /Format review happens once per produced file/);
+
+  const output = await read("core/references/output-conventions.md");
+  assert.match(output, /workDir\/drafts\//);
+  assert.match(output, /Use web research only when the user checks/);
+
+  for (const name of USER_SKILLS) {
+    const skill = await read(`skills/study/${name}/SKILL.md`);
+    if (name === "study-files") {
+      assert.match(skill, /No web research/);
+      assert.match(skill, /Do not offer the \*\*Use public web research\*\* option/);
+      continue;
+    }
+    assert.match(skill, /Optional extras|Use public web research/, `${name} must expose the web opt-in`);
+  }
+
+  const performance = await read("docs/study/performance.md");
+  assert.match(performance, /workDir\/timings\.json/);
+  assert.match(performance, /Canvas section lists and page details/);
+});

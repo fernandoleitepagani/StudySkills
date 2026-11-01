@@ -77,6 +77,7 @@ The following are covered by `node --test` and pass:
 - Token age warnings and rejected-token expiry guidance.
 - Canvas read-only guards and error-code classification.
 - Pagination, truncation, and rate-limit retry.
+- Bounded Canvas section and page-detail concurrency.
 - File and image download with size caps.
 - Canvas material selection and fetch filtering.
 - Durable manual-materials link extraction and partial Canvas reporting.

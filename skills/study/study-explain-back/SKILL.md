@@ -27,6 +27,7 @@ Ask only when the answer is not already clear:
 - Length: short, standard, deep.
 - Include an analogy?
 - Include a self-test?
+- Optional extras: use the shared checkbox. Leave **Use public web research** unchecked by default.
 - Output format.
 - Language.
 

@@ -1,6 +1,10 @@
 # Web research
 
-Assume the harness has web search and web fetch tools. Use them when they improve accuracy, examples, definitions, references, or current context.
+Web research is opt-in. Use it only when the user checks **Use public web research** in the shared **Optional extras** question.
+
+The box is unchecked by default. Unchecked means no web search and no web fetch. Keep `research.web` as `not-used` and report `Web research: not used`.
+
+When checked, assume the harness has web search and web fetch tools. Use them when they improve accuracy, examples, definitions, references, or current context.
 
 Web research is an enhancement. It does not replace the user's sources.
 
@@ -110,18 +114,18 @@ Do not include tracking parameters or private query strings in citations.
 
 ## `plan.json`
 
-Record the research state:
+Default the research state to `not-used`:
 
 ```json
 {
   "research": {
-    "web": "used",
+    "web": "not-used",
     "sources": []
   }
 }
 ```
 
-Allowed values for `web`:
+When the user checks the box, set `web` to `used` and record the public sources. Allowed values for `web`:
 
 - `used`
 - `not-used`
@@ -145,7 +149,7 @@ Record web research evidence:
 
 ## Failure behavior
 
-Assume web tools exist. Do not ask the user to install or configure them.
+When the box is checked, assume web tools exist. Do not ask the user to install or configure them.
 
 If the harness denies or fails the web tool:
 

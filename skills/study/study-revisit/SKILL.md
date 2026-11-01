@@ -59,6 +59,7 @@ Ask only what is not already known:
 - Mode: audit only, or audit and revise.
 - Improvement focus: correctness, clarity, completeness, structure, visual style, duplicates, citations, or a custom focus.
 - Specific changes requested by the user.
+- Optional extras: use the shared checkbox. Leave **Use public web research** unchecked by default.
 - Output formats for revised documents.
 - Whether to include an audit report.
 - Language.
