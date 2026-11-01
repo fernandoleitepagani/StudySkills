@@ -7,14 +7,18 @@ import { makeTempDir, cleanupDir, writeTokenFile } from "../test-support/temp.mj
 const BASE = "https://school.instructure.com";
 
 async function loadTokenModule(home) {
-  const previous = process.env.HOME;
+  const previousHome = process.env.HOME;
+  const previousProfile = process.env.USERPROFILE;
   process.env.HOME = home;
+  process.env.USERPROFILE = home;
   try {
     return await import(
       `../skills/study/study-canvas/scripts/lib/token.mjs?home=${encodeURIComponent(home)}`
     );
   } finally {
-    process.env.HOME = previous;
+    process.env.HOME = previousHome;
+    if (previousProfile === undefined) delete process.env.USERPROFILE;
+    else process.env.USERPROFILE = previousProfile;
   }
 }
 
@@ -35,7 +39,7 @@ test("token: reports missing host-specific files", async () => {
     assert.equal(status.token, null);
     assert.equal(status.host, "school.instructure.com");
     assert.equal(status.paths.length, 2);
-    assert.match(status.paths[0], /canvas\/school\.instructure\.com\/token\.txt$/);
+    assert.match(status.paths[0].replace(/\\/g, "/"), /canvas\/school\.instructure\.com\/token\.txt$/);
     await assert.rejects(mod.requireToken(BASE), (error) => error.code === "NO_TOKEN");
   } finally {
     await cleanupDir(home);

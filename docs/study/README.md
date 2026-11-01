@@ -6,7 +6,7 @@ Install and update instructions: [installation.md](./installation.md).
 Harness compatibility and smoke tests: [harness-compatibility.md](./harness-compatibility.md).
 
 Security audit: [security-audit.md](./security-audit.md).
-Release notes: [release-notes-v1.0.0.md](./release-notes-v1.0.0.md).
+Release notes: [release-notes-v1.0.1.md](./release-notes-v1.0.1.md).
 
 ## Collection conventions
 

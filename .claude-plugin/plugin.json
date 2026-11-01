@@ -1,6 +1,6 @@
 {
   "name": "study-skills",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Agent skills for studying, learning, and creating: study-canvas, study-notes, study-recall, study-explain-back, study-exams, study-planner, study-files, study-revisit, study-language, study-math-practice, study-code-kata, paper-reader, and thesis-organizer.",
   "author": {
     "name": "Fernando Pagani",

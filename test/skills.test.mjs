@@ -38,7 +38,8 @@ async function exists(relative) {
 }
 
 function frontmatter(text) {
-  const match = text.match(/^---\n([\s\S]*?)\n---/);
+  const normalized = text.replace(/\r\n/g, "\n");
+  const match = normalized.match(/^---\n([\s\S]*?)\n---/);
   assert.ok(match, "SKILL.md needs frontmatter");
   const data = {};
   for (const line of match[1].split(/\r?\n/)) {
@@ -212,7 +213,7 @@ test("repo: AGENTS.md is real and mirrors CLAUDE.md", async () => {
 });
 
 test("repo: README uses main installs and no release tags", async () => {
-  const text = await read("README.md");
+  const text = (await read("README.md")).replace(/\r\n/g, "\n");
   assert.match(text, /claude plugin marketplace add fernandoleitepagani\/StudySkills/);
   assert.match(text, /codex plugin marketplace add fernandoleitepagani\/StudySkills/);
   assert.match(text, /npx skills@latest add \\\n  fernandoleitepagani\/StudySkills/);

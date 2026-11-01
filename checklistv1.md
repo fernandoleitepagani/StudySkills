@@ -1,6 +1,6 @@
-# StudySkills v1.0.0 Release Checklist
+# StudySkills v1.0.1 Release Checklist
 
-Baseline: `v1.0.0`, `main` and `dev` aligned, 96 tests passing.
+Baseline: `v1.0.1`, `main` and `dev` aligned, 96 tests passing.
 
 Release gate: every box must be checked or explicitly removed from v1 scope. No `pending`, no known defects, no manual-verification caveat.
 
@@ -10,7 +10,7 @@ Release gate: every box must be checked or explicitly removed from v1 scope. No 
 - [x] Confirm support for exactly Claude Code, OpenCode, and Codex, CLI and GUI.
 - [x] Confirm supported languages: EN and PT-BR.
 - [x] Confirm supported output formats: PDF, DOCX, PPTX, CSV, Markdown.
-- [x] Move the "Community study skills directory" item after v1.0.0.
+- [x] Move the "Community study skills directory" item after v1.0.1.
 - [x] Confirm supported systems: Linux, macOS, Windows native, and WSL as Linux.
 - [x] Freeze features after the cross-platform and documentation changes.
 - [x] Confirm no open GitHub issues, PRs, or release blockers.
@@ -284,7 +284,7 @@ Failure behavior:
 
 ## 9. Documentation and contracts
 
-- [x] README is accurate for v1.0.0.
+- [x] README is accurate for v1.0.1.
 - [x] README names only the current release.
 - [x] README install commands are current.
 - [x] README limitations are accurate.
@@ -295,7 +295,7 @@ Failure behavior:
 - [x] Every skill `agents/openai.yaml` is correct.
 - [x] `AGENTS.md` and `CLAUDE.md` remain aligned.
 - [x] Plugin metadata matches the collection.
-- [x] Roadmap is updated for v1.0.0.
+- [x] Roadmap is updated for v1.0.1.
 - [x] Add the security audit document.
 - [x] Add release notes with supported harnesses, formats, and known limits.
 - [x] Confirm license and links.
@@ -320,18 +320,18 @@ Failure behavior:
 ## 11. Final release
 
 - [x] Bump `package.json` and `.claude-plugin/plugin.json` to `1.0.0`.
-- [x] Update README current release to `v1.0.0`.
-- [x] Update docs and roadmap to v1.0.0.
+- [x] Update README current release to `v1.0.1`.
+- [x] Update docs and roadmap to v1.0.1.
 - [x] Run `node --test`.
 - [x] Run `npm run check:version`.
 - [x] Run `npm run check:skills`.
 - [x] Confirm working tree is clean.
 - [x] Merge `dev` into `main`.
 - [x] Confirm `main` and `dev` match.
-- [x] Tag `v1.0.0`.
+- [x] Tag `v1.0.1`.
 - [x] Push `main`, `dev`, and the tag.
 - [x] Confirm the release workflow passes.
-- [x] Confirm latest release is `v1.0.0`.
+- [x] Confirm latest release is `v1.0.1`.
 - [x] Confirm the tag archive matches `main`.
 - [x] Install from `main` on a clean profile.
 - [x] Install from the release tag archive as a sanity check.
@@ -341,7 +341,7 @@ Failure behavior:
 - [x] Publish release notes.
 - [x] Archive the completed harness matrix.
 
-## v1.0.0 definition of done
+## v1.0.1 definition of done
 
 - [x] All 13 skills work in Claude Code, OpenCode, and Codex CLI.
 - [x] Representative full flows work in all 3 GUIs.
@@ -355,4 +355,4 @@ Failure behavior:
 - [x] Documentation is complete and current.
 - [x] Harness matrix has no `pending` cells.
 - [x] No known defects remain.
-- [x] `v1.0.0` is tagged, released, and installable from `main`.
+- [x] `v1.0.1` is tagged, released, and installable from `main`.

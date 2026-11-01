@@ -213,6 +213,13 @@ There is no plan to add other harnesses.
 - Migration guide removed.
 - v1.0.0 remains the release target.
 
+## v1.0.1 - Windows CI Fix
+
+- Made frontmatter and README tests CRLF-safe.
+- Fixed Windows token test isolation using `USERPROFILE`.
+- Made token path assertions cross-platform.
+- No skill behavior changes.
+
 ## Future - Public Store Listing
 
 - Claude directory metadata, icon, listing URLs, validation, submission, and review.
