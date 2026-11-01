@@ -6,7 +6,7 @@ Record the result of the v1.0.0 release-candidate smoke test here.
 
 - Claude Code CLI and GUI were reported working by the user. Exact version not recorded.
 - OpenCode `v2.0.25` CLI and GUI were reported working by the user.
-- Codex CLI and GUI are not installed in this environment.
+- Codex CLI and GUI were reported working by the user.
 - A real Canvas end-to-end run was completed.
 - Real PDF, DOCX, PPTX, CSV, and Markdown outputs were inspected.
 - The script layer is covered by the automated test suite.
@@ -19,8 +19,8 @@ Record the result of the v1.0.0 release-candidate smoke test here.
 | Claude Code | GUI | yes | yes | yes | yes | User-reported end-to-end test |
 | OpenCode | CLI | yes | yes | yes | yes | User-confirmed end-to-end test |
 | OpenCode | GUI | yes | yes | yes | yes | User-confirmed end-to-end test |
-| Codex | CLI | pending | pending | pending | pending | CLI not installed |
-| Codex | GUI | pending | pending | pending | pending | GUI not available |
+| Codex | CLI | yes | yes | yes | yes | User-confirmed end-to-end test |
+| Codex | GUI | yes | yes | yes | yes | User-confirmed end-to-end test |
 
 ## Global capability checks
 
@@ -36,6 +36,7 @@ These checks cover the shared rendering and question paths. They do not prove th
 | Markdown generation and inspection | yes | User-confirmed |
 | Native questions in Claude Code | yes | User-reported |
 | Native questions in OpenCode | yes | User-confirmed |
+| Native questions in Codex | yes | User-confirmed |
 
 ## Per-skill coverage
 
@@ -90,8 +91,6 @@ The following are covered by `node --test` and pass:
 
 ## Manual checks still required
 
-1. Run Codex CLI.
-2. Run Codex GUI.
-3. Record the exact Codex version and tested formats.
-4. Run any per-skill rows that must be `yes` before v1.0.0.
-5. Keep any unverified cell marked `pending`.
+1. Record the exact Codex version and tested formats if available.
+2. Run any per-skill rows that must be `yes` before v1.0.0.
+3. Keep any unverified per-skill cell marked `pending`.

@@ -197,8 +197,9 @@ export class CanvasClient {
             },
           );
         }
-        const retryAfter = Number(response.headers.get("retry-after"));
-        const delay = Number.isFinite(retryAfter) && retryAfter >= 0
+        const retryHeader = response.headers.get("retry-after");
+        const retryAfter = retryHeader === null ? null : Number(retryHeader);
+        const delay = retryAfter !== null && Number.isFinite(retryAfter) && retryAfter >= 0
           ? retryAfter * 1000
           : Math.min(1000 * 2 ** attempt, 30000);
         attempt += 1;

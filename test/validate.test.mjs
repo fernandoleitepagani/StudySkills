@@ -268,3 +268,70 @@ test("validate: fails required quality and research metadata when missing", asyn
     await cleanupDir(root);
   }
 });
+
+test("validate: rejects a quality score below its published minimum", async () => {
+  const { root, runDir, planPath, checksPath } = await setup();
+  try {
+    await fs.writeFile(path.join(runDir, "summary.pdf"), "%PDF-1.4\n%%EOF\n");
+    await fs.writeFile(
+      planPath,
+      JSON.stringify({
+        requested: [{ output: "summary", files: ["summary.pdf"], formats: ["pdf"] }],
+        quality: { required: true },
+      }),
+      "utf8",
+    );
+    await fs.writeFile(
+      checksPath,
+      JSON.stringify({
+        files: { "summary.pdf": { sections: ["cover"], counts: { pages: 1 } } },
+        quality: {
+          sourceCoverage: { selected: 1, used: 1, skipped: [] },
+          rubric: {
+            grounding: 3,
+            coverage: 4,
+            learningDesign: 4,
+            accuracy: 4,
+            clarity: 4,
+            visualClarity: 4,
+            accessibility: 4,
+            formatIntegrity: 5,
+          },
+          review: "pass",
+        },
+      }),
+      "utf8",
+    );
+    const result = await validateRun({ runDir, planPath, checksPath });
+    assert.equal(result.ok, false);
+    assert.equal(result.quality.ok, false);
+  } finally {
+    await cleanupDir(root);
+  }
+});
+
+test("validate: rejects an invalid original even when a fallback is valid", async () => {
+  const { root, runDir, planPath, checksPath } = await setup();
+  try {
+    await fs.writeFile(path.join(runDir, "summary.pdf"), "not a pdf");
+    await fs.writeFile(path.join(runDir, "summary.md"), "# Summary\n");
+    await fs.writeFile(
+      planPath,
+      JSON.stringify({
+        requested: [{ output: "summary", files: ["summary.pdf"], formats: ["pdf"] }],
+        fallbacks: { "summary.pdf": "summary.md" },
+      }),
+      "utf8",
+    );
+    await fs.writeFile(
+      checksPath,
+      JSON.stringify({ files: { "summary.md": { sections: ["cover"], counts: { pages: 1 } } } }),
+      "utf8",
+    );
+    const result = await validateRun({ runDir, planPath, checksPath });
+    assert.equal(result.ok, false);
+    assert.equal(result.invalid.some((item) => item.name === "summary.pdf"), true);
+  } finally {
+    await cleanupDir(root);
+  }
+});

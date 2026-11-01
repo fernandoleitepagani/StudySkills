@@ -36,6 +36,7 @@ test("core: doctor, workdir, output-dir, cleanup", async () => {
     assert.equal(result.code, 0);
     data = await json(result);
     assert.ok(data.runDir.startsWith(path.join(docs, "StudySkills", "statistics-101")));
+    assert.equal(data.outputDir, data.runDir);
 
     const emptyDir = data.runDir;
     result = await runCore(["cleanup-output", "--dir", emptyDir, "--json"], { home, env });
@@ -164,6 +165,22 @@ test("core: cleanup-failed removes only named output files", async () => {
     await fs.access(path.join(data.runDir, "summary.md"));
     const outside = await runCore(["cleanup-failed", "--dir", home, "--name", "x"], { home, env });
     assert.notEqual(outside.code, 0);
+  } finally {
+    await cleanupDir(home);
+  }
+});
+
+test("core: documents directory can be overridden for Windows and custom setups", async () => {
+  const home = await makeTempDir("studyskills-core-home-");
+  const docs = path.join(home, "CustomDocs");
+  try {
+    const result = await runCore(["doctor", "--json"], {
+      home,
+      env: { STUDYSKILLS_DOCUMENTS_DIR: docs },
+    });
+    assert.equal(result.code, 0);
+    const data = await json(result);
+    assert.equal(data.documentsDir, docs);
   } finally {
     await cleanupDir(home);
   }

@@ -2,7 +2,7 @@
 
 Agent skills for studying, learning, and creating.
 
-Current release: `v0.9.5`.
+Current release: `v0.9.6`.
 
 [![License: MIT](https://img.shields.io/badge/license-MIT-1f3a5f.svg)](./LICENSE)
 [![Node](https://img.shields.io/badge/node-%3E%3D20-1f3a5f.svg)](https://nodejs.org)
@@ -150,6 +150,17 @@ If you ask it to change something in Canvas, it refuses and explains that it is 
 - No telemetry, analytics, or remote logging from the skills.
 - Web research is limited to public concepts. The hard do-not-send list forbids source content, filenames, paths, Canvas data, and personal data.
 - The skills do not upload files to external services.
+
+## Supported systems
+
+- Linux
+- macOS
+- Windows native
+- WSL, treated as Linux
+
+Use PowerShell commands on native Windows. Use POSIX commands in WSL, Linux, and macOS.
+
+Set `STUDYSKILLS_DOCUMENTS_DIR` if Documents is redirected, for example to OneDrive.
 
 ## Requirements
 

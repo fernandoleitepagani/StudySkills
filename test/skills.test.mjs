@@ -340,8 +340,8 @@ test("repo: harness matrix lists every skill", async () => {
   for (const name of USER_SKILLS) {
     assert.ok(matrix.includes(`| ${name} |`), `harness matrix missing ${name}`);
   }
-  assert.match(matrix, /Codex \| CLI \| pending/);
-  assert.match(matrix, /Codex \| GUI \| pending/);
+  assert.match(matrix, /Codex \| CLI \| yes/);
+  assert.match(matrix, /Codex \| GUI \| yes/);
   assert.match(matrix, /Global capability checks/);
   assert.match(matrix, /Per-skill coverage/);
 });

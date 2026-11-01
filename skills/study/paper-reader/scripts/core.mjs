@@ -115,7 +115,7 @@ async function main() {
   if (command === "output-dir") {
     const topic = requireFlag("topic");
     const result = await makeDocumentsRunDir(topic);
-    print({ ok: true, ...result });
+    print({ ok: true, ...result, outputDir: result.runDir });
     return;
   }
 

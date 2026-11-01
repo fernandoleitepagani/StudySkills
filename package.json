@@ -1,6 +1,6 @@
 {
   "name": "study-skills",
-  "version": "0.9.5",
+  "version": "0.9.6",
   "private": true,
   "type": "module",
   "description": "Agent skills for studying, learning, and creating.",
@@ -16,6 +16,7 @@
     "check:skills": "node scripts/sync-skills.mjs --check",
     "check:marketplaces": "node --test test/marketplaces.test.mjs",
     "link:skills": "node scripts/link-skills.mjs",
-    "check:install": "node scripts/check-install.mjs --root skills/study --json"
+    "check:install": "node scripts/check-install.mjs --root skills/study --json",
+    "check:syntax": "node scripts/check-syntax.mjs"
   }
 }

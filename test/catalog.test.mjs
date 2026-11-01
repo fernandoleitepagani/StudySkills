@@ -103,3 +103,28 @@ test("catalog: missing output root is empty and symlinks are ignored", async () 
     await cleanupDir(home);
   }
 });
+
+test("catalog: rejects a root symlink that escapes the StudySkills directory", async () => {
+  const home = await makeTempDir("studyskills-catalog-home-");
+  const docs = path.join(home, "Docs");
+  const base = path.join(docs, "StudySkills");
+  const outside = path.join(home, "outside");
+  try {
+    await fs.mkdir(base, { recursive: true });
+    await fs.mkdir(outside, { recursive: true });
+    try {
+      await fs.symlink(outside, path.join(base, "escape"));
+    } catch {
+      return;
+    }
+    const result = await runCore(
+      ["catalog", "--root", path.join(base, "escape"), "--json"],
+      { home, env: { XDG_DOCUMENTS_DIR: docs } },
+    );
+    assert.notEqual(result.code, 0);
+    const data = await json(result);
+    assert.equal(data.code, "OUTSIDE_OUTPUT_ROOT");
+  } finally {
+    await cleanupDir(home);
+  }
+});

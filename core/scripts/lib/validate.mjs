@@ -147,6 +147,16 @@ const QUALITY_CRITERIA = [
   "accessibility",
   "formatIntegrity",
 ];
+const QUALITY_MINIMUMS = {
+  grounding: 4,
+  coverage: 4,
+  learningDesign: 4,
+  accuracy: 4,
+  clarity: 4,
+  visualClarity: 3,
+  accessibility: 4,
+  formatIntegrity: 5,
+};
 
 function validateQuality(plan, quality) {
   const required = plan.quality?.required === true;
@@ -171,12 +181,16 @@ function validateQuality(plan, quality) {
       const score = rubric[criterion];
       if (!Number.isFinite(Number(score)) || Number(score) < 1 || Number(score) > 5) {
         issues.push(`Quality score ${criterion} must be between 1 and 5.`);
+      } else if (Number(score) < QUALITY_MINIMUMS[criterion]) {
+        issues.push(`Quality score ${criterion} must be at least ${QUALITY_MINIMUMS[criterion]}.`);
       }
     }
     if (rubric.visualClarity !== undefined) {
       const score = rubric.visualClarity;
       if (!Number.isFinite(Number(score)) || Number(score) < 1 || Number(score) > 5) {
         issues.push("Quality score visualClarity must be between 1 and 5.");
+      } else if (Number(score) < QUALITY_MINIMUMS.visualClarity) {
+        issues.push(`Quality score visualClarity must be at least ${QUALITY_MINIMUMS.visualClarity}.`);
       }
     }
   }
@@ -247,9 +261,15 @@ export async function validateRun({ runDir, planPath, checksPath = null, token =
     const file = path.join(runDir, item.name);
     let valid = false;
     let missingFile = false;
+    let originalInvalid = false;
     try {
       const stat = await fs.stat(file);
-      if (stat.isFile() && stat.size > 0 && await signatureMatches(file, item.format)) valid = true;
+      if (stat.isFile() && stat.size > 0) {
+        if (await signatureMatches(file, item.format)) valid = true;
+        else originalInvalid = true;
+      } else {
+        originalInvalid = true;
+      }
     } catch {
       missingFile = true;
     }
@@ -272,6 +292,9 @@ export async function validateRun({ runDir, planPath, checksPath = null, token =
             output: item.output,
             fallbackFor: item.name,
           });
+          if (originalInvalid) {
+            invalid.push({ ...item, reason: "Original file is invalid; fallback used." });
+          }
           fallbackResults.push({ requested: item.name, produced: fallbackName });
           continue;
         }

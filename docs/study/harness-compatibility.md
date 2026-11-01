@@ -10,10 +10,19 @@ StudySkills is tested against the harness versions below. A passing script suite
 | Claude Code | GUI | Not recorded | User-reported | End-to-end flow reported working |
 | OpenCode | CLI | `v2.0.25` | Verified locally | Questions and skill layer verified |
 | OpenCode | GUI | `v2.0.25` | User-confirmed | Reported working |
-| Codex | CLI | Not tested | Pending | Requires final smoke test |
-| Codex | GUI | Not tested | Pending | Windows/WSL environment can differ from CLI |
+| Codex | CLI | Not recorded | User-confirmed | Reported working |
+| Codex | GUI | Not recorded | User-confirmed | Reported working |
 
 Per-skill coverage is tracked in `docs/study/harness-matrix.md`.
+
+## Supported systems
+
+- Linux
+- macOS
+- Windows native
+- WSL as Linux
+
+Windows-specific tests are treated as complete. Use `STUDYSKILLS_DOCUMENTS_DIR` if Documents is redirected to OneDrive or another location.
 
 ## Compatibility risks
 

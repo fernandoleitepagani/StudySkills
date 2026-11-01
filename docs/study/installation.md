@@ -1,5 +1,17 @@
 # Install and update StudySkills
 
+StudySkills supports Linux, macOS, Windows native, and WSL as Linux.
+
+Use PowerShell on native Windows and POSIX commands in WSL, Linux, and macOS.
+
+If Documents is redirected to OneDrive or another location, set:
+
+```text
+STUDYSKILLS_DOCUMENTS_DIR=C:\Users\<you>\OneDrive\Documents
+```
+
+The value must be an absolute path.
+
 StudySkills can be installed through Claude Code, Codex, or OpenCode.
 
 The repository is a self-hosted marketplace. A public directory listing is separate from installing from this repository.

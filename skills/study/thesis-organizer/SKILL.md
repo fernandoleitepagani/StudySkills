@@ -30,7 +30,7 @@ Use one of:
 If using the library, run:
 
 ```bash
-node <skill-dir>/scripts/core.mjs catalog --root ~/Documents/StudySkills --json
+node <skill-dir>/scripts/core.mjs catalog --json
 ```
 
 Select everything in a topic/run or specific documents, following `source-selection.md`.

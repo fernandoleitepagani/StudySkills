@@ -27,8 +27,28 @@ export function formatBytes(bytes) {
 }
 
 export async function resolveDocumentsDir() {
+  const override = process.env.STUDYSKILLS_DOCUMENTS_DIR;
+  if (override) {
+    const value = expandHome(override);
+    if (path.isAbsolute(value)) return value;
+  }
+
   const xdg = process.env.XDG_DOCUMENTS_DIR;
   if (xdg && path.isAbsolute(expandHome(xdg))) return expandHome(xdg);
+
+  if (process.platform === "win32") {
+    for (const key of ["OneDrive", "OneDriveCommercial", "OneDriveConsumer"]) {
+      const root = process.env[key];
+      if (!root) continue;
+      const candidate = path.join(root, "Documents");
+      try {
+        await fs.access(candidate);
+        return candidate;
+      } catch {
+        // Try the next known location.
+      }
+    }
+  }
 
   const userDirsFile = path.join(os.homedir(), ".config", "user-dirs.dirs");
   try {

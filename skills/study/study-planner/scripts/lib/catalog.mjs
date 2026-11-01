@@ -77,7 +77,9 @@ export async function catalogStudy({ root = null } = {}) {
   const documentsDir = await resolveDocumentsDir();
   const base = studyRoot(documentsDir);
   const requested = path.resolve(expandHome(String(root ?? base)));
-  if (!inside(base, requested)) {
+  const realBase = await fs.realpath(base).catch(() => base);
+  const realRequested = await fs.realpath(requested).catch(() => requested);
+  if (!inside(base, requested) || !inside(realBase, realRequested)) {
     const error = new Error(
       `Catalog root must be inside ${base}. Use the StudySkills output directory.`,
     );

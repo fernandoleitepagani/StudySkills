@@ -2,6 +2,13 @@
 
 This document tracks the File Study skill and the future media-import work.
 
+## Supported systems
+
+- Linux
+- macOS
+- Windows native
+- WSL as Linux
+
 ## Goal
 
 `study-files` turns local folders, files, and harness attachments into study documents.

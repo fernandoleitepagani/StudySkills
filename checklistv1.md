@@ -1,75 +1,79 @@
 # StudySkills v1.0.0 Release Checklist
 
-Baseline: `v0.9.5`, `main` and `dev` aligned, 92 tests passing.
+Baseline: `v0.9.6`, `main` and `dev` aligned, 96 tests passing.
 
 Release gate: every box must be checked or explicitly removed from v1 scope. No `pending`, no known defects, no manual-verification caveat.
 
 ## 0. Scope and release gate
 
-- [ ] Confirm v1 includes exactly 13 skills: `study-canvas`, `study-notes`, `study-recall`, `study-explain-back`, `study-exams`, `study-planner`, `study-files`, `study-revisit`, `study-language`, `study-math-practice`, `study-code-kata`, `paper-reader`, `thesis-organizer`.
-- [ ] Confirm support for exactly Claude Code, OpenCode, and Codex, CLI and GUI.
-- [ ] Confirm supported languages: EN and PT-BR.
-- [ ] Confirm supported output formats: PDF, DOCX, PPTX, CSV, Markdown.
-- [ ] Decide whether the roadmap item "Community study skills directory" is in v1.0.0 or moved after v1. Recommended: move it after v1.
-- [ ] Decide the supported OS matrix. If Windows is claimed, test Windows. If not, document Linux/macOS support clearly.
-- [ ] Freeze features. After this point, only defects found during verification may change behavior.
+- [x] Confirm v1 includes exactly 13 skills: `study-canvas`, `study-notes`, `study-recall`, `study-explain-back`, `study-exams`, `study-planner`, `study-files`, `study-revisit`, `study-language`, `study-math-practice`, `study-code-kata`, `paper-reader`, `thesis-organizer`.
+- [x] Confirm support for exactly Claude Code, OpenCode, and Codex, CLI and GUI.
+- [x] Confirm supported languages: EN and PT-BR.
+- [x] Confirm supported output formats: PDF, DOCX, PPTX, CSV, Markdown.
+- [x] Move the "Community study skills directory" item after v1.0.0.
+- [x] Confirm supported systems: Linux, macOS, Windows native, and WSL as Linux.
+- [ ] Freeze features after the cross-platform and documentation changes.
 - [ ] Confirm no open GitHub issues, PRs, or release blockers.
-- [ ] Record the release gate in `docs/study/harness-matrix.md`.
+- [ ] Record the final release gate in `docs/study/harness-matrix.md`.
 
 ## 1. Environment and access
 
-- [ ] Install Claude Code CLI.
-- [ ] Install Codex CLI.
-- [ ] Make Claude Code GUI available.
-- [ ] Make OpenCode GUI available.
-- [ ] Make Codex GUI available.
+- [x] Install Claude Code CLI.
+- [x] Install Codex CLI.
+- [x] Make Claude Code GUI available.
+- [x] Make OpenCode GUI available.
+- [x] Make Codex GUI available.
 
 ## 2. Automated quality gate
 
-- [ ] Run `node --test` on Node 20.
-- [ ] Run `node --test` on Node 22.
-- [ ] Run `npm run check:version`.
-- [ ] Run `npm run check:skills`.
-- [ ] Run `node --check` over every `.mjs` file.
-- [ ] Confirm zero runtime dependencies.
-- [ ] Confirm zero dev dependencies.
-- [ ] Confirm `study-core` does not exist and is not referenced.
-- [ ] Confirm every skill has local `references/core/`.
-- [ ] Confirm every skill has local `scripts/core.mjs`.
-- [ ] Confirm every skill has its local validator, files, inventory, and theme assets.
-- [ ] Confirm Canvas-only files exist only in `study-canvas`.
+- [x] Run `node --test` on Node 20.
+- [x] Run `node --test` on Node 22.
+- [x] Run `npm run check:version`.
+- [x] Run `npm run check:skills`.
+- [x] Run `node --check` over every `.mjs` file.
+- [x] Confirm zero runtime dependencies.
+- [x] Confirm zero dev dependencies.
+- [x] Confirm `study-core` does not exist and is not referenced.
+- [x] Confirm every skill has local `references/core/`.
+- [x] Confirm every skill has local `scripts/core.mjs`.
+- [x] Confirm every skill has its local validator, files, inventory, and theme assets.
+- [x] Confirm Canvas-only files exist only in `study-canvas`.
 - [ ] Add regression tests for every defect found during manual verification.
-- [ ] Confirm the full suite passes after all fixes.
-- [ ] Confirm CI passes on `main`.
-- [ ] If Windows or macOS is claimed, add and pass that CI target.
+- [x] Confirm the full suite passes after all fixes.
+- [x] Confirm CI passes on `main`.
+
+- [x] Windows and macOS support documented and CI target configured.
+- [ ] Windows/macOS CI passes on the pushed commit.
+- [ ] Resolve or explicitly accept module-linked content limitations.
+- [ ] Resolve or explicitly accept remaining known defects.
 
 ## 3. Installation and distribution
 
 ### Claude Code
 
-- [ ] Install the plugin marketplace from `main` on a clean profile.
-- [ ] Install the plugin.
-- [ ] Confirm all 13 skills are listed.
-- [ ] Confirm no duplicate skills.
-- [ ] Confirm no `study-core`.
-- [ ] Run one skill from the CLI.
-- [ ] Update from `main` and confirm the update applies.
-- [ ] Remove the plugin and marketplace cleanly.
-- [ ] Repeat the install/update/remove flow in the GUI.
-- [ ] Confirm trust and permission prompts behave as documented.
+- [x] Install the plugin marketplace from `main` on a clean profile.
+- [x] Install the plugin.
+- [x] Confirm all 13 skills are listed.
+- [x] Confirm no duplicate skills.
+- [x] Confirm no `study-core`.
+- [x] Run one skill from the CLI.
+- [x] Update from `main` and confirm the update applies.
+- [x] Remove the plugin and marketplace cleanly.
+- [x] Repeat the install/update/remove flow in the GUI.
+- [x] Confirm trust and permission prompts behave as documented.
 
 ### Codex
 
-- [ ] Install the plugin marketplace from `main` on a clean profile.
-- [ ] Install the plugin.
-- [ ] Confirm all 13 skills are listed.
-- [ ] Confirm no duplicate skills.
-- [ ] Confirm no `study-core`.
-- [ ] Run one skill from the CLI.
-- [ ] Update from `main` and confirm the update applies.
-- [ ] Remove the plugin and marketplace cleanly.
-- [ ] Repeat the install/update/remove flow in the GUI.
-- [ ] Confirm trust and permission prompts behave as documented.
+- [x] Install the plugin marketplace from `main` on a clean profile.
+- [x] Install the plugin.
+- [x] Confirm all 13 skills are listed.
+- [x] Confirm no duplicate skills.
+- [x] Confirm no `study-core`.
+- [x] Run one skill from the CLI.
+- [x] Update from `main` and confirm the update applies.
+- [x] Remove the plugin and marketplace cleanly.
+- [x] Repeat the install/update/remove flow in the GUI.
+- [x] Confirm trust and permission prompts behave as documented.
 
 ### OpenCode
 
@@ -78,10 +82,10 @@ Release gate: every box must be checked or explicitly removed from v1 scope. No 
 - [x] Install a single skill independently.
 - [x] Confirm a single-skill install has all local core files.
 - [x] Confirm no duplicate skills when both plugin and copied installs are present.
-- [ ] Confirm `npx skills@latest update` works.
-- [ ] Remove and reinstall.
-- [ ] Repeat in the GUI.
-- [ ] Confirm no release-tag pinning is needed.
+- [x] Confirm `npx skills@latest update` works.
+- [x] Remove and reinstall.
+- [x] Repeat in the GUI.
+- [x] Confirm no release-tag pinning is needed.
 
 ### Distribution documentation
 
@@ -95,12 +99,12 @@ Release gate: every box must be checked or explicitly removed from v1 scope. No 
 
 For each cell, verify native questions, custom typed answers, plan approval, generation, validation, reporting, and cleanup.
 
-- [ ] Claude Code CLI
-- [ ] Claude Code GUI
-- [ ] OpenCode CLI
-- [ ] OpenCode GUI
-- [ ] Codex CLI
-- [ ] Codex GUI
+- [x] Claude Code CLI
+- [x] Claude Code GUI
+- [x] OpenCode CLI
+- [x] OpenCode GUI
+- [x] Codex CLI
+- [x] Codex GUI
 
 For each surface:
 
@@ -292,7 +296,6 @@ Failure behavior:
 - [ ] `AGENTS.md` and `CLAUDE.md` remain aligned.
 - [ ] Plugin metadata matches the collection.
 - [ ] Roadmap is updated for v1.0.0.
-- [ ] Add a migration guide from v0.9.5 to v1.0.0.
 - [ ] Add the security audit document.
 - [ ] Add release notes with supported harnesses, formats, and known limits.
 - [ ] Confirm license and links.
@@ -320,8 +323,8 @@ Failure behavior:
 - [ ] Update README current release to `v1.0.0`.
 - [ ] Update docs and roadmap to v1.0.0.
 - [ ] Run `node --test`.
-- [ ] Run `npm run check:version`.
-- [ ] Run `npm run check:skills`.
+- [x] Run `npm run check:version`.
+- [x] Run `npm run check:skills`.
 - [ ] Confirm working tree is clean.
 - [ ] Merge `dev` into `main`.
 - [ ] Confirm `main` and `dev` match.

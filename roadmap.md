@@ -163,7 +163,7 @@ There is no plan to add other harnesses.
 - Durable `manual-materials.md` link report.
 - Optional `links.csv`.
 - Durable links from modules, assignments, announcements, pages, syllabus, and front page.
-- Exact browser-download and `/file-study` instructions.
+- Exact browser-download and `/study-files` instructions.
 - Beginner-friendly error and result messages.
 - Updated `roadmap2.md` with the manual media plan.
 - v1.0.0 remains gated on final compatibility and verification work.
@@ -201,8 +201,17 @@ There is no plan to add other harnesses.
 - Merged `exam-sim` and `exam-debrief` into `study-exams`.
 - Preserved all source functionality through mode selectors.
 - Kept the four-question interview limit.
-- Added migration and install verification.
+- Added install verification and cross-platform guidance.
 - Registered public store listing as future work.
+
+## v0.9.6 - Cross-Platform Hardening
+
+- Linux, macOS, and Windows support documented.
+- Windows/macOS CI matrix added.
+- Windows Documents/OneDrive override support.
+- Output directory alias, retry-header, quality-threshold, invalid-fallback, 401-propagation, and catalog symlink hardening.
+- Migration guide removed.
+- v1.0.0 remains the release target.
 
 ## Future - Public Store Listing
 
@@ -214,5 +223,7 @@ There is no plan to add other harnesses.
 
 ## v1.0.0 - Stable
 
-- Stable skill contract, migration guide, and security audit.
-- Community study skills directory.
+- Stable 13-skill contract and security audit.
+- Linux, macOS, and Windows support.
+- Release notes and final harness matrix.
+- Community study skills directory moved post-v1.

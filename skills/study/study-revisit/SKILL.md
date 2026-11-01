@@ -26,7 +26,7 @@ Use library mode.
 1. Run:
 
 ```bash
-node <skill-dir>/scripts/core.mjs catalog --root ~/Documents/StudySkills --json
+node <skill-dir>/scripts/core.mjs catalog --json
 ```
 
 2. Show topics, runs, document names, and sizes.

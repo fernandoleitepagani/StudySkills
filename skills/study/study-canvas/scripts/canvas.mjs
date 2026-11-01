@@ -320,6 +320,12 @@ async function loadCourseLists(client, courseId, { errors, truncations = {}, pro
         count: 0,
       };
       errors.push(result.error);
+      if (result.error.code === "UNAUTHORIZED") {
+        throw new CanvasError(result.error.message, {
+          status: 401,
+          code: "UNAUTHORIZED",
+        });
+      }
       return [];
     }
     truncations[label] = result.value.truncated;

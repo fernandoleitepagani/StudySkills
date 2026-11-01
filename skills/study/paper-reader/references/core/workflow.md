@@ -66,7 +66,7 @@ Repeat `--path` for multiple paths.
 If the skill uses the StudySkills library, run:
 
 ```bash
-node <skill-dir>/scripts/core.mjs catalog --root ~/Documents/StudySkills --json
+node <skill-dir>/scripts/core.mjs catalog --json
 ```
 
 When the skill has multiple source groups, follow `source-selection.md`:
