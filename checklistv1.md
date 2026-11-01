@@ -12,8 +12,8 @@ Release gate: every box must be checked or explicitly removed from v1 scope. No 
 - [x] Confirm supported output formats: PDF, DOCX, PPTX, CSV, Markdown.
 - [x] Move the "Community study skills directory" item after v1.0.0.
 - [x] Confirm supported systems: Linux, macOS, Windows native, and WSL as Linux.
-- [ ] Freeze features after the cross-platform and documentation changes.
-- [ ] Confirm no open GitHub issues, PRs, or release blockers.
+- [x] Freeze features after the cross-platform and documentation changes.
+- [x] Confirm no open GitHub issues, PRs, or release blockers.
 - [ ] Record the final release gate in `docs/study/harness-matrix.md`.
 
 ## 1. Environment and access
@@ -43,7 +43,7 @@ Release gate: every box must be checked or explicitly removed from v1 scope. No 
 - [x] Confirm CI passes on `main`.
 
 - [x] Windows and macOS support documented and CI target configured.
-- [ ] Windows/macOS CI passes on the pushed commit.
+- [x] Windows/macOS CI passes on the pushed commit.
 - [ ] Resolve or explicitly accept module-linked content limitations.
 - [ ] Resolve or explicitly accept remaining known defects.
 
