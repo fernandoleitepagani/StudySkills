@@ -14,7 +14,7 @@ Read `references/core/workflow.md` before doing anything else. Follow its shared
 - **Show the work.** Every solution needs reasoning, not only a final answer.
 - **Use LaTeX.** Write formulas as `$...$` or `$$...$$`. Use `latex-graph` blocks for graphs.
 - **Mark assumptions.** If a problem depends on an unstated convention, say so.
-- **No code execution required.** Do not install packages, run a math engine, or claim a result was verified by a tool unless it actually was.
+- **No code execution required.** Do not install packages, run a math engine, or claim a tool verified a result when the run produced no such result.
 - **Sources are read-only.**
 - **Only requested files** go to `~/Documents/StudySkills/<topic>/<run>/`.
 - **Web research follows `references/core/web-research.md`.** The do-not-send list is absolute.
@@ -32,7 +32,7 @@ If a source is supplied, use it for terminology, methods, and difficulty calibra
 
 ## Interview
 
-Ask only what is not already known:
+Ask only for information the user has not provided:
 
 - Topic or unit.
 - Level: middle school, high school, undergraduate, graduate, or a custom level.
@@ -183,5 +183,6 @@ Typical defaults:
 - Do not create flashcards, notes, or an exam.
 - Set `quality.required` to `true` in `plan.json`.
 - Set `math.required` to `true` when the set contains formulas or graphs.
-- Record `math.formulas`, `math.graphs`, `math.images`, `math.rendering`, and `math.fallback` in `checks.json`.
-- Run `scripts/core.mjs math-check` on the draft before rendering.
+- Record `math.formulas`, `math.graphs`, `math.images`, `math.rendering`, `math.fallback`, and `math.rawLatex` in `checks.json`.
+- Set `math.rawLatex` to `false` for rendered PDF, DOCX, or PPTX output.
+- Run `scripts/core.mjs math-check --base-dir <workDir>` on the draft before rendering.

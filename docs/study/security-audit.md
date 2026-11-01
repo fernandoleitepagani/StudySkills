@@ -9,6 +9,7 @@ This audit covers the 13 StudySkills skills and their shared self-contained core
 - generated outputs
 - plugin and marketplace distribution
 - web research
+- LaTeX math, graphs, and image handling
 - cleanup behavior
 - zero-dependency supply chain
 
@@ -17,6 +18,7 @@ This audit covers the 13 StudySkills skills and their shared self-contained core
 - Canvas personal access tokens
 - local source files and course materials
 - generated study documents
+- generated formula and graph assets
 - user file paths and directory structure
 - plugin and marketplace metadata
 - repository integrity
@@ -65,7 +67,7 @@ This audit covers the 13 StudySkills skills and their shared self-contained core
 - Absolute LaTeX and image paths are rejected.
 - LaTeX compilation stays in the work directory and auxiliary files are removed.
 - No automatic TeX installation and no remote compilation.
-- 116 automated tests cover the script layer and Canvas mock behavior.
+- 125 automated tests cover the script layer and Canvas mock behavior.
 - Linux, macOS, and Windows CI runs on Node 20 and 22.
 
 ## Findings
@@ -82,7 +84,8 @@ This audit covers the 13 StudySkills skills and their shared self-contained core
 - Invalid original files are reported when a fallback exists.
 - Catalog roots are checked with realpath.
 - Windows/OneDrive Documents can be selected explicitly.
-- LaTeX delimiter, graph, image, forbidden-command, and absolute-path checks are implemented.
+- LaTeX delimiter, graph-label, legend, image, forbidden-command, and absolute-path checks are implemented.
+- The math scanner checks graph labels, multi-series legends, asset existence, and raw-LaTeX attestation.
 - Math metadata is validated when `plan.math.required` is true.
 
 ### Accepted residual risks
@@ -126,6 +129,6 @@ This audit covers the 13 StudySkills skills and their shared self-contained core
 
 ## Release recommendation
 
-No unresolved security blocker remains for v1.1.0.
+No unresolved security blocker remains for v1.1.1.
 
 The residual risks above are documented and have user-facing mitigations. They should remain in the release notes and future roadmap.

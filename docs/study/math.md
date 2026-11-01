@@ -118,6 +118,18 @@ Summary formula sheet:
 | Speed | $v = \frac{d}{t}$ |
 | Force | $F = m a$ |
 
+## Validation
+
+Run:
+
+```bash
+node <skill-dir>/scripts/core.mjs math-check --file <draft.md> --base-dir <workDir> --json
+```
+
+The scanner checks delimiters, graph blocks, axis labels, legends, image alt text, captions, asset existence, forbidden commands, and absolute paths.
+
+For a math run with PDF, DOCX, or PPTX output, record `math.rawLatex: false` in `checks.json` after you inspect the rendered files.
+
 ## Related docs
 
 - [Math practice skill](../../skills/study/study-math-practice/README.md)

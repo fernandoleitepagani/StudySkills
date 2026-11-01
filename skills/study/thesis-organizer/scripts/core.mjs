@@ -76,7 +76,7 @@ const help = {
     "inventory --pack DIR",
     "inventory --path PATH [--path PATH ...]",
     "catalog [--root DIR]",
-    "math-check --file FILE [--file FILE ...]",
+    "math-check --file FILE [--file FILE ...] [--base-dir DIR]",
   ],
 };
 
@@ -164,10 +164,11 @@ async function main() {
   if (command === "math-check") {
     const files = Array.isArray(flags.file) ? flags.file : [];
     if (!files.length) fail("MISSING_ARGUMENT", "Use at least one --file FILE.");
+    const baseDir = flags["base-dir"] && flags["base-dir"] !== true ? String(flags["base-dir"]) : null;
     const results = [];
     let ok = true;
     for (const file of files) {
-      const result = await inspectMathFile(file);
+      const result = await inspectMathFile(file, baseDir ? { baseDir } : {});
       results.push({ file, ...result });
       if (!result.ok) ok = false;
     }

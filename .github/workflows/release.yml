@@ -30,6 +30,15 @@ jobs:
       - name: Check generated skill core
         run: npm run check:skills
 
+      - name: Check JavaScript syntax
+        run: npm run check:syntax
+
+      - name: Check marketplace manifests
+        run: npm run check:marketplaces
+
+      - name: Check skill install layout
+        run: npm run check:install
+
       - name: Run tests
         run: node --test
 

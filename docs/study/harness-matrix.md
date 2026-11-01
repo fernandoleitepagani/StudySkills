@@ -1,6 +1,6 @@
 # Harness capability matrix
 
-These results cover v1.1.0. The v1.0.0 harness baseline and v1.0.1 test patch remain the basis for the surface matrix. v1.1.0 adds performance and math contracts.
+These results cover v1.1.1, with v1.1.0 as the baseline. The v1.0.0 harness baseline and v1.0.1 test patch remain the basis for the surface matrix.
 
 ## Environment used for this run
 
@@ -105,7 +105,7 @@ The following are covered by `node --test` and pass:
 - Cross-origin redirect protection.
 - Work and output directory behavior.
 - CLI commands end to end against the mock server.
-- 116 automated tests.
+- 125 automated tests.
 
 ## Final v1.1 gate
 
@@ -113,4 +113,4 @@ The following are covered by `node --test` and pass:
 - Harness surfaces remain complete for the v1.1.0 baseline.
 - Math visual smoke remains a per-harness verification step.
 - No unexplained `pending` cells remain.
-- Accepted limitations are recorded in `security-audit.md` and the v1.1.0 release notes.
+- Accepted limitations are recorded in `security-audit.md` and the v1.1.1 release notes.
