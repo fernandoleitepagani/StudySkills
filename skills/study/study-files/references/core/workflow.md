@@ -42,6 +42,8 @@ Read after plan approval:
 - `references/core/quality.md`
 - `references/core/web-research.md`
 
+Read `references/core/math.md` when the output contains formulas, graphs, or math images.
+
 Read `references/core/error-messages.md` only when reporting a failure.
 
 ## Step 1 - Source mode
@@ -136,7 +138,7 @@ Create the output directory only after the source is ready:
 node <skill-dir>/scripts/core.mjs output-dir --topic "<topic>" --json
 ```
 
-Read the skill's output section and `references/core/style.md`. Create `workDir/drafts/` and write one canonical draft per logical output. Apply the style, citations, and source coverage to that draft. Do not render from memory.
+Read the skill's output section and `references/core/style.md`. Create `workDir/drafts/` and write one canonical draft per logical output. Apply the style, citations, source coverage, and math contract to that draft. Do not render from memory.
 
 Use web research only when the user checked **Use public web research**. Follow `references/core/web-research.md`. The do-not-send list is absolute: never send source content, filenames, paths, Canvas data, or personal data to a web tool.
 
@@ -148,7 +150,7 @@ Review the draft in `references/core/quality.md`:
 4. Revise weak sections.
 5. Re-read the revised draft.
 
-Render every requested format from the reviewed draft. Use the harness document skill for PDF, DOCX, and PPTX. Use plain text for Markdown and CSV. After rendering, inspect each file for visual clarity, accessibility, format integrity, links, counts, and overflow. Drafts stay in the work directory and never enter Documents.
+Render every requested format from the reviewed draft. Use the harness document skill for PDF, DOCX, and PPTX. Use plain text for Markdown and CSV. Render formulas and graphs with the format rules in `math.md`. After rendering, inspect each file for visual clarity, accessibility, format integrity, links, counts, overflow, and raw LaTeX. Drafts stay in the work directory and never enter Documents.
 
 If the source set exceeds the model context, or a source is over 100 pages or 50 MB, process it in sections. Keep section notes only in the work directory, synthesize the final output from them, cite page or section boundaries, and delete the temporary notes with the work directory. Do not create chunk files in Documents. If the harness cannot process the size, ask the user to narrow the source set.
 
@@ -166,7 +168,7 @@ Read each generated file back with the harness document skill. Write `checks.jso
 
 Record content scores once per logical output. Use the lowest visual clarity, accessibility, and format integrity score from the produced files in the run-level rubric.
 
-Add the quality block from `quality.md` and the research block from `web-research.md`. Every selected source must be used or explicitly skipped.
+Add the quality block from `quality.md`, the research block from `web-research.md`, and the math block from `math.md`. Every selected source must be used or explicitly skipped.
 
 Run:
 

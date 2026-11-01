@@ -6,7 +6,7 @@ disable-model-invocation: true
 
 # Study Notes
 
-Read `references/core/workflow.md` before doing anything else. Follow its shared workflow and invariants.
+Read `references/core/workflow.md` before doing anything else. Follow its shared workflow and invariants. Read `references/core/math.md` when the source contains formulas, graphs, or math images.
 
 ## Modes
 
@@ -121,6 +121,8 @@ Required sections in `notes-index.md`:
 - Read-only sources.
 - Never access Canvas.
 - Keep the didactic style from `references/core/style.md`.
+- Keep formulas from slides, transcripts, and notes as LaTeX. Do not flatten them into ambiguous plain text.
+- Use `latex-graph` blocks for graphs and caption every graph or image.
 - Only write to `~/Documents/StudySkills/<topic>/<run>/`.
 - Generate only requested files.
 - Follow `references/core/quality.md`.

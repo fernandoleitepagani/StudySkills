@@ -447,3 +447,49 @@ test("skills: faster generation and web opt-in contracts", async () => {
   assert.match(performance, /workDir\/timings\.json/);
   assert.match(performance, /Canvas section lists and page details/);
 });
+
+test("skills: LaTeX math contract is generated and wired", async () => {
+  for (const name of USER_SKILLS) {
+    assert.equal(await exists(`skills/study/${name}/references/core/math.md`), true, `${name} missing math.md`);
+    assert.equal(await exists(`skills/study/${name}/scripts/lib/math.mjs`), true, `${name} missing math.mjs`);
+  }
+
+  const math = await read("core/references/math.md");
+  assert.match(math, /latex-graph/);
+  assert.match(math, /Never leave raw LaTeX/);
+  assert.match(math, /\\write18/);
+  assert.match(math, /math\.required/);
+
+  const plan = await read("core/references/plan-contract.md");
+  assert.match(plan, /"math"/);
+  assert.match(plan, /math\.required/);
+
+  const style = await read("core/references/style.md");
+  assert.match(style, /## Math and graphs/);
+
+  const mathSkill = await read("skills/study/study-math-practice/SKILL.md");
+  assert.match(mathSkill, /Use LaTeX/);
+  assert.match(mathSkill, /latex-graph/);
+  assert.match(mathSkill, /math\.required/);
+  assert.match(mathSkill, /math-check/);
+
+  for (const name of [
+    "study-exams",
+    "study-canvas",
+    "study-notes",
+    "study-explain-back",
+    "study-revisit",
+    "paper-reader",
+    "thesis-organizer",
+  ]) {
+    assert.match(
+      await read(`skills/study/${name}/SKILL.md`),
+      /references\/core\/math\.md/,
+      `${name} must reference the math contract`,
+    );
+  }
+
+  const canvasOutputs = await read("skills/study/study-canvas/references/outputs.md");
+  assert.match(canvasOutputs, /LaTeX/);
+  assert.match(canvasOutputs, /Math rendering mode/);
+});

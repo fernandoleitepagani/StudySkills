@@ -59,7 +59,7 @@ This audit covers the 13 StudySkills skills and their shared self-contained core
 - No telemetry, analytics, or remote logging.
 - No git operations during study runs.
 - No runtime dependencies.
-- 100 automated tests cover the script layer and Canvas mock behavior.
+- 115 automated tests cover the script layer and Canvas mock behavior.
 - Linux, macOS, and Windows CI runs on Node 20 and 22.
 
 ## Findings

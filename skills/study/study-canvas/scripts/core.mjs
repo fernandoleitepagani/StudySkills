@@ -12,6 +12,7 @@ import {
 import { validateRun } from "./lib/validate.mjs";
 import { inventory } from "./lib/inventory.mjs";
 import { catalogStudy } from "./lib/catalog.mjs";
+import { inspectMathFile } from "./lib/math.mjs";
 
 function parseArgs(argv) {
   const flags = {};
@@ -22,7 +23,7 @@ function parseArgs(argv) {
       const key = arg.slice(2);
       const next = argv[i + 1];
       const value = next !== undefined && !next.startsWith("--") ? next : true;
-      if (key === "path" || key === "name") {
+      if (key === "path" || key === "name" || key === "file") {
         if (!Array.isArray(flags[key])) flags[key] = [];
         if (value !== true) flags[key].push(value);
       } else {
@@ -75,6 +76,7 @@ const help = {
     "inventory --pack DIR",
     "inventory --path PATH [--path PATH ...]",
     "catalog [--root DIR]",
+    "math-check --file FILE [--file FILE ...]",
   ],
 };
 
@@ -156,6 +158,21 @@ async function main() {
     const root = flags.root && flags.root !== true ? String(flags.root) : null;
     const result = await catalogStudy({ root });
     print(result);
+    return;
+  }
+
+  if (command === "math-check") {
+    const files = Array.isArray(flags.file) ? flags.file : [];
+    if (!files.length) fail("MISSING_ARGUMENT", "Use at least one --file FILE.");
+    const results = [];
+    let ok = true;
+    for (const file of files) {
+      const result = await inspectMathFile(file);
+      results.push({ file, ...result });
+      if (!result.ok) ok = false;
+    }
+    print({ ok, files: results });
+    if (!ok) process.exitCode = 1;
     return;
   }
 

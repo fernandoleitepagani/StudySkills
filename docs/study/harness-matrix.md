@@ -85,7 +85,8 @@ The following are covered by `node --test` and pass:
 - HTML to text, including pre, tables, images, and nested lists.
 - Materials and manifest generation against a mock Canvas.
 - Plan-driven validation, semantic checks, partial failure, extra files, and token leakage.
-- Quality and research metadata validation.
+- Quality, research, and math metadata validation.
+- LaTeX delimiter, graph, image, forbidden-command, and absolute-path scanning.
 - Cross-origin redirect protection.
 - Work and output directory behavior.
 - CLI commands end to end against the mock server.

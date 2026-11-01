@@ -118,6 +118,20 @@ Quality includes presentation:
 
 Visual elements must help comprehension. Do not add decoration to look busy.
 
+## Math review
+
+When a document contains math:
+
+- Check formula notation, signs, units, and significant figures.
+- Check that equation numbers and references agree.
+- Check graph labels, units, scale, and legend.
+- Check that every graph and image has a caption and alt text.
+- Check that rendered PDF, DOCX, and PPTX files contain no raw TeX.
+- Check that Markdown keeps the LaTeX source.
+- Check that CSV uses plain notation.
+- Record formula, graph, and image counts in `checks.json`.
+- Report the math rendering mode and any fallback.
+
 ## Web sources
 
 When web research is used:

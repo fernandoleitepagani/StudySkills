@@ -34,9 +34,10 @@ const REFERENCES = [
   "quality.md",
   "web-research.md",
   "error-messages.md",
+  "math.md",
 ];
 
-const LIBS = ["files.mjs", "validate.mjs", "inventory.mjs", "catalog.mjs"];
+const LIBS = ["files.mjs", "validate.mjs", "inventory.mjs", "catalog.mjs", "math.mjs"];
 
 async function exists(file) {
   try {

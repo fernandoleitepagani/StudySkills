@@ -17,8 +17,9 @@ const REFS = [
   "quality.md",
   "web-research.md",
   "error-messages.md",
+  "math.md",
 ];
-const LIBS = ["files.mjs", "validate.mjs", "inventory.mjs", "catalog.mjs"];
+const LIBS = ["files.mjs", "validate.mjs", "inventory.mjs", "catalog.mjs", "math.mjs"];
 const EXPECTED_SKILLS = [
   "study-canvas",
   "study-notes",

@@ -20,7 +20,7 @@ A topic or source material, a level, and a problem count. A textbook or notes he
 4. Approve the plan before generation.
 5. Read the final report for outputs, skips, and fallbacks.
 
-Choose the difficulty mix, problem types, hints, solutions, and answer key. Every problem gets a worked solution.
+Choose the difficulty mix, problem types, hints, solutions, and answer key. Every problem gets a worked solution. Formulas use LaTeX, and graphs use PGFPlots or TikZ blocks. See [Math, graphs, and images](../../../docs/study/math.md).
 
 ## What it produces
 
@@ -41,6 +41,9 @@ Outputs go to:
 > Problems: 20
 > Difficulty: easy, standard, hard
 > Output: PDF problem set and solutions
+>
+> Example formula: $2x + 5 = 17$
+> Example graph: a `latex-graph` block with labeled axes
 
 ## Safety and limits
 

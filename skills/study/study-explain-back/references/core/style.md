@@ -89,6 +89,21 @@ Use visuals when they improve comprehension. Do not decorate.
 5. Reading order.
 6. Source references.
 
+## Math and graphs
+
+- Write formulas in LaTeX. Use `$...$` inline and `$$...$$` on its own line.
+- Number an equation only when the text refers back to it.
+- Keep symbols, units, and significant figures consistent.
+- Use `latex-graph` blocks with PGFPlots or TikZ for plotted graphs.
+- Label axes and include units.
+- Add a caption to every graph and image.
+- Add alt text to every image.
+- Prefer relative image paths. Do not use remote or absolute paths.
+- Keep formulas editable in Markdown. In PDF, DOCX, and PPTX, render them.
+- Never leave raw LaTeX in a rendered PDF, DOCX, or PPTX.
+- Use plain notation in CSV outputs.
+- Follow `math.md` for fallbacks and LaTeX security rules.
+
 ## Typography
 
 - Headings: bold, high contrast.

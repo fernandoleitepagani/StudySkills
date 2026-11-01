@@ -196,6 +196,8 @@ Rules:
 
 File name: `summary.<format>`.
 
+Use LaTeX for formulas and `latex-graph` blocks for graphs. Caption every graph and image.
+
 Content:
 
 1. Cover.
@@ -258,6 +260,8 @@ Rules:
 - Mix recall, application, and analysis where possible.
 - Do not use questions that can be answered by keyword matching alone.
 - Every answer must reference the source topic.
+- Write quantitative questions and formulas in LaTeX.
+- Use `latex-graph` blocks for graphs and caption every graph.
 
 ## Concept map
 
@@ -279,6 +283,7 @@ Rules:
 - Use short node labels.
 - Avoid crossing lines where possible.
 - Keep the map readable at A4 or slide size.
+- Write math labels and relationships in LaTeX when needed.
 
 ## Custom output
 
@@ -320,4 +325,7 @@ Before reporting success:
 - [ ] No extra files are in the output directory.
 - [ ] Truncated collections and skipped pages are reported.
 - [ ] External materials and images are reported.
+- [ ] Math rendering mode is reported.
+- [ ] Rendered outputs contain no raw LaTeX.
+- [ ] Graphs and images have captions and alt text.
 - [ ] Requested formats that failed are still present in `plan.json` and reported.

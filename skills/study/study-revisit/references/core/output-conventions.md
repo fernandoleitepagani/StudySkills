@@ -30,6 +30,18 @@
 - Keep accessibility, heading hierarchy, and language metadata.
 - Record web research status in `research` and report it at the end.
 
+## Math
+
+- Keep formulas, graphs, and image references in the canonical draft.
+- Render math from the reviewed draft, not from a separate retelling.
+- Keep Markdown outputs as LaTeX source.
+- Use plain notation in CSV outputs.
+- Render formulas and graphs for PDF, DOCX, and PPTX.
+- Do not leave raw LaTeX in rendered outputs.
+- Report `math.rendering` as `latex`, `image`, or `plain`.
+- Report a plain-text fallback when the renderer is unavailable.
+- Follow `math.md` for syntax, accessibility, and LaTeX safety.
+
 ## Web sources
 
 - Use web research only when the user checks **Use public web research**.

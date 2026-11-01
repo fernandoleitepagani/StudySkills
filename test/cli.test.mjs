@@ -406,3 +406,28 @@ test("cli: all core sections forbidden stops the fetch", async () => {
     await cleanupDir(home);
   }
 });
+
+test("cli: math-check accepts valid math and rejects unclosed delimiters", async () => {
+  const dir = await makeTempDir("studyskills-math-cli-");
+  const home = await makeTempDir("studyskills-math-home-");
+  try {
+    const valid = path.join(dir, "valid.md");
+    await fs.writeFile(valid, "The value is $x + 1$.\n", "utf8");
+    let result = await runCore(["math-check", "--file", valid, "--json"], { home });
+    assert.equal(result.code, 0);
+    let data = await json(result);
+    assert.equal(data.ok, true);
+    assert.equal(data.files[0].counts.formulas, 1);
+
+    const invalid = path.join(dir, "invalid.md");
+    await fs.writeFile(invalid, "The value is $x + 1.\n", "utf8");
+    result = await runCore(["math-check", "--file", invalid, "--json"], { home });
+    assert.equal(result.code, 1);
+    data = await json(result);
+    assert.equal(data.ok, false);
+    assert.equal(data.files[0].issues.some((item) => item.code === "UNCLOSED_INLINE_MATH"), true);
+  } finally {
+    await cleanupDir(dir);
+    await cleanupDir(home);
+  }
+});

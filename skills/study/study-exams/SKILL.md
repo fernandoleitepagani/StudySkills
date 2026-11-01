@@ -6,7 +6,11 @@ disable-model-invocation: true
 
 # Study Exams
 
-Read `references/core/workflow.md` before doing anything else. Follow its shared workflow and invariants.
+Read `references/core/workflow.md` before doing anything else. Follow its shared workflow and invariants. Read `references/core/math.md` when the source contains formulas, graphs, or math images.
+
+## Math format
+
+Quantitative questions and answer keys use LaTeX for formulas. Graphs use `latex-graph` blocks with labeled axes and captions. Answer-key CSV stays plain.
 
 ## Modes
 

@@ -35,14 +35,20 @@ Read these references before asking anything:
 
 - `references/core/harness-questions.md`
 - `references/core/grilling.md`
+- `references/core/plan-contract.md`
 - `references/options.md`
+- `references/core/source-selection.md`
+- `references/security.md`
+
+Read these references after plan approval:
+
 - `references/core/style.md`
 - `references/core/quality.md`
-- `references/core/source-selection.md`
 - `references/core/web-research.md`
-- `references/core/error-messages.md`
+- `references/core/math.md` when the course contains formulas, graphs, or math images
 - `references/outputs.md`
-- `references/security.md`
+
+Read `references/core/error-messages.md` only when reporting a failure.
 
 ## Step 1 - Connection and token
 
@@ -337,6 +343,7 @@ Read:
 - `assets/theme.json`
 - `references/core/quality.md`
 - `references/core/web-research.md`
+- `references/core/math.md` when the course contains formulas, graphs, or math images
 - `references/core/error-messages.md`
 
 Use web research only when the user checks **Use public web research**. Never send course content, filenames, paths, Canvas URL, or personal data to a web tool. Cite public sources separately from course sources.

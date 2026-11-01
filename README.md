@@ -162,6 +162,7 @@ Use PowerShell on native Windows and POSIX commands in WSL, Linux, and macOS. Se
 - A harness that can render the formats you request.
 - A Canvas personal access token with read access for `study-canvas`.
 - Network access only for `study-canvas`.
+- No LaTeX installation is required. LaTeX is optional, with image and plain-text fallbacks.
 
 ## Development
 
@@ -192,6 +193,14 @@ To link every skill into local harness directories:
 ```bash
 node scripts/link-skills.mjs
 ```
+
+## Math and graphs
+
+Math-bearing outputs use LaTeX for formulas and PGFPlots or TikZ for graphs. PDF can render LaTeX directly. DOCX and PPTX use native equations or rendered images. Markdown keeps the LaTeX source, and CSV stays plain.
+
+The skills never install LaTeX. If a renderer is unavailable, the output falls back to an image or plain notation and the final report says which mode it used.
+
+See [Math, graphs, and images](./docs/study/math.md).
 
 ## Output formats
 

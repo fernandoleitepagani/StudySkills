@@ -18,7 +18,7 @@ Start with the [installation and update guide](./installation.md). Harness cover
 
 ## Development
 
-Repository rules live in [AGENTS.md](../../AGENTS.md). The shared workflow is in [workflow.md](../../core/references/workflow.md), with the plan and quality contracts in [plan-contract.md](../../core/references/plan-contract.md) and [quality.md](../../core/references/quality.md). Harness versions and smoke tests live in [harness-compatibility.md](./harness-compatibility.md). Generation timings and targets live in [performance.md](./performance.md).
+Repository rules live in [AGENTS.md](../../AGENTS.md). The shared workflow is in [workflow.md](../../core/references/workflow.md), with the plan and quality contracts in [plan-contract.md](../../core/references/plan-contract.md) and [quality.md](../../core/references/quality.md). Harness versions and smoke tests live in [harness-compatibility.md](./harness-compatibility.md). Generation timings and targets live in [performance.md](./performance.md). LaTeX formulas, graphs, images, and fallbacks live in [math.md](./math.md).
 
 ## Skill notes
 
@@ -98,7 +98,7 @@ Pronunciation support stays textual: IPA, stress, and notes. The skill does not 
 
 Writes original math and STEM problems with progressive hints, worked solutions, common errors, and an optional answer key. Problem and solution counts stay aligned.
 
-The skill does not run a math engine or hide a calculator.
+The skill does not run a math engine or hide a calculator. Formulas use LaTeX, and graphs use PGFPlots or TikZ blocks.
 
 [Guide](../../skills/study/study-math-practice/README.md)
 
