@@ -2,7 +2,7 @@
 
 Agent skills for studying, learning, and creating.
 
-Current release: `v0.9.1`.
+Current release: `v0.9.2`.
 
 [![License: MIT](https://img.shields.io/badge/license-MIT-1f3a5f.svg)](./LICENSE)
 [![Node](https://img.shields.io/badge/node-%3E%3D20-1f3a5f.svg)](https://nodejs.org)
@@ -13,9 +13,9 @@ The collection covers Canvas courses, lecture notes, flashcards, practice exams,
 
 ## Install
 
-Pick one route per harness. Do not install both the plugin and the copied skills for the same harness.
+Pick one route per harness. Every skill is self-contained; install the collection or a single skill.
 
-Every skill is self-contained. Install the whole collection or a single skill. Each skill has its own README with a short usage guide.
+See the full [installation and update guide](./docs/study/installation.md) for GUI steps, WSL notes, verification, and troubleshooting.
 
 ### Claude Code
 
@@ -24,18 +24,21 @@ claude plugin marketplace add fernandoleitepagani/StudySkills
 claude plugin install study-skills@studyskills
 ```
 
-The marketplace refreshes from `main`.
+The marketplace refreshes from `main`. Restart Claude Code after installing.
 
 ### Codex
 
 ```bash
 codex plugin marketplace add fernandoleitepagani/StudySkills
-codex plugin add study-skills@studyskills
 ```
 
-The Codex marketplace refreshes from `main`.
+Then run `/plugins` in Codex, choose the StudySkills marketplace, and install `study-skills`. Restart the GUI or start a new session after installing.
+
+On Windows, use the same Windows or WSL environment as the Codex GUI.
 
 ### OpenCode
+
+macOS, Linux, and WSL:
 
 ```bash
 DISABLE_TELEMETRY=1 DO_NOT_TRACK=1 npx skills@latest add \
@@ -43,11 +46,21 @@ DISABLE_TELEMETRY=1 DO_NOT_TRACK=1 npx skills@latest add \
   --skill '*' -a opencode -g -y
 ```
 
-Update later with:
+Windows PowerShell:
 
-```bash
-npx skills@latest update
+```powershell
+$env:DISABLE_TELEMETRY=1
+$env:DO_NOT_TRACK=1
+npx -y skills@latest add "fernandoleitepagani/StudySkills" --skill "*" -a opencode -g -y
 ```
+
+Update with `npx skills@latest update`.
+
+### Update
+
+- Claude Code and Codex: use the plugin manager’s update action, or reinstall.
+- OpenCode: `npx skills@latest update`.
+- If a GUI still shows the old version, remove and reinstall, then restart it.
 
 ## What is included
 

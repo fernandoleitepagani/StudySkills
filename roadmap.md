@@ -168,6 +168,15 @@ There is no plan to add other harnesses.
 - Updated `roadmap2.md` with the manual media plan.
 - v1.0.0 remains gated on final compatibility and verification work.
 
+## v0.9.2 - Marketplace and Cross-Platform Updates
+
+- Added Codex plugin and marketplace manifests.
+- Added Claude marketplace validation and GUI guidance.
+- Added cross-platform `link-skills.mjs`.
+- Added Windows PowerShell, WSL, Linux, and macOS install guidance.
+- Updated the local skill and documented marketplace update paths.
+- v1.0.0 remains gated on final compatibility and verification work.
+
 ## v1.0.0 - Stable
 
 - Stable skill contract, migration guide, and security audit.

@@ -2,6 +2,8 @@
 
 One collection page. Per-skill guides live in each skill `README.md`.
 
+Install and update instructions: [installation.md](./installation.md).
+
 ## Collection conventions
 
 - Output language is PT-BR or EN. Default to PT-BR when the user writes Portuguese; otherwise EN.

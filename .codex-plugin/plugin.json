@@ -1,0 +1,25 @@
+{
+  "name": "study-skills",
+  "version": "0.9.2",
+  "description": "Agent skills for studying, learning, and creating: Canvas, notes, flashcards, exams, language, research, and practice.",
+  "author": {
+    "name": "Fernando Pagani",
+    "url": "https://github.com/fernandoleitepagani"
+  },
+  "homepage": "https://github.com/fernandoleitepagani/StudySkills",
+  "repository": "https://github.com/fernandoleitepagani/StudySkills",
+  "license": "MIT",
+  "skills": "./skills/study/",
+  "keywords": [
+    "study",
+    "canvas",
+    "learning",
+    "flashcards",
+    "agent-skills"
+  ],
+  "interface": {
+    "displayName": "StudySkills",
+    "shortDescription": "Study, learn, revise, and practice with agent skills.",
+    "category": "Productivity"
+  }
+}

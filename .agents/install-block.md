@@ -1,8 +1,8 @@
 # Canonical install block
 
-One install route per harness. Do not install both the plugin and the copied skills for the same harness.
+One install route per harness. Every skill is self-contained.
 
-Every skill is self-contained. Install the whole collection or a single skill.
+See `docs/study/installation.md` for GUI steps, WSL notes, verification, troubleshooting, and updates.
 
 ## Claude Code
 
@@ -11,18 +11,21 @@ claude plugin marketplace add fernandoleitepagani/StudySkills
 claude plugin install study-skills@studyskills
 ```
 
-The marketplace refreshes from `main`.
+Restart Claude Code after installation.
 
 ## Codex
 
 ```bash
 codex plugin marketplace add fernandoleitepagani/StudySkills
-codex plugin add study-skills@studyskills
 ```
 
-The marketplace refreshes from `main`.
+Then run `/plugins` in Codex, choose the StudySkills marketplace, and install `study-skills`. Restart Codex after installation.
+
+On Windows, use the same Windows or WSL environment as the Codex GUI.
 
 ## OpenCode
+
+macOS, Linux, and WSL:
 
 ```bash
 DISABLE_TELEMETRY=1 DO_NOT_TRACK=1 npx skills@latest add \
@@ -30,21 +33,28 @@ DISABLE_TELEMETRY=1 DO_NOT_TRACK=1 npx skills@latest add \
   --skill '*' -a opencode -g -y
 ```
 
-Update later with `npx skills@latest update`.
+Windows PowerShell:
+
+```powershell
+$env:DISABLE_TELEMETRY=1
+$env:DO_NOT_TRACK=1
+npx -y skills@latest add "fernandoleitepagani/StudySkills" --skill "*" -a opencode -g -y
+```
+
+Update with `npx skills@latest update`.
 
 ## Local development
 
 ```bash
-npx skills@latest add /absolute/path/to/StudySkills --skill '*' -a opencode -g -y
+node scripts/link-skills.mjs
 ```
 
-If the installer does not support local paths, run `./scripts/link-skills.sh`.
+Use `--force` only after checking which existing directories will be replaced. `scripts/link-skills.sh` is POSIX-only and not the recommended Windows path.
 
 ## Rules
 
-- The commands above assume the repository is hosted at `fernandoleitepagani/StudySkills`.
-- No `npm install` is required. StudySkills has no runtime dependencies.
-- Every skill is self-contained. Install the whole collection or a single skill.
-- Plugin marketplaces and OpenCode track `main`, not a release tag.
-- Use `dev` for development; merge to `main` for stable installs.
+- The commands assume the repository is hosted at `fernandoleitepagani/StudySkills`.
+- No `npm install` is required.
+- The marketplace tracks `main`; no release tag is required.
+- Use `dev` for development and `main` for stable installs.
 - Do not promise automatic updates for routes that require a manual command.
