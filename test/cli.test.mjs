@@ -22,6 +22,25 @@ async function json(result) {
   throw new Error(`Expected JSON output. stdout=${result.stdout} stderr=${result.stderr}`);
 }
 
+function hostTokenFile(home, origin) {
+  const key = new URL(origin).host.replace(/[^a-z0-9.-]/g, "_");
+  return path.join(home, ".studyskills", "canvas", key, "token.txt");
+}
+
+async function makeFakeClipboard(dir, text) {
+  const commands = process.platform === "darwin"
+    ? ["pbpaste"]
+    : ["wl-paste", "xclip", "xsel"];
+  const clip = path.join(dir, "clipboard.txt");
+  await fs.writeFile(clip, text, "utf8");
+  for (const command of commands) {
+    const file = path.join(dir, command);
+    await fs.writeFile(file, `#!/bin/sh\ncat "${clip}"\n`, "utf8");
+    await fs.chmod(file, 0o755);
+  }
+  return [dir, process.env.PATH].filter(Boolean).join(path.delimiter);
+}
+
 test("cli: token, courses, inspect, fetch, output, validate, cleanup", async () => {
   const home = await makeTempDir("studyskills-cli-home-");
   const docs = path.join(home, "Documents");
@@ -445,6 +464,194 @@ test("cli: math-check accepts valid math and rejects unclosed delimiters", async
     assert.equal(result.code, 0);
   } finally {
     await cleanupDir(dir);
+    await cleanupDir(home);
+  }
+});
+
+test("cli: token-setup reports paths and writes nothing", async () => {
+  const home = await makeTempDir("studyskills-setup-home-");
+  const mock = await startMockCanvas();
+  try {
+    const result = await runCli(
+      ["token-setup", "--base-url", mock.origin, "--no-open", "--json"],
+      { home },
+    );
+    assert.equal(result.code, 0);
+    const data = await json(result);
+    assert.equal(data.ok, true);
+    assert.equal(data.settingsUrl, `${mock.origin}/profile/settings`);
+    assert.equal(data.opened, false);
+    assert.equal(data.existing.found, false);
+    assert.match(data.tokenFile, /token\.txt$/);
+    assert.equal(JSON.stringify(data).includes("test-token"), false);
+    await assert.rejects(fs.access(path.dirname(data.tokenFile)));
+  } finally {
+    await mock.close();
+    await cleanupDir(home);
+  }
+});
+
+test("cli: token-save reads the clipboard and continues the run", async (t) => {
+  if (process.platform === "win32") {
+    t.skip("clipboard test uses a POSIX fake");
+    return;
+  }
+  const home = await makeTempDir("studyskills-clip-home-");
+  const fake = await makeTempDir("studyskills-clip-bin-");
+  const mock = await startMockCanvas();
+  try {
+    const env = { PATH: await makeFakeClipboard(fake, "test-token\n") };
+    let result = await runCli(
+      ["token-save", "--base-url", mock.origin, "--from-clipboard", "--json"],
+      { home, env },
+    );
+    assert.equal(result.code, 0);
+    let data = await json(result);
+    assert.equal(data.user.name, "Test Student");
+    assert.equal(data.source, "clipboard");
+    assert.equal(JSON.stringify(data).includes("test-token"), false);
+
+    const tokenFile = hostTokenFile(home, mock.origin);
+    assert.equal(await fs.readFile(tokenFile, "utf8"), "test-token\n");
+
+    result = await runCli(["courses", "--base-url", mock.origin, "--json"], { home });
+    assert.equal(result.code, 0);
+    data = await json(result);
+    assert.equal(data.courses.length, 1);
+  } finally {
+    await mock.close();
+    await cleanupDir(fake);
+    await cleanupDir(home);
+  }
+});
+
+test("cli: token-save reports an unavailable clipboard", async (t) => {
+  if (process.platform === "win32") {
+    t.skip("clipboard test uses a POSIX fake");
+    return;
+  }
+  const home = await makeTempDir("studyskills-clip-home-");
+  const empty = await makeTempDir("studyskills-clip-empty-");
+  const mock = await startMockCanvas();
+  try {
+    const result = await runCli(
+      ["token-save", "--base-url", mock.origin, "--from-clipboard", "--json"],
+      { home, env: { PATH: empty } },
+    );
+    assert.notEqual(result.code, 0);
+    const data = await json(result);
+    assert.equal(data.code, "CLIPBOARD_UNAVAILABLE");
+    await assert.rejects(fs.access(hostTokenFile(home, mock.origin)));
+  } finally {
+    await mock.close();
+    await cleanupDir(empty);
+    await cleanupDir(home);
+  }
+});
+
+test("cli: token-save reports an empty clipboard", async (t) => {
+  if (process.platform === "win32") {
+    t.skip("clipboard test uses a POSIX fake");
+    return;
+  }
+  const home = await makeTempDir("studyskills-clip-home-");
+  const fake = await makeTempDir("studyskills-clip-bin-");
+  const mock = await startMockCanvas();
+  try {
+    const env = { PATH: await makeFakeClipboard(fake, "") };
+    const result = await runCli(
+      ["token-save", "--base-url", mock.origin, "--from-clipboard", "--json"],
+      { home, env },
+    );
+    assert.notEqual(result.code, 0);
+    const data = await json(result);
+    assert.equal(data.code, "CLIPBOARD_EMPTY");
+    await assert.rejects(fs.access(hostTokenFile(home, mock.origin)));
+  } finally {
+    await mock.close();
+    await cleanupDir(fake);
+    await cleanupDir(home);
+  }
+});
+
+test("cli: token-save rejects a multi-line clipboard value", async (t) => {
+  if (process.platform === "win32") {
+    t.skip("clipboard test uses a POSIX fake");
+    return;
+  }
+  const home = await makeTempDir("studyskills-clip-home-");
+  const fake = await makeTempDir("studyskills-clip-bin-");
+  const mock = await startMockCanvas();
+  try {
+    const env = { PATH: await makeFakeClipboard(fake, "one\ntwo\n") };
+    const result = await runCli(
+      ["token-save", "--base-url", mock.origin, "--from-clipboard", "--json"],
+      { home, env },
+    );
+    assert.notEqual(result.code, 0);
+    const data = await json(result);
+    assert.equal(data.code, "TOKEN_MULTILINE");
+    await assert.rejects(fs.access(hostTokenFile(home, mock.origin)));
+  } finally {
+    await mock.close();
+    await cleanupDir(fake);
+    await cleanupDir(home);
+  }
+});
+
+test("cli: token-save reads token and env files", async () => {
+  const home = await makeTempDir("studyskills-file-home-");
+  const mock = await startMockCanvas();
+  try {
+    const tokenFile = path.join(home, "token.txt");
+    await fs.writeFile(tokenFile, "test-token\n", "utf8");
+    let result = await runCli(
+      ["token-save", "--base-url", mock.origin, "--file", tokenFile, "--json"],
+      { home },
+    );
+    assert.equal(result.code, 0);
+    let data = await json(result);
+    assert.equal(data.source, "file");
+
+    const envFile = path.join(home, "token.env");
+    await fs.writeFile(envFile, "CANVAS_TOKEN=test-token\n", "utf8");
+    result = await runCli(
+      ["token-save", "--base-url", mock.origin, "--file", envFile, "--json"],
+      { home },
+    );
+    assert.equal(result.code, 0);
+
+    result = await runCli(
+      ["token-save", "--base-url", mock.origin, "--file", path.join(home, "missing.txt"), "--json"],
+      { home },
+    );
+    assert.notEqual(result.code, 0);
+    data = await json(result);
+    assert.equal(data.code, "TOKEN_FILE_NOT_FOUND");
+  } finally {
+    await mock.close();
+    await cleanupDir(home);
+  }
+});
+
+test("cli: token-save does not overwrite a token after a rejected validation", async () => {
+  const home = await makeTempDir("studyskills-reject-home-");
+  const mock = await startMockCanvas({ token: "right-token" });
+  try {
+    const saved = await writeHostToken(home, mock.origin, "old-token");
+    const bad = path.join(home, "bad-token.txt");
+    await fs.writeFile(bad, "wrong-token\n", "utf8");
+    const result = await runCli(
+      ["token-save", "--base-url", mock.origin, "--file", bad, "--json"],
+      { home },
+    );
+    assert.notEqual(result.code, 0);
+    const data = await json(result);
+    assert.equal(data.code, "UNAUTHORIZED");
+    assert.equal(JSON.stringify(data).includes("wrong-token"), false);
+    assert.equal(await fs.readFile(saved, "utf8"), "old-token");
+  } finally {
+    await mock.close();
     await cleanupDir(home);
   }
 });

@@ -43,10 +43,23 @@ Rules:
 - API requests follow only same-origin redirects. A cross-origin API redirect is refused.
 - Drop the Authorization header when a file download redirects to a different host.
 - Never store the token in the repository.
-- If the token file is unreadable or is a directory, return the structured error and offer the Exit or Guide flow. Do not print a stack trace.
+- If the token file is unreadable or is a directory, return the structured error and offer the setup flow. Do not print a stack trace.
 - Remind the user to revoke the token when it is no longer needed.
 
 Redact `Authorization`, `access_token`, `verifier`, and the token value from any error that leaves the script.
+
+## Token onboarding
+
+`token-save` is the only command that writes a token.
+
+- Validate the token against `GET /api/v1/users/self` before writing it.
+- Write `token.txt` through a temp file and rename, with mode `0600` where supported.
+- Leave an existing token file untouched when validation fails.
+- Read the clipboard only after the user confirms they copied the token. Read it once per attempt. Never log, echo, return, or store the clipboard contents beyond the validated token file.
+- Do not add a generic clipboard command.
+- Do not clear the clipboard.
+- Send the opener only the Canvas settings URL. Never send the token.
+- Apply the same validation and redaction rules to a token read from a user-named file.
 
 ## Files and paths
 

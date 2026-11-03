@@ -11,8 +11,8 @@ You are running a user-invoked study workflow for one Canvas course.
 ## Invariants
 
 - **Canvas is read-only.** Only GET requests. Never submit, post, edit, upload, change settings, or commit anything to Canvas.
-- **Never ask for the Canvas token in chat.** Read it only from the token files.
-- **Never print, echo, or write the token.** Not in the plan, sources, outputs, logs, or error messages.
+- **Never ask for the Canvas token in chat.** Read it only from the clipboard or a user-named file, and write it only through `token-save`.
+- **Never print, echo, or copy the token into a plan, source, output, log, or error message.**
 - **Only write requested output files** to `~/Documents/StudySkills/<course>/<run>/`.
 - **Generate every explicitly requested format.** If a format fails, produce the rest and report the failure.
 - **No extra files.** No prompt pack, no zip, no manifest in Documents.
@@ -69,22 +69,79 @@ It falls back to the legacy global files only to help migration. A legacy fallba
 
 If the token is found but `stale` is true, warn the user that the token file is 30 or more days old. Canvas tokens commonly expire after 30 days, but the institution controls expiry. Continue to validation; do not reject the token just because of age.
 
+If `legacy` is true, offer **Move it now** and run `token-save --base-url <url> --file <legacy path> --json`. Continue either way.
+
 If `found` is false, or the token is empty, or `error` is present:
 
 1. Warn the user that no readable token was found for that Canvas host. If `error` is present, show its message.
-2. Use the native question tool with exactly two options:
+2. Use the native question tool with these options, recommended first:
+   - **Set it up now**
+   - **I already have a token file**
    - **Exit**
-   - **Guide me to create it**
-3. If the user chooses **Exit**, stop.
-4. If the user chooses **Guide me**, run:
+
+**Set it up now**
+
+Run:
+
+```bash
+node <skill-dir>/scripts/canvas.mjs token-setup --base-url <url> --json
+```
+
+Show the full-account-access warning: a Canvas token can reach the whole account. Create a dedicated token, keep it outside the repository, and revoke it when it is no longer needed.
+
+Show `settingsUrl` and these steps: open Canvas, Account, Settings, New Access Token, name it StudySkills, Generate, Copy. Canvas shows the token once. If `opened` is false, ask the user to open `settingsUrl` in a browser.
+
+If `existing.found` is true, ask **Keep it** / **Replace it**. If the user keeps it, continue to Step 2. Never overwrite a token without confirmation.
+
+Ask: **Copy the token, then choose one:**
+
+1. **I copied it** (recommended)
+2. **Use a file instead**
+3. **Cancel**
+
+- **I copied it**: run:
+
+```bash
+node <skill-dir>/scripts/canvas.mjs token-save --base-url <url> --from-clipboard --json
+```
+
+- **Use a file instead**: ask for a path as a typed answer, then run:
+
+```bash
+node <skill-dir>/scripts/canvas.mjs token-save --base-url <url> --file <path> --json
+```
+
+- **Cancel**: stop.
+
+On success, say `Connected as <user.name>.` Continue to Step 2 in the same run. Do not ask the user to run the skill again.
+
+On `UNAUTHORIZED`, the token was rejected. Most often it was copied incorrectly or expired. Offer **Copy a new token** or **Use a file instead**. Retry once.
+
+On `CLIPBOARD_UNAVAILABLE`, `CLIPBOARD_EMPTY`, or `CLIPBOARD_TOO_LARGE`, offer **Use a file instead**. On `TOKEN_EMPTY`, `TOKEN_TOO_SHORT`, `TOKEN_MULTILINE`, `TOKEN_WHITESPACE`, `TOKEN_INVALID_CHARS`, or `TOKEN_LOOKS_LIKE_URL`, say the clipboard did not contain a single token and offer **Copy again** or **Use a file instead**. On `RATE_LIMITED`, wait and retry once. On `NETWORK_ERROR`, report the error and offer **Retry** or **Exit**.
+
+**I already have a token file**
+
+Ask for the path as a typed answer, then run:
+
+```bash
+node <skill-dir>/scripts/canvas.mjs token-save --base-url <url> --file <path> --json
+```
+
+This is also the migration path for a legacy global token. Pass the legacy path, and the command writes the host-specific file.
+
+**Exit**
+
+Stop.
+
+Never ask for the token in chat. Never print it. Never show it in a question option.
+
+If the user asks for the manual steps, run:
 
 ```bash
 node <skill-dir>/scripts/canvas.mjs token-guide --base-url <url> --json
 ```
 
-Show the returned guide. It includes the full-account-access warning, the dedicated-token recommendation, and the revoke reminder. Tell the user to save the token and run `/study-canvas` again from the beginning. Then **stop**. Do not retry, validate, or continue.
-
-If a token is found, continue.
+Show the guide. Do not make it the default path.
 
 ## Step 2 - Interview
 
@@ -109,7 +166,7 @@ node <skill-dir>/scripts/canvas.mjs courses --base-url <url> --json
 
 If validation fails with `UNAUTHORIZED`, show the returned hint. Say the token exists but Canvas rejected it. The most likely cause is expiry, and Canvas tokens commonly expire after 30 days. Other causes are a revoked token, a token for another Canvas host, or a token without API access.
 
-Offer **Replace token** or **Exit** with the native question tool. If the user chooses **Replace token**, run the token guide, tell them which host-specific file to edit, and stop. Do not retry or loop.
+Offer **Replace token** or **Exit** with the native question tool. If the user chooses **Replace token**, run the Step 1 setup flow, retry `courses` once, and stop if it still fails. Do not loop.
 
 If validation fails with `FORBIDDEN`, the token is valid but lacks access to that endpoint. Report the endpoint and stop; do not tell the user to recreate the token automatically.
 
@@ -490,8 +547,8 @@ Materials and temporary chunk notes are never kept.
 
 Stop immediately and report when:
 
-- No token and the user declines the guide.
-- The token file is unreadable and the user declines the guide.
+- No token and the user declines setup.
+- The token file is unreadable and the user declines setup.
 - `UNAUTHORIZED`: the token was rejected, likely expired or revoked.
 - `FORBIDDEN` on the course root, or `ALL_SECTIONS_FORBIDDEN` when every core section is forbidden and there are no links for a manual-materials report. A single forbidden section is a partial run, not a stop.
 - `NO_USABLE_MATERIALS`: the accessible sections contained no readable material and no manual links.

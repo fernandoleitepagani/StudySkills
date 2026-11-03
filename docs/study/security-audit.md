@@ -29,6 +29,9 @@ This audit covers the 13 StudySkills skills and their shared self-contained core
 | --- | --- | --- |
 | Token printed in chat or output | Account compromise | Token never requested in chat; outputs scanned; redaction |
 | Token committed or copied into Documents | Credential leak | Files live under `~/.studyskills`; repository guidance |
+| Clipboard read exposes unrelated data | Privacy leak | Read only after explicit user confirmation; single read; never logged or returned |
+| Bad token overwrites a working token | Access loss | Validate before write; temp file and rename; leave the old file on failure |
+| Token leaked through setup output | Account compromise | Return only host, path, and user name; redact errors; never return the token |
 | Canvas write operation | Account/course mutation | GET-only guard and read allowlist |
 | Cross-origin redirect leaks Authorization | Token theft | Redirect checks and header dropping |
 | Prompt injection in course content | Agent follows untrusted instructions | Course content treated as data; no instruction execution |
@@ -50,7 +53,9 @@ This audit covers the 13 StudySkills skills and their shared self-contained core
 - Cross-origin API redirects are refused.
 - Authorization is dropped on cross-origin downloads.
 - Tokens are host-specific.
-- Token files are written with restrictive permissions where supported.
+- Token onboarding validates the token with Canvas before writing it.
+- Token files are written through a temp file and rename, with restrictive permissions where supported.
+- Clipboard reads are explicit, single-use, and never logged.
 - Token values are redacted from errors.
 - Outputs are scanned for token leakage.
 - File names are sanitized.

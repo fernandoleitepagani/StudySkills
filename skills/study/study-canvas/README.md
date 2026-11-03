@@ -10,15 +10,16 @@ You have a Canvas course and want finished study material without downloading ev
 
 ## What you need
 
-A Canvas URL and a personal access token in the host-specific token file. The skill never asks for the token in chat.
+A Canvas URL and a personal access token. The skill opens the Canvas token page and saves the token from your clipboard or a file. It never asks for the token in chat.
 
 ## How to use it
 
 1. Install StudySkills or this skill alone. See the [root README](../../../README.md).
 2. Run `/study-canvas` in Claude Code, OpenCode, or Codex.
-3. Answer the questions. The native question tool accepts a typed answer.
-4. Approve the plan before the skill fetches course material.
-5. Read the final report for outputs, skips, fallbacks, and sources.
+3. On the first run, choose **Set it up now**. The skill opens Canvas and saves the token for you.
+4. Answer the questions. The native question tool accepts a typed answer.
+5. Approve the plan before the skill fetches course material.
+6. Read the final report for outputs, skips, fallbacks, and sources.
 
 The skill offers **Everything within safe limits** or **Choose specific materials** after it inspects the course. A token file older than 30 days gets a warning. When Canvas rejects the token, the skill says expiry is the likely cause.
 
@@ -63,8 +64,10 @@ Outputs go to:
 
 ## Troubleshooting
 
-- **No token:** choose **Guide me** and follow the host-specific path.
-- **Token rejected:** Many institutions expire Canvas tokens after 30 days. Create a new token and replace the old value.
+- **No token:** choose **Set it up now**, or save the token in a file and give the skill the path.
+- **Clipboard unavailable:** save the token in a file, for example `~/Downloads/token.txt`, and give the skill the path.
+- **Token rejected:** Many institutions expire Canvas tokens after 30 days. Create a new token, then choose **Replace token**.
+- **File import fails:** check the path and the file permissions.
 - **403 on one section:** the token works, but that section is restricted. The skill continues with the rest.
 - **403 on every core section:** the course exposes no accessible core section. Try another course or attach local files.
 - **Rate limit:** wait, then retry.

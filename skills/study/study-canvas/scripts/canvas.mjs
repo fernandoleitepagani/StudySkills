@@ -4,16 +4,26 @@ import fs from "node:fs/promises";
 import {
   CanvasClient,
   CanvasError,
+  normalizeBaseUrl,
   validateToken,
 } from "./lib/canvas-client.mjs";
 import {
   createTokenGuide,
   getTokenStatus,
+  parseEnvToken,
   redactSecrets,
   requireToken,
+  tokenPaths,
 } from "./lib/token.mjs";
 import {
+  canvasSettingsUrl,
+  openExternal,
+  readClipboard,
+  saveToken,
+} from "./lib/token-setup.mjs";
+import {
   ensureDir,
+  expandHome,
   formatBytes,
   sanitizeFilename,
   uniquePath,
@@ -105,6 +115,32 @@ function safeError(error) {
     message: redactSecrets(error?.message ?? String(error)),
     body: error instanceof CanvasError ? error.body : null,
   };
+}
+
+const TOKEN_SAVE_HINTS = {
+  CLIPBOARD_UNAVAILABLE: "Copy the token, or save it in a file and pass the path.",
+  CLIPBOARD_EMPTY: "Copy the token again, then retry.",
+  CLIPBOARD_TOO_LARGE: "The clipboard does not contain a single token.",
+  TOKEN_EMPTY: "The pasted value does not look like a Canvas token.",
+  TOKEN_TOO_LONG: "The pasted value does not look like a Canvas token.",
+  TOKEN_TOO_SHORT: "The pasted value does not look like a Canvas token.",
+  TOKEN_MULTILINE: "The pasted value does not look like a Canvas token.",
+  TOKEN_WHITESPACE: "The pasted value does not look like a Canvas token.",
+  TOKEN_INVALID_CHARS: "The pasted value does not look like a Canvas token.",
+  TOKEN_LOOKS_LIKE_URL: "The pasted value does not look like a Canvas token.",
+  UNAUTHORIZED: "The token was rejected. Create a new token and retry.",
+  FORBIDDEN: "The token is valid but Canvas refused the account endpoint.",
+  RATE_LIMITED: "Wait, then retry.",
+  NETWORK_ERROR: "Check the connection, then retry.",
+  TOKEN_FILE_NOT_FOUND: "Check the path and retry.",
+  TOKEN_FILE_UNREADABLE: "Check the path and the file permissions.",
+  TOKEN_PATH_NOT_FILE: "Choose a file path, not a directory.",
+  TOKEN_WRITE_ERROR: "Check permissions on the token directory.",
+  TOKEN_DIRECTORY_ERROR: "Check permissions on the token directory.",
+};
+
+function tokenSaveHint(code) {
+  return TOKEN_SAVE_HINTS[code] ?? "Check the message and try again.";
 }
 
 async function attempt(label, fn, errors) {
@@ -987,6 +1023,8 @@ async function main() {
         ok: true,
         commands: [
           "token-status --base-url URL",
+          "token-setup --base-url URL [--no-open]",
+          "token-save --base-url URL (--from-clipboard | --file PATH)",
           "token-guide --base-url URL",
           "courses --base-url URL",
           "inspect --base-url URL --course-id ID",
@@ -1000,6 +1038,8 @@ async function main() {
         "",
         "Commands:",
         "  token-status --base-url URL",
+        "  token-setup --base-url URL [--no-open]",
+        "  token-save --base-url URL (--from-clipboard | --file PATH)",
         "  token-guide --base-url URL",
         "  courses --base-url URL",
         "  inspect --base-url URL --course-id ID",
@@ -1042,6 +1082,86 @@ async function main() {
           ? status.error.message
           : `No Canvas token found.\nLooked in:\n  ${(status.paths ?? []).join("\n  ")}`,
     );
+    return;
+  }
+
+  if (command === "token-setup") {
+    const baseUrl = requireFlag("base-url");
+    const normalized = normalizeBaseUrl(baseUrl);
+    const paths = tokenPaths(normalized);
+    const status = await getTokenStatus(normalized);
+    const settingsUrl = canvasSettingsUrl(normalized);
+    const opened = flags["no-open"] ? { opened: false, command: null } : await openExternal(settingsUrl);
+    const existing = {
+      found: Boolean(status.found),
+      path: status.path ?? null,
+      legacy: Boolean(status.legacy),
+      stale: Boolean(status.stale),
+    };
+    if (status.error) existing.error = status.error;
+    respond(
+      {
+        ok: true,
+        host: paths.host,
+        settingsUrl,
+        opened: opened.opened,
+        tokenFile: paths.txt,
+        envFile: paths.env,
+        existing,
+      },
+      [
+        `Canvas token setup for ${paths.host}`,
+        "",
+        `Open: ${settingsUrl}`,
+        `Save to: ${paths.txt}`,
+        "",
+        "The token is checked with Canvas before it is saved.",
+      ].join("\n"),
+    );
+    return;
+  }
+
+  if (command === "token-save") {
+    const baseUrl = requireFlag("base-url");
+    const fromClipboard = Boolean(flags["from-clipboard"]);
+    const fileFlag = flags.file && flags.file !== true ? String(flags.file) : null;
+    if (fromClipboard && fileFlag) {
+      fail("INVALID_ARGUMENT", "Use either --from-clipboard or --file, not both.");
+    }
+    if (!fromClipboard && !fileFlag) {
+      fail("MISSING_ARGUMENT", "Use --from-clipboard or --file <path>.");
+    }
+
+    let token = null;
+    try {
+      if (fromClipboard) {
+        const clip = await readClipboard();
+        token = clip.token;
+      } else {
+        const file = expandHome(fileFlag);
+        let text;
+        try {
+          text = await fs.readFile(file, "utf8");
+        } catch (error) {
+          if (error?.code === "ENOENT") fail("TOKEN_FILE_NOT_FOUND", `No token file at ${file}.`);
+          if (error?.code === "EISDIR") fail("TOKEN_PATH_NOT_FILE", `${file} is a directory, not a token file.`);
+          fail("TOKEN_FILE_UNREADABLE", `Cannot read ${file}: ${error.message}`);
+        }
+        token = parseEnvToken(text) || text;
+      }
+
+      const paths = tokenPaths(baseUrl);
+      const result = await saveToken({ baseUrl, token, tokenFile: paths.txt });
+      const source = fromClipboard ? "clipboard" : "file";
+      respond(
+        { ok: true, ...result, source },
+        `Saved the Canvas token for ${result.host}. Connected as ${result.user.name ?? "your Canvas user"}.`,
+      );
+    } catch (error) {
+      fail(error.code ?? "TOKEN_SAVE_FAILED", redactSecrets(error.message, token), {
+        hint: tokenSaveHint(error.code),
+      });
+    }
     return;
   }
 

@@ -25,7 +25,7 @@ Do not use it when:
 
 **Where does the token go?**
 
-In `~/.studyskills/canvas/<host>/token.txt` or `.env`. Legacy global files are read only as a migration fallback. A token file older than 30 days gets a warning. If Canvas rejects the token, expiry is the most likely cause; Canvas tokens commonly expire after 30 days. The skill never asks for it in chat.
+The skill saves it in `~/.studyskills/canvas/<host>/token.txt`. It also reads `token.env`. Legacy global files are read only as a migration fallback. A token file older than 30 days gets a warning. If Canvas rejects the token, expiry is the most likely cause; Canvas tokens commonly expire after 30 days. The skill never asks for the token in chat.
 
 **Does it change anything in Canvas?**
 
@@ -33,7 +33,7 @@ No. It only makes GET requests. It cannot submit assignments, post discussions, 
 
 **What if no token is found?**
 
-The skill warns you and offers Exit or Guide me. The guide creates the folder and an empty token file, then exits so you can save the token and run the skill again. If the token file is unreadable or is a directory, the same guide flow is offered.
+The skill offers three choices: **Set it up now**, **I already have a token file**, and **Exit**. **Set it up now** opens the Canvas token page, reads the token from your clipboard, checks it with Canvas, and saves it. You can pick a file instead. The run continues after a successful save. If the token file is unreadable or is a directory, the same setup flow is offered.
 
 **What formats can it produce?**
 
@@ -76,6 +76,7 @@ The skill shows a plan. After approval, it fetches the course and saves:
 - Inline images are downloaded only from Canvas. External images are listed as links.
 - Courses with more than 500 pages report skipped pages.
 - If a requested format fails, a Markdown fallback is written and reported.
+- Clipboard access needs a local desktop session. On a remote shell, save the token in a file and give the skill the path.
 
 If Canvas forbids one section, such as Files or Pages, the skill continues with the sections it can read and reports the partial result. It stops only when every core section is forbidden or no readable material remains.
 

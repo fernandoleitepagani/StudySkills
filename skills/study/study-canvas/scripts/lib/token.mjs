@@ -15,7 +15,7 @@ async function readTokenFile(file) {
   }
 }
 
-function cleanToken(value) {
+export function cleanToken(value) {
   const trimmed = String(value ?? "").replace(/^\uFEFF/, "").trim();
   if (!trimmed) return "";
   if (
@@ -27,7 +27,7 @@ function cleanToken(value) {
   return trimmed;
 }
 
-function parseEnvToken(text) {
+export function parseEnvToken(text) {
   if (!text) return "";
   for (const line of String(text).replace(/^\uFEFF/, "").split(/\r?\n/)) {
     const trimmed = line.trim();
