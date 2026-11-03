@@ -6,7 +6,7 @@
 
 Study skills for Claude Code, OpenCode, and Codex.
 
-Current release: `v1.1.1`.
+Current release: `v1.2.0`.
 
 [![License: MIT](https://img.shields.io/badge/license-MIT-1f3a5f.svg)](./LICENSE)
 [![Node](https://img.shields.io/badge/node-%3E%3D20-1f3a5f.svg)](https://nodejs.org)
@@ -228,7 +228,7 @@ The skills never add a prompt pack, zip file, source copy, or extra format.
 
 ## Roadmap
 
-Release history is in [docs/study/release-notes-v1.1.1.md](./docs/study/release-notes-v1.1.1.md). The media plan is in [roadmap2.md](./roadmap2.md).
+Release history is in [docs/study/release-notes-v1.2.0.md](./docs/study/release-notes-v1.2.0.md). The media plan is in [roadmap2.md](./roadmap2.md).
 
 ## License
 
