@@ -61,6 +61,20 @@ Redact `Authorization`, `access_token`, `verifier`, and the token value from any
 - Send the opener only the Canvas settings URL. Never send the token.
 - Apply the same validation and redaction rules to a token read from a user-named file.
 
+## Local capture page
+
+- Bind `127.0.0.1` only. Never `0.0.0.0`.
+- Use a random port and a random nonce in the path.
+- Serve one page. Close the server after a successful save, three failed attempts, or the timeout.
+- Check `Origin` and `Sec-Fetch-Site` on POST.
+- Reject bodies over 8 KB.
+- Use no JavaScript, no external assets, and no analytics.
+- Set `Cache-Control: no-store`, `Referrer-Policy: no-referrer`, `X-Content-Type-Options: nosniff`, and a restrictive `Content-Security-Policy`.
+- Never log the token, the request body, or the form value.
+- Never put the token in a URL or query string.
+- Offer the page only after explicit user consent.
+- Fail closed with `REMOTE_SESSION` on a remote shell.
+
 ## Files and paths
 
 - Sanitize every filename.

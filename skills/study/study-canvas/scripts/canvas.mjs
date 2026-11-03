@@ -20,6 +20,7 @@ import {
   openExternal,
   readClipboard,
   saveToken,
+  startCaptureServer,
 } from "./lib/token-setup.mjs";
 import {
   ensureDir,
@@ -141,6 +142,19 @@ const TOKEN_SAVE_HINTS = {
 
 function tokenSaveHint(code) {
   return TOKEN_SAVE_HINTS[code] ?? "Check the message and try again.";
+}
+
+const CAPTURE_HINTS = {
+  REMOTE_SESSION: "Use --file instead.",
+  OPEN_FAILED: "Open the URL manually, or use --file.",
+  CAPTURE_TIMEOUT: "Retry, or use --file instead.",
+  CAPTURE_TOO_MANY_ATTEMPTS: "Use --file instead.",
+  CAPTURE_CLOSED: "Retry, or use --file instead.",
+  CAPTURE_START_FAILED: "Retry, or use --file instead.",
+};
+
+function captureHint(code) {
+  return CAPTURE_HINTS[code] ?? "Retry, or use --file instead.";
 }
 
 async function attempt(label, fn, errors) {
@@ -1025,6 +1039,7 @@ async function main() {
           "token-status --base-url URL",
           "token-setup --base-url URL [--no-open]",
           "token-save --base-url URL (--from-clipboard | --file PATH)",
+          "token-capture --base-url URL [--no-open] [--timeout-ms N]",
           "token-guide --base-url URL",
           "courses --base-url URL",
           "inspect --base-url URL --course-id ID",
@@ -1040,6 +1055,7 @@ async function main() {
         "  token-status --base-url URL",
         "  token-setup --base-url URL [--no-open]",
         "  token-save --base-url URL (--from-clipboard | --file PATH)",
+        "  token-capture --base-url URL [--no-open] [--timeout-ms N]",
         "  token-guide --base-url URL",
         "  courses --base-url URL",
         "  inspect --base-url URL --course-id ID",
@@ -1161,6 +1177,66 @@ async function main() {
       fail(error.code ?? "TOKEN_SAVE_FAILED", redactSecrets(error.message, token), {
         hint: tokenSaveHint(error.code),
       });
+    }
+    return;
+  }
+
+  if (command === "token-capture") {
+    const baseUrl = requireFlag("base-url");
+    const normalized = normalizeBaseUrl(baseUrl);
+    const noOpen = Boolean(flags["no-open"]);
+
+    if (!noOpen && (process.env.SSH_CONNECTION || process.env.SSH_TTY)) {
+      fail("REMOTE_SESSION", "The capture page needs a local desktop browser. Use --file instead.", {
+        hint: captureHint("REMOTE_SESSION"),
+      });
+    }
+
+    const timeoutFlag = flags["timeout-ms"];
+    if (timeoutFlag === true) {
+      fail("INVALID_ARGUMENT", "Missing value for --timeout-ms.");
+    }
+    const timeoutMs = timeoutFlag === undefined ? 120000 : Number(timeoutFlag);
+    if (!Number.isFinite(timeoutMs) || timeoutMs <= 0 || timeoutMs > 600000) {
+      fail("INVALID_ARGUMENT", "Use --timeout-ms between 1 and 600000.");
+    }
+
+    const paths = tokenPaths(normalized);
+    let server;
+    try {
+      server = await startCaptureServer({
+        baseUrl: normalized,
+        tokenFile: paths.txt,
+        timeoutMs,
+      });
+      server.result.catch(() => {});
+    } catch (error) {
+      fail(error.code ?? "CAPTURE_START_FAILED", redactSecrets(error.message), {
+        hint: captureHint(error.code),
+      });
+    }
+
+    try {
+      if (!noOpen) {
+        const opened = await openExternal(server.url);
+        if (!opened.opened) {
+          await server.close();
+          fail("OPEN_FAILED", "Could not open a browser for the capture page.", {
+            hint: captureHint("OPEN_FAILED"),
+          });
+        }
+      }
+
+      process.stdout.write(`${JSON.stringify({ listening: true, url: server.url })}\n`);
+      const saved = await server.result;
+      process.stdout.write(`${JSON.stringify({ saved: true, ...saved })}\n`);
+    } catch (error) {
+      await server.close();
+      fail(error.code ?? "CAPTURE_FAILED", redactSecrets(error.message), {
+        hint: captureHint(error.code),
+      });
+    } finally {
+      await server.close();
     }
     return;
   }

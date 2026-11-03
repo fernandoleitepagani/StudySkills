@@ -33,7 +33,7 @@ No. It only makes GET requests. It cannot submit assignments, post discussions, 
 
 **What if no token is found?**
 
-The skill offers three choices: **Set it up now**, **I already have a token file**, and **Exit**. **Set it up now** opens the Canvas token page, reads the token from your clipboard, checks it with Canvas, and saves it. You can pick a file instead. The run continues after a successful save. If the token file is unreadable or is a directory, the same setup flow is offered.
+The skill offers four choices: **Set it up now**, **Use the browser page**, **I already have a token file**, and **Exit**. **Set it up now** opens the Canvas token page, reads the token from your clipboard, checks it with Canvas, and saves it. **Use the browser page** serves a local page where you paste the token. You can pick a file instead. The run continues after a successful save. If the token file is unreadable or is a directory, the same setup flow is offered.
 
 **What formats can it produce?**
 
@@ -76,7 +76,7 @@ The skill shows a plan. After approval, it fetches the course and saves:
 - Inline images are downloaded only from Canvas. External images are listed as links.
 - Courses with more than 500 pages report skipped pages.
 - If a requested format fails, a Markdown fallback is written and reported.
-- Clipboard access needs a local desktop session. On a remote shell, save the token in a file and give the skill the path.
+- Clipboard access and the browser token page need a local desktop session. On a remote shell, save the token in a file and give the skill the path.
 
 If Canvas forbids one section, such as Files or Pages, the skill continues with the sections it can read and reports the partial result. It stops only when every core section is forbidden or no readable material remains.
 

@@ -32,6 +32,9 @@ This audit covers the 13 StudySkills skills and their shared self-contained core
 | Clipboard read exposes unrelated data | Privacy leak | Read only after explicit user confirmation; single read; never logged or returned |
 | Bad token overwrites a working token | Access loss | Validate before write; temp file and rename; leave the old file on failure |
 | Token leaked through setup output | Account compromise | Return only host, path, and user name; redact errors; never return the token |
+| Another local page posts to the capture endpoint | Token injection or overwrite | 127.0.0.1 bind, random nonce path, Origin and Sec-Fetch-Site checks, single use |
+| Capture server left running | Local exposure | 120 second default timeout, close after success, close in `finally` |
+| Token exposed in page output or logs | Account compromise | No token in HTML, URLs, logs, or errors; escape all rendered values |
 | Canvas write operation | Account/course mutation | GET-only guard and read allowlist |
 | Cross-origin redirect leaks Authorization | Token theft | Redirect checks and header dropping |
 | Prompt injection in course content | Agent follows untrusted instructions | Course content treated as data; no instruction execution |
@@ -56,6 +59,9 @@ This audit covers the 13 StudySkills skills and their shared self-contained core
 - Token onboarding validates the token with Canvas before writing it.
 - Token files are written through a temp file and rename, with restrictive permissions where supported.
 - Clipboard reads are explicit, single-use, and never logged.
+- The local capture page binds to `127.0.0.1` and uses a one-time nonce.
+- Capture pages set `no-store`, `no-referrer`, `nosniff`, and a restrictive CSP.
+- The capture server closes after success, three failures, or the timeout.
 - Token values are redacted from errors.
 - Outputs are scanned for token leakage.
 - File names are sanitized.

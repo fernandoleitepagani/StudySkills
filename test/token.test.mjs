@@ -8,6 +8,7 @@ import {
   canvasSettingsUrl,
   sanitizeToken,
   saveToken,
+  startCaptureServer,
 } from "../skills/study/study-canvas/scripts/lib/token-setup.mjs";
 
 const BASE = "https://school.instructure.com";
@@ -271,6 +272,193 @@ test("token-setup: refuses a directory at the token path", async () => {
       (error) => error.code === "TOKEN_PATH_NOT_FILE",
     );
   } finally {
+    await mock.close();
+    await cleanupDir(home);
+  }
+});
+
+function capturePost(url, token, headers = {}) {
+  return fetch(url, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/x-www-form-urlencoded",
+      Origin: new URL(url).origin,
+      ...headers,
+    },
+    body: new URLSearchParams({ token }),
+  });
+}
+
+test("token-capture: serves the form and saves a valid token", async () => {
+  const home = await makeTempDir();
+  const mock = await startMockCanvas();
+  const tokenFile = path.join(home, "token.txt");
+  const server = await startCaptureServer({ baseUrl: mock.origin, tokenFile, timeoutMs: 2000 });
+  try {
+    const page = await fetch(server.url);
+    assert.equal(page.status, 200);
+    assert.equal(page.headers.get("cache-control"), "no-store");
+    const html = await page.text();
+    assert.match(html, /name="token"/);
+    assert.match(html, /Save token/);
+    assert.equal(html.includes("test-token"), false);
+
+    const response = await capturePost(server.url, "test-token");
+    assert.equal(response.status, 200);
+    assert.equal(response.headers.get("cache-control"), "no-store");
+    const success = await response.text();
+    assert.match(success, /Connected as <strong>Test Student<\/strong>/);
+
+    const saved = await server.result;
+    assert.equal(saved.user.name, "Test Student");
+    assert.equal(await fs.readFile(tokenFile, "utf8"), "test-token\n");
+    if (process.platform !== "win32") {
+      assert.equal((await fs.stat(tokenFile)).mode & 0o777, 0o600);
+    }
+  } finally {
+    await server.close();
+    await mock.close();
+    await cleanupDir(home);
+  }
+});
+
+test("token-capture: rejects a wrong nonce", async () => {
+  const home = await makeTempDir();
+  const mock = await startMockCanvas();
+  const tokenFile = path.join(home, "token.txt");
+  const server = await startCaptureServer({ baseUrl: mock.origin, tokenFile, timeoutMs: 2000 });
+  try {
+    const response = await fetch(`${new URL(server.url).origin}/capture/wrong`);
+    assert.equal(response.status, 404);
+    assert.equal(response.headers.get("cache-control"), "no-store");
+  } finally {
+    const rejection = assert.rejects(server.result, (error) => error.code === "CAPTURE_CLOSED");
+    await server.close();
+    await rejection;
+    await mock.close();
+    await cleanupDir(home);
+  }
+});
+
+test("token-capture: rejects a foreign origin and writes nothing", async () => {
+  const home = await makeTempDir();
+  const mock = await startMockCanvas();
+  const tokenFile = path.join(home, "token.txt");
+  const server = await startCaptureServer({ baseUrl: mock.origin, tokenFile, timeoutMs: 2000 });
+  try {
+    const response = await capturePost(server.url, "test-token", { Origin: "https://evil.example" });
+    assert.equal(response.status, 403);
+    await response.text();
+    await assert.rejects(fs.access(tokenFile));
+  } finally {
+    const rejection = assert.rejects(server.result, (error) => error.code === "CAPTURE_CLOSED");
+    await server.close();
+    await rejection;
+    await mock.close();
+    await cleanupDir(home);
+  }
+});
+
+test("token-capture: rejects a body over 8 KB", async () => {
+  const home = await makeTempDir();
+  const mock = await startMockCanvas();
+  const tokenFile = path.join(home, "token.txt");
+  const server = await startCaptureServer({ baseUrl: mock.origin, tokenFile, timeoutMs: 2000 });
+  try {
+    const response = await fetch(server.url, {
+      method: "POST",
+      headers: { "Content-Type": "application/x-www-form-urlencoded", Origin: new URL(server.url).origin },
+      body: `token=${"x".repeat(9000)}`,
+    });
+    assert.equal(response.status, 413);
+    await assert.rejects(fs.access(tokenFile));
+  } finally {
+    const rejection = assert.rejects(server.result, (error) => error.code === "CAPTURE_CLOSED");
+    await server.close();
+    await rejection;
+    await mock.close();
+    await cleanupDir(home);
+  }
+});
+
+test("token-capture: retries after a rejected token", async () => {
+  const home = await makeTempDir();
+  const mock = await startMockCanvas({ token: "right-token" });
+  const tokenFile = path.join(home, "token.txt");
+  const server = await startCaptureServer({ baseUrl: mock.origin, tokenFile, timeoutMs: 3000 });
+  try {
+    let response = await capturePost(server.url, "wrong-token");
+    assert.equal(response.status, 400);
+    let html = await response.text();
+    assert.match(html, /Canvas 401/);
+    assert.equal(html.includes("wrong-token"), false);
+
+    response = await capturePost(server.url, "right-token");
+    assert.equal(response.status, 200);
+    const saved = await server.result;
+    assert.equal(saved.user.name, "Test Student");
+    assert.equal(await fs.readFile(tokenFile, "utf8"), "right-token\n");
+  } finally {
+    await server.close();
+    await mock.close();
+    await cleanupDir(home);
+  }
+});
+
+test("token-capture: stops after three rejected tokens", async () => {
+  const home = await makeTempDir();
+  const mock = await startMockCanvas({ token: "right-token" });
+  const tokenFile = path.join(home, "token.txt");
+  const server = await startCaptureServer({ baseUrl: mock.origin, tokenFile, timeoutMs: 3000 });
+  try {
+    for (let attempt = 1; attempt <= 2; attempt += 1) {
+      const response = await capturePost(server.url, "wrong-token");
+      assert.equal(response.status, 400);
+      await response.text();
+    }
+    const rejection = assert.rejects(server.result, (error) => error.code === "CAPTURE_TOO_MANY_ATTEMPTS");
+    const third = await capturePost(server.url, "wrong-token");
+    assert.equal(third.status, 429);
+    await third.text();
+    await rejection;
+    await assert.rejects(fs.access(tokenFile));
+  } finally {
+    await server.close();
+    await mock.close();
+    await cleanupDir(home);
+  }
+});
+
+test("token-capture: times out and writes nothing", async () => {
+  const home = await makeTempDir();
+  const mock = await startMockCanvas();
+  const tokenFile = path.join(home, "token.txt");
+  const server = await startCaptureServer({ baseUrl: mock.origin, tokenFile, timeoutMs: 50 });
+  try {
+    await assert.rejects(server.result, (error) => error.code === "CAPTURE_TIMEOUT");
+    await assert.rejects(fs.access(tokenFile));
+  } finally {
+    await server.close();
+    await mock.close();
+    await cleanupDir(home);
+  }
+});
+
+test("token-capture: escapes the Canvas user name", async () => {
+  const home = await makeTempDir();
+  const mock = await startMockCanvas();
+  mock.fixture.user.name = "<b>Test</b>";
+  const tokenFile = path.join(home, "token.txt");
+  const server = await startCaptureServer({ baseUrl: mock.origin, tokenFile, timeoutMs: 2000 });
+  try {
+    const response = await capturePost(server.url, "test-token");
+    assert.equal(response.status, 200);
+    const html = await response.text();
+    assert.match(html, /&lt;b&gt;Test&lt;\/b&gt;/);
+    assert.equal(html.includes("<b>Test</b>"), false);
+    await server.result;
+  } finally {
+    await server.close();
     await mock.close();
     await cleanupDir(home);
   }

@@ -10,13 +10,13 @@ You have a Canvas course and want finished study material without downloading ev
 
 ## What you need
 
-A Canvas URL and a personal access token. The skill opens the Canvas token page and saves the token from your clipboard or a file. It never asks for the token in chat.
+A Canvas URL and a personal access token. The skill opens the Canvas token page and saves the token from your clipboard, a file, or a local browser page. It never asks for the token in chat.
 
 ## How to use it
 
 1. Install StudySkills or this skill alone. See the [root README](../../../README.md).
 2. Run `/study-canvas` in Claude Code, OpenCode, or Codex.
-3. On the first run, choose **Set it up now**. The skill opens Canvas and saves the token for you.
+3. On the first run, choose **Set it up now**. The skill opens Canvas and saves the token for you. Choose **Use the browser page** when clipboard access is blocked.
 4. Answer the questions. The native question tool accepts a typed answer.
 5. Approve the plan before the skill fetches course material.
 6. Read the final report for outputs, skips, fallbacks, and sources.
@@ -65,7 +65,9 @@ Outputs go to:
 ## Troubleshooting
 
 - **No token:** choose **Set it up now**, or save the token in a file and give the skill the path.
-- **Clipboard unavailable:** save the token in a file, for example `~/Downloads/token.txt`, and give the skill the path.
+- **Clipboard unavailable:** choose **Use the browser page**, or save the token in a file, for example `~/Downloads/token.txt`, and give the skill the path.
+- **Browser page unavailable:** the page needs a local desktop browser. Save the token in a file instead.
+- **Remote session:** the page cannot reach your local browser. Save the token in a file.
 - **Token rejected:** Many institutions expire Canvas tokens after 30 days. Create a new token, then choose **Replace token**.
 - **File import fails:** check the path and the file permissions.
 - **403 on one section:** the token works, but that section is restricted. The skill continues with the rest.

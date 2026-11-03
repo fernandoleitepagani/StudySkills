@@ -76,6 +76,7 @@ If `found` is false, or the token is empty, or `error` is present:
 1. Warn the user that no readable token was found for that Canvas host. If `error` is present, show its message.
 2. Use the native question tool with these options, recommended first:
    - **Set it up now**
+   - **Use the browser page**
    - **I already have a token file**
    - **Exit**
 
@@ -117,7 +118,23 @@ On success, say `Connected as <user.name>.` Continue to Step 2 in the same run. 
 
 On `UNAUTHORIZED`, the token was rejected. Most often it was copied incorrectly or expired. Offer **Copy a new token** or **Use a file instead**. Retry once.
 
-On `CLIPBOARD_UNAVAILABLE`, `CLIPBOARD_EMPTY`, or `CLIPBOARD_TOO_LARGE`, offer **Use a file instead**. On `TOKEN_EMPTY`, `TOKEN_TOO_SHORT`, `TOKEN_MULTILINE`, `TOKEN_WHITESPACE`, `TOKEN_INVALID_CHARS`, or `TOKEN_LOOKS_LIKE_URL`, say the clipboard did not contain a single token and offer **Copy again** or **Use a file instead**. On `RATE_LIMITED`, wait and retry once. On `NETWORK_ERROR`, report the error and offer **Retry** or **Exit**.
+On `CLIPBOARD_UNAVAILABLE`, `CLIPBOARD_EMPTY`, or `CLIPBOARD_TOO_LARGE`, offer **Use the browser page** or **Use a file instead**. On `TOKEN_EMPTY`, `TOKEN_TOO_SHORT`, `TOKEN_MULTILINE`, `TOKEN_WHITESPACE`, `TOKEN_INVALID_CHARS`, or `TOKEN_LOOKS_LIKE_URL`, say the clipboard did not contain a single token and offer **Copy again**, **Use the browser page**, or **Use a file instead**. On `RATE_LIMITED`, wait and retry once. On `NETWORK_ERROR`, report the error and offer **Retry** or **Exit**.
+
+**Use the browser page**
+
+Run:
+
+```bash
+node <skill-dir>/scripts/canvas.mjs token-capture --base-url <url> --json
+```
+
+Give the shell call a timeout of at least 180000 ms. The command opens a local page and waits for the token. The browser opens before the command waits, so do not read the URL from stdout first.
+
+Tell the user: paste the token into the page and choose Save. The page shows `Connected as <name>` when it succeeds. Do not ask for the token in chat.
+
+On success, say `Connected as <user.name>.` Continue to Step 2 in the same run.
+
+On `OPEN_FAILED` or `REMOTE_SESSION`, explain that the page needs a local desktop browser, then offer **Use a file instead**. On `CAPTURE_TIMEOUT`, offer **Retry** or **Use a file instead**. On `CAPTURE_TOO_MANY_ATTEMPTS`, stop and offer **Use a file instead**.
 
 **I already have a token file**
 

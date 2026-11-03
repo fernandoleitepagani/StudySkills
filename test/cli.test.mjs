@@ -2,8 +2,10 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import path from "node:path";
 import fs from "node:fs/promises";
+import { spawn } from "node:child_process";
 import { startMockCanvas } from "../test-support/mock-canvas.mjs";
 import {
+  CANVAS_SCRIPT,
   makeTempDir,
   cleanupDir,
   runCli,
@@ -650,6 +652,94 @@ test("cli: token-save does not overwrite a token after a rejected validation", a
     assert.equal(data.code, "UNAUTHORIZED");
     assert.equal(JSON.stringify(data).includes("wrong-token"), false);
     assert.equal(await fs.readFile(saved, "utf8"), "old-token");
+  } finally {
+    await mock.close();
+    await cleanupDir(home);
+  }
+});
+
+test("cli: token-capture serves the page and saves a token", async () => {
+  const home = await makeTempDir("studyskills-capture-home-");
+  const mock = await startMockCanvas();
+  const child = spawn(
+    process.execPath,
+    [
+      CANVAS_SCRIPT,
+      "token-capture",
+      "--base-url", mock.origin,
+      "--no-open",
+      "--timeout-ms", "5000",
+      "--json",
+    ],
+    {
+      env: { ...process.env, HOME: home, USERPROFILE: home },
+      stdio: ["ignore", "pipe", "pipe"],
+    },
+  );
+
+  let stdout = "";
+  let stderr = "";
+  child.stdout.on("data", (chunk) => { stdout += chunk; });
+  child.stderr.on("data", (chunk) => { stderr += chunk; });
+  const closed = new Promise((resolve) => child.on("close", (code) => resolve(code)));
+
+  try {
+    const url = await new Promise((resolve, reject) => {
+      const timer = setTimeout(() => {
+        reject(new Error(`No listening line. stdout=${stdout} stderr=${stderr}`));
+      }, 3000);
+      const check = () => {
+        for (const line of stdout.split("\n")) {
+          if (!line.trim()) continue;
+          try {
+            const data = JSON.parse(line);
+            if (data.listening && data.url) {
+              clearTimeout(timer);
+              resolve(data.url);
+              return;
+            }
+          } catch {
+            // Wait for a complete line.
+          }
+        }
+      };
+      child.stdout.on("data", check);
+      child.once("exit", (code) => {
+        if (code !== null && !stdout.includes('"listening"')) {
+          clearTimeout(timer);
+          reject(new Error(`Capture exited ${code}. stdout=${stdout} stderr=${stderr}`));
+        }
+      });
+    });
+
+    const response = await fetch(url, {
+      method: "POST",
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      body: new URLSearchParams({ token: "test-token" }),
+    });
+    assert.equal(response.status, 200);
+    assert.equal(await closed, 0);
+    assert.equal(await fs.readFile(hostTokenFile(home, mock.origin), "utf8"), "test-token\n");
+    assert.match(stdout, /"saved":true/);
+  } finally {
+    if (child.exitCode === null) child.kill();
+    await mock.close();
+    await cleanupDir(home);
+  }
+});
+
+test("cli: token-capture rejects a remote session", async () => {
+  const home = await makeTempDir("studyskills-capture-home-");
+  const mock = await startMockCanvas();
+  try {
+    const result = await runCli(
+      ["token-capture", "--base-url", mock.origin, "--json"],
+      { home, env: { SSH_CONNECTION: "1" } },
+    );
+    assert.notEqual(result.code, 0);
+    const data = await json(result);
+    assert.equal(data.code, "REMOTE_SESSION");
+    await assert.rejects(fs.access(hostTokenFile(home, mock.origin)));
   } finally {
     await mock.close();
     await cleanupDir(home);
